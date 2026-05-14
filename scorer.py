@@ -73,7 +73,7 @@ class PenaltyRecord:
     notes: list[str] = field(default_factory=list)
 
     def add_note(self, note: str):
-        self.notes.append(note)
+        self.notes.append(note)>
 
 
 @dataclass
@@ -230,35 +230,40 @@ def calculate_etps(
 
 
 # ─────────────────────────────────────────────────────────────
-# eSCORE — normalized 0-100 readability scale
-# Your concept, implemented as a derived output from eTPS.
-# reference_tps: the baseline TPS for your hardware/model combo.
-# Typically the raw TPS of a known-good reference run.
-# eScore 100 = eTPS matches reference. >100 is theoretically
-# possible if memory system improves beyond baseline.
+# eSCORE — normalized readability scale derived from eTPS
+# Default: 0-100. Pass allow_bonus=True for Nyx A/B comparisons
+# where the delta above baseline is the signal being published.
+# reference_tps is per hardware profile, not a global constant.
 # ─────────────────────────────────────────────────────────────
 
-def calculate_escore(etps: float, reference_tps: float) -> int:
+def calculate_escore(
+    etps: float,
+    reference_tps: float,
+    allow_bonus: bool = False,
+) -> int:
     """
-    Normalize eTPS to a 0-100 human-readable score.
+    Normalize eTPS to a human-readable integer score.
 
-    eScore = min(100, round((eTPS / reference_tps) × 100))
+    eScore = round((eTPS / reference_tps) × 100)
 
-    100 = perfect efficiency relative to reference
-    63  = correct but flawed (hallucination, correction round)
-    3   = correct but severely inefficient or slow
-    0   = task failure or zero output
+    Default (allow_bonus=False): capped at 100. Use for general
+    leaderboard display where 0-100 intuitive meaning matters.
 
-    reference_tps should be declared per hardware profile —
-    not a global constant. A Legion 5i reference differs from
-    an X1 Pro-470 reference. Store it in the hardware declaration.
+    allow_bonus=True: uncapped. Use for Nyx A/B comparisons where
+    the delta above 100 is the published signal — e.g. eScore 107
+    demonstrates memory system value above the no-memory baseline.
+
+    reference_tps should be declared per hardware profile, not as
+    a global constant. A Legion 5i reference differs from an
+    X1 Pro-470 reference. Store it in the hardware declaration.
     """
     if reference_tps <= 0:
         raise ValueError("reference_tps must be positive")
     if etps < 0:
         raise ValueError("etps cannot be negative")
 
-    return min(100, round((etps / reference_tps) * 100))
+    raw = round((etps / reference_tps) * 100)
+    return raw if allow_bonus else min(100, raw)
 
 
 if __name__ == "__main__":
@@ -331,18 +336,21 @@ if __name__ == "__main__":
     assert result.etps == 0.0
     print(f"Test 6 PASS — Zero TPS: eTPS={result.etps}")
 
-    # eScore tests
+    # eScore — capped mode (default)
     assert calculate_escore(50.0, 50.0) == 100
     assert calculate_escore(0.0, 50.0) == 0
     assert calculate_escore(25.0, 50.0) == 50
-    assert calculate_escore(31.5, 50.0) == 63   # hallucination + correction run
-    assert calculate_escore(55.0, 50.0) == 100  # capped at 100
+    assert calculate_escore(31.5, 50.0) == 63
+    assert calculate_escore(55.0, 50.0) == 100   # capped
+    # eScore — bonus mode (Nyx A/B)
+    assert calculate_escore(55.0, 50.0, allow_bonus=True) == 110  # visible delta
+    assert calculate_escore(50.0, 50.0, allow_bonus=True) == 100  # baseline unchanged
     try:
         calculate_escore(10.0, 0.0)
         assert False, "Should have raised"
     except ValueError:
         pass
-    print(f"Test 7 PASS — eScore: 50/50=100, 0/50=0, 31.5/50=63, 55/50 capped at 100")
+    print(f"Test 7 PASS — eScore: capped default + allow_bonus delta visible")
 
     print(f"\n{'='*50}")
     print(f"All tests passed. Spec version: {SPEC_VERSION}")
@@ -357,4 +365,5 @@ if __name__ == "__main__":
             session_coherence_score=0.8, is_single_turn=False),
     )
     print(sample.summary())
-    print(f"\neScore (ref=40.0): {calculate_escore(sample.etps, 40.0)}")
+    print(f"\neScore (ref=40.0):              {calculate_escore(sample.etps, 40.0)}")
+    print(f"eScore allow_bonus (ref=40.0):  {calculate_escore(sample.etps, 40.0, allow_bonus=True)}")
