@@ -229,6 +229,43 @@ def calculate_etps(
     )
 
 
+# ─────────────────────────────────────────────────────────────
+# eSCORE — normalized readability scale derived from eTPS
+# Default: 0-100. Pass allow_bonus=True for Nyx A/B comparisons
+# where the delta above baseline is the signal being published.
+# reference_tps is per hardware profile, not a global constant.
+# ─────────────────────────────────────────────────────────────
+
+def calculate_escore(
+    etps: float,
+    reference_tps: float,
+    allow_bonus: bool = False,
+) -> int:
+    """
+    Normalize eTPS to a human-readable integer score.
+
+    eScore = round((eTPS / reference_tps) × 100)
+
+    Default (allow_bonus=False): capped at 100. Use for general
+    leaderboard display where 0-100 intuitive meaning matters.
+
+    allow_bonus=True: uncapped. Use for Nyx A/B comparisons where
+    the delta above 100 is the published signal — e.g. eScore 107
+    demonstrates memory system value above the no-memory baseline.
+
+    reference_tps should be declared per hardware profile, not as
+    a global constant. A Legion 5i reference differs from an
+    X1 Pro-470 reference. Store it in the hardware declaration.
+    """
+    if reference_tps <= 0:
+        raise ValueError("reference_tps must be positive")
+    if etps < 0:
+        raise ValueError("etps cannot be negative")
+
+    raw = round((etps / reference_tps) * 100)
+    return raw if allow_bonus else min(100, raw)
+
+
 if __name__ == "__main__":
     print("Running eTPS scorer self-tests...\n")
 
@@ -299,6 +336,22 @@ if __name__ == "__main__":
     assert result.etps == 0.0
     print(f"Test 6 PASS — Zero TPS: eTPS={result.etps}")
 
+    # eScore — capped mode (default)
+    assert calculate_escore(50.0, 50.0) == 100
+    assert calculate_escore(0.0, 50.0) == 0
+    assert calculate_escore(25.0, 50.0) == 50
+    assert calculate_escore(31.5, 50.0) == 63
+    assert calculate_escore(55.0, 50.0) == 100   # capped
+    # eScore — bonus mode (Nyx A/B)
+    assert calculate_escore(55.0, 50.0, allow_bonus=True) == 110
+    assert calculate_escore(50.0, 50.0, allow_bonus=True) == 100
+    try:
+        calculate_escore(10.0, 0.0)
+        assert False, "Should have raised"
+    except ValueError:
+        pass
+    print(f"Test 7 PASS — eScore: capped default + allow_bonus delta visible")
+
     print(f"\n{'='*50}")
     print(f"All tests passed. Spec version: {SPEC_VERSION}")
     print(f"{'='*50}\n")
@@ -312,3 +365,5 @@ if __name__ == "__main__":
             session_coherence_score=0.8, is_single_turn=False),
     )
     print(sample.summary())
+    print(f"\neScore (ref=40.0):              {calculate_escore(sample.etps, 40.0)}")
+    print(f"eScore allow_bonus (ref=40.0):  {calculate_escore(sample.etps, 40.0, allow_bonus=True)}")
