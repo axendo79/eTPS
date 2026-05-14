@@ -8,6 +8,10 @@ Quality-adjusted local AI inference benchmark. Complements raw TPS.
 - scorer.py       — Core formula. Pure math. No I/O. Test this first.
 - logger.py       — SQLite persistence. WAL mode. Schema versioned.
 - task_validator.py — First real task. Run against live endpoint to validate pipeline.
+- seit.py         — Power-normalized companion metric (SEIT).
+- user_profile.py — User accounts, hardware profiles, consent, partner export.
+- leaderboard.py  — Ranking, filtering, JSON export.
+- CONTRIBUTING.md — Submission format and validation rules.
 
 ## Formula
 eTPS = TPS_raw × Efficiency × Quality × Continuity
@@ -15,6 +19,9 @@ eTPS = TPS_raw × Efficiency × Quality × Continuity
 Efficiency = 1 - waste_ratio  (token waste proxies only)
 Quality    = f(penalty record) (correctness only, independent of token counts)
 Continuity = f(context retention) (multi-turn sessions only)
+
+eScore = round((eTPS / reference_tps) × 100), capped at 100 by default.
+Pass allow_bonus=True to expose delta above baseline for A/B comparisons.
 
 ## Critical constraints
 - Efficiency and Quality are INDEPENDENT. Correction rounds affect Quality only.
@@ -28,6 +35,9 @@ Continuity = f(context retention) (multi-turn sessions only)
 - Allow eTPS to exceed TPS_raw (formula error if this happens)
 - Use ORM — raw SQL only for auditability
 - Add frontend before scorer and logger are validated on real hardware
+
+## Claude Code instructions
+- Always read the current committed file before modifying. Never reconstruct from memory.
 
 ## Run order
 1. python scorer.py          # Self-tests, no dependencies
