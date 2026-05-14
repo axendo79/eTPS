@@ -73,7 +73,7 @@ class PenaltyRecord:
     notes: list[str] = field(default_factory=list)
 
     def add_note(self, note: str):
-        self.notes.append(note)>
+        self.notes.append(note)
 
 
 @dataclass
@@ -343,8 +343,8 @@ if __name__ == "__main__":
     assert calculate_escore(31.5, 50.0) == 63
     assert calculate_escore(55.0, 50.0) == 100   # capped
     # eScore — bonus mode (Nyx A/B)
-    assert calculate_escore(55.0, 50.0, allow_bonus=True) == 110  # visible delta
-    assert calculate_escore(50.0, 50.0, allow_bonus=True) == 100  # baseline unchanged
+    assert calculate_escore(55.0, 50.0, allow_bonus=True) == 110
+    assert calculate_escore(50.0, 50.0, allow_bonus=True) == 100
     try:
         calculate_escore(10.0, 0.0)
         assert False, "Should have raised"
