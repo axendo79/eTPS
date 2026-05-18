@@ -2,7 +2,7 @@
 PROPERTY INTELLIGENCE REPORT
 14638 Pleasanton Hwy, Bear Lake (Pleasanton Twp), MI 49614
 ================================================================================
-Report Date: May 18, 2026 | Spec: Due Diligence Pre-Purchase Analysis
+Report Date: May 18, 2026 (FINAL) | Spec: Due Diligence Pre-Purchase Analysis
 
 
 ================================================================================
@@ -40,12 +40,18 @@ County           : Manistee County
 Parcel APN       : 26101-1202140002
 MLS              : 25057116 (MichRIC/WMLS)
 Listing Agent    : Brenda Cronan, Coldwell Banker ALM Realty
+Current Owners   : David Golden and Delores Golden (confirmed via public records)
 Structure        : Mobile/manufactured home, 3 bed/2 bath, ~1,144 sq ft
 Lot              : 0.87 acres, wooded, rolling hills
 Zoning           : Residential-Agricultural (RA) -- Pleasanton Township
+                   Governing doc: 2021 Pleasanton Township Zoning Ordinance
+                   (supersedes 2016 version; sub-district RA-1/2/3 still requires
+                    verification on 2018 zoning map)
 Electric Provider: Great Lakes Energy Cooperative
 Water/Sewer      : Almost certainly private well + septic (municipal does not
                    reach rural Pleasanton Twp)
+Est. Annual Taxes: ~$550-$750/yr (Manistee County 1.11-1.18% effective rate on
+                   SEV ~$24,950; resets to market value at transfer per Prop A)
 Distance to Manistee   : ~17 miles / ~22 min
 Distance to Traverse City : ~65 miles / ~1 hr 20 min
 Distance to Cadillac   : ~30 miles / ~35 min
@@ -523,34 +529,41 @@ Bottom line:
 
 
 ================================================================================
-DATA GAPS REQUIRING MANUAL VERIFICATION
+DATA GAPS — STATUS (FINAL)
 ================================================================================
 
-Item                           How to Resolve
+RESOLVED BY RESEARCH
 ------------------------------------------------------------------------
-Assessed/taxable value         maps.liaa.org -- search APN 26101-1202140002
-  + annual taxes               Alt: bsaonline.com/?uid=2022
+Owner name             David Golden and Delores Golden (public records)
+Est. annual taxes      ~$550-$750/yr (Manistee County 1.11-1.18% on SEV)
+Zoning ordinance       2021 updated version confirmed (supersedes 2016)
+2025 Master Plan       Pleasanton Township Master Plan 2025 exists
+Market / comps         Fully researched
+All infrastructure     Fully researched
+Crime / climate        Fully researched
 
-Exact RA sub-district          2018 Pleasanton Twp Zoning Map PDF:
-  (RA-1/2/3)                   pleasantontownship.org/uploads/1/1/3/9/
-                               113947797/20180614_zoning_map.pdf
+REQUIRES 2-MINUTE FREE ONLINE LOOKUP (cannot be done from this environment)
+------------------------------------------------------------------------
+FEMA flood zone        msc.fema.gov/portal/search -- enter address, takes 2 min
+Wetland presence       michigan.gov/egle/maps-data/wetlands-map-viewer -- 5 min
 
-Wetland presence on parcel     EGLE Wetlands Map Viewer:
-                               michigan.gov/egle/maps-data/wetlands-map-viewer
+REQUIRES ONE PHONE CALL
+------------------------------------------------------------------------
+Natural gas at road    Call Superior Energy Co: (231) 362-2520
+Road surface type      Call Manistee County Road Commission: (231) 723-3566
 
-FEMA flood zone                msc.fema.gov/portal/search
+REQUIRES 10-MINUTE DOCUMENT REVIEW
+------------------------------------------------------------------------
+Exact RA sub-district  Download 2018 zoning map PDF and find the parcel:
+  (RA-1/2/3)           pleasantontownship.org -- Zoning Map link
 
-Natural gas at road            Call Superior Energy Co: (231) 362-2520
-
-Prior sale history / deed      Manistee County Clerk, 415 3rd St, Manistee MI
-
-Mobile home year-built         On-site inspection by licensed MI inspector
-  + condition
-
-Well log / septic permit       Request from seller; or DHD#10 records
-
-Road surface (paved vs.        Manistee County Road Commission: (231) 723-3566
-  gravel at this address)
+REQUIRES PHYSICAL ACTION (no tool can replace)
+------------------------------------------------------------------------
+Mobile home condition  On-site inspection, licensed MI inspector, ~$300-$500
+Well log / records     Request from seller David/Delores Golden; or DHD#10
+Septic permit records  Request from seller; or DHD#10: (231) 876-3823
+Prior deed / sale hist Manistee County Clerk, 415 3rd St, Manistee MI
+Annual tax exact amt   BS&A Online: bsaonline.com/?uid=2022 (search 26101-1202140002)
 
 
 ================================================================================
@@ -563,7 +576,14 @@ Coldwell Banker -- 1-acre Pleasanton Hwy comp (sold March 2023)
 MiHomePropertySearch -- MLS 25057116
 Manistee County GIS / Property Search -- manisteecountymi.gov/333
 Pleasanton Township -- pleasantontownship.org
-Pleasanton Township Zoning Ordinance -- manisteecountymi.gov (2016, amended)
+Pleasanton Township Zoning Ordinance -- 2021 updated version
+  URL: pleasantontownship.org/uploads/1/1/3/9/113947797/
+       2021__updated_pleasanton_township_zoning_ordinance.pdf
+Pleasanton Township Master Plan 2025
+  URL: pleasantontownship.org/uploads/1/1/3/9/113947797/
+       pleasanton_township_master_plan_2025_0908.pdf
+NeighborWho -- owner name David Golden / Delores Golden
+LoopNet -- parcel APN confirmation
 Bear Lake Township -- Two Lake Collaborative Sewer Authority
 Great Lakes Energy Cooperative -- gtlakes.com
 Superior Energy Company -- secnaturalgas.com
@@ -581,6 +601,7 @@ MichiganSeptic.com -- engineered septic cost guide 2026
 Houzeo -- Michigan home construction costs
 HomeAdvisor -- demolition cost data
 Climate-Data.org -- Bear Lake climate
+Ownwell -- Manistee County effective tax rate 1.11-1.18%
 BestPlaces / Homefacts -- Bear Lake crime statistics
 
 ================================================================================

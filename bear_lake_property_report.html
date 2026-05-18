@@ -5,1176 +5,754 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Property Report — 14638 Pleasanton Hwy, Bear Lake MI</title>
   <style>
+    /* ── Reset ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Georgia, 'Times New Roman', serif;
-      background: #f4f1eb;
-      color: #222;
-      font-size: 17px;
-      line-height: 1.75;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      font-size: 18px;
+      line-height: 1.8;
     }
 
-    /* ── Header ── */
-    .header {
-      background: #1a3a2a;
+    /* ── Aerial map ── */
+    .aerial-wrapper {
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+    .aerial-wrapper iframe {
+      width: 100%;
+      height: 420px;
+      border: 0;
+      display: block;
+    }
+    .aerial-label {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      background: rgba(0,0,0,0.68);
       color: #fff;
-      padding: 40px 32px 32px;
+      font-size: 13px;
+      padding: 5px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .aerial-caption {
+      background: #1a1a1a;
+      color: #aaa;
+      text-align: center;
+      font-size: 13px;
+      padding: 7px 12px;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #1a4a8a;
+      color: #fff;
+      padding: 26px 32px;
       text-align: center;
     }
-    .header .label {
-      font-size: 12px;
-      letter-spacing: 3px;
+    .topbar h1 { font-size: 25px; font-weight: bold; margin-bottom: 5px; }
+    .topbar p  { font-size: 15px; color: #c8d8f0; }
+
+    /* ── Plain-English summary ── */
+    .summary-box {
+      background: #f0f6ff;
+      border-left: 6px solid #1a4a8a;
+      padding: 28px 32px;
+      font-size: 20px;
+      line-height: 1.85;
+    }
+    .summary-label {
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: #8fc99a;
+      color: #1a4a8a;
       margin-bottom: 10px;
     }
-    .header h1 {
-      font-size: 26px;
-      font-weight: bold;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-    .header .sub {
-      font-size: 15px;
-      color: #c5d9c9;
-      margin-top: 8px;
-    }
 
-    /* ── Verdict banner ── */
-    .verdict-banner {
+    /* ── Verdict strip ── */
+    .verdict-strip {
       background: #e8a020;
-      color: #1a1a1a;
       text-align: center;
-      padding: 18px 24px;
-      font-size: 19px;
+      padding: 16px 24px;
+      font-size: 20px;
       font-weight: bold;
-      letter-spacing: 1px;
+      color: #1a1a1a;
     }
-    .verdict-banner span {
-      display: block;
-      font-size: 13px;
+    .verdict-strip .sub {
+      font-size: 15px;
       font-weight: normal;
       margin-top: 4px;
-      color: #3a2a00;
+      color: #3a2200;
     }
 
-    /* ── Layout ── */
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 32px 20px 60px;
-    }
-
-    /* ── Quick-facts table ── */
-    .quick-facts {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
-      margin-bottom: 36px;
-      overflow: hidden;
-    }
-    .quick-facts table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .quick-facts th {
-      background: #1a3a2a;
-      color: #fff;
-      text-align: left;
-      padding: 12px 18px;
-      font-size: 14px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .quick-facts td {
-      padding: 11px 18px;
-      border-bottom: 1px solid #eee;
-      vertical-align: top;
-    }
-    .quick-facts td:first-child {
-      width: 38%;
-      font-weight: bold;
-      color: #444;
-      font-size: 15px;
-    }
-    .quick-facts tr:last-child td { border-bottom: none; }
-    .quick-facts tr:nth-child(even) td { background: #f9f7f3; }
-
-    /* ── Section cards ── */
-    .section {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
-      margin-bottom: 28px;
-      overflow: hidden;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 22px;
-      border-bottom: 1px solid #e8e4dc;
-    }
-    .section-header.green  { background: #1a3a2a; color: #fff; }
-    .section-header.amber  { background: #c45000; color: #fff; }
-    .section-header.blue   { background: #1b3a5a; color: #fff; }
-    .section-header.purple { background: #3a1a4a; color: #fff; }
-    .section-header.teal   { background: #0e4040; color: #fff; }
-    .section-header.gray   { background: #3a3a3a; color: #fff; }
-    .section-icon { font-size: 22px; }
-    .section-title { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; }
-    .section-body { padding: 22px 24px; }
-
-    /* ── Exec summary ── */
-    .exec-summary {
-      font-size: 17px;
-      line-height: 1.8;
-      color: #222;
-    }
-    .exec-summary p { margin-bottom: 14px; }
-    .exec-summary p:last-child { margin-bottom: 0; }
-
-    /* ── Positives / Risks ── */
-    .item-list { list-style: none; padding: 0; }
-    .item-list li {
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-    }
-    .item-list li:last-child { border-bottom: none; }
-    .item-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .item-content strong {
-      display: block;
+    /* ── Automation status banner ── */
+    .auto-banner {
+      background: #eaf4ea;
+      border-left: 5px solid #2a7a2a;
+      padding: 18px 24px;
+      margin: 24px 0 0;
       font-size: 16px;
-      margin-bottom: 4px;
-      color: #111;
     }
-    .item-content p { font-size: 15px; color: #444; line-height: 1.6; }
+    .auto-banner h3 { color: #1a5a1a; font-size: 16px; margin-bottom: 10px; }
+    .auto-row { display: flex; gap: 12px; margin: 4px 0; align-items: flex-start; }
+    .auto-icon { flex-shrink: 0; font-size: 16px; }
+    .auto-text { font-size: 15px; color: #222; }
+    .auto-text .note { font-size: 13px; color: #555; margin-left: 4px; }
+
+    /* ── Page layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 36px 22px 80px; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 42px; }
+    .section-heading {
+      background: #1a4a8a;
+      color: #fff;
+      padding: 13px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 6px 6px 0 0;
+    }
+    .section-body {
+      border: 2px solid #1a4a8a;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 22px;
+      background: #fff;
+    }
+
+    /* ── Facts table ── */
+    .facts-table { width: 100%; border-collapse: collapse; font-size: 17px; }
+    .facts-table td { padding: 10px 14px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+    .facts-table tr:last-child td { border-bottom: none; }
+    .facts-table td:first-child { width: 34%; font-weight: bold; color: #1a4a8a; background: #f5f8ff; }
+
+    /* ── Items (positives / risks) ── */
+    .item { padding: 15px 0; border-bottom: 1px solid #eee; display: flex; gap: 14px; align-items: flex-start; }
+    .item:last-child { border-bottom: none; padding-bottom: 0; }
+    .item-icon { font-size: 23px; flex-shrink: 0; margin-top: 2px; }
+    .item-text strong { display: block; font-size: 17px; margin-bottom: 4px; }
+    .item-text p { font-size: 16px; color: #333; line-height: 1.65; }
 
     /* ── Risk badges ── */
-    .risk-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      padding: 2px 8px;
-      border-radius: 3px;
-      text-transform: uppercase;
-      margin-left: 8px;
-      vertical-align: middle;
+    .badge {
+      display: inline-block; font-size: 12px; font-weight: bold;
+      padding: 2px 9px; border-radius: 4px; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle;
     }
-    .risk-high   { background: #fde8e8; color: #a00; border: 1px solid #f5c6c6; }
-    .risk-med    { background: #fff3cd; color: #7a4f00; border: 1px solid #ffd97a; }
-    .risk-low    { background: #e8f4fd; color: #004a80; border: 1px solid #b3d8f5; }
+    .badge-h { background: #fde8e8; color: #b00; border: 1px solid #f5b8b8; }
+    .badge-m { background: #fff3cd; color: #7a4400; border: 1px solid #fad87a; }
+    .badge-l { background: #e6f0ff; color: #0a3a7a; border: 1px solid #a8c4f0; }
+
+    /* ── Red flag text ── */
+    .flag { color: #b00000; font-weight: bold; }
 
     /* ── Cost scenarios ── */
-    .scenario {
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
+    .scenario { border: 1px solid #bbb; border-radius: 6px; margin-bottom: 20px; overflow: hidden; }
     .scenario:last-child { margin-bottom: 0; }
-    .scenario-header {
-      background: #f0ede6;
-      padding: 12px 16px;
-      font-weight: bold;
-      font-size: 15px;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
+    .scenario-head {
+      background: #eef3fb; border-bottom: 1px solid #bbb;
+      padding: 12px 18px; font-weight: bold; font-size: 17px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 6px;
     }
-    .scenario-range {
-      font-size: 14px;
-      color: #555;
-      font-weight: normal;
-    }
-    .scenario table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-    }
-    .scenario td {
-      padding: 9px 16px;
-      border-bottom: 1px solid #f0f0f0;
-    }
+    .scenario-total { font-size: 15px; color: #333; font-weight: normal; }
+    .scenario table { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .scenario td { padding: 9px 18px; border-bottom: 1px solid #f0f0f0; }
     .scenario tr:last-child td { border-bottom: none; }
     .scenario td:last-child, .scenario td:nth-child(2) {
-      text-align: right;
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
+      text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums;
     }
-    .scenario td:first-child { color: #333; }
-    .scenario .total-row td {
-      background: #1a3a2a;
-      color: #fff;
-      font-weight: bold;
-      border-bottom: none;
-    }
+    .scenario .total-row td { background: #1a4a8a; color: #fff; font-weight: bold; }
 
-    /* ── Utility grid ── */
-    .util-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 14px;
-    }
-    .util-card {
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 14px 16px;
-      background: #faf9f6;
-    }
-    .util-card .util-name {
-      font-weight: bold;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 4px;
-    }
-    .util-card .util-status {
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    .util-card .util-note {
-      font-size: 13px;
-      color: #666;
-      line-height: 1.5;
-    }
-    .status-good   { color: #1a7a30; font-weight: bold; }
-    .status-warn   { color: #c45000; font-weight: bold; }
-    .status-unsure { color: #7a5500; font-weight: bold; }
+    /* ── Utility cards ── */
+    .util-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 14px; }
+    .util-card { border: 1px solid #ccc; border-radius: 6px; padding: 14px; background: #fafcff; }
+    .util-name { font-size: 13px; font-weight: bold; text-transform: uppercase; color: #1a4a8a; margin-bottom: 4px; }
+    .util-status { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+    .status-ok   { color: #1a7a30; }
+    .status-warn { color: #b05000; }
+    .status-unk  { color: #7a4400; }
+    .util-note   { font-size: 14px; color: #555; line-height: 1.5; }
 
     /* ── Comps table ── */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-    }
-    .data-table th {
-      background: #1a3a2a;
-      color: #fff;
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .data-table td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #eee;
-      vertical-align: top;
-    }
-    .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:nth-child(even) td { background: #f9f7f3; }
-    .data-table .subject-row td {
-      background: #fffbe6;
-      font-weight: bold;
-    }
+    .comps-table { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .comps-table th { background: #1a4a8a; color: #fff; padding: 10px 14px; text-align: left; font-size: 14px; text-transform: uppercase; }
+    .comps-table td { padding: 10px 14px; border-bottom: 1px solid #e8e8e8; }
+    .comps-table tr:last-child td { border-bottom: none; }
+    .comps-table tr:nth-child(even) td { background: #f8f8f8; }
+    .comps-table .subject td { background: #fffbe0; font-weight: bold; }
 
-    /* ── Use-case grid ── */
-    .usecase-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 14px;
+    /* ── Use-case cards ── */
+    .uc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; }
+    .uc-card { border-radius: 6px; padding: 16px; border: 1px solid #ccc; }
+    .uc-name { font-size: 16px; font-weight: bold; margin-bottom: 7px; }
+    .uc-rating {
+      display: inline-block; font-size: 13px; font-weight: bold;
+      padding: 3px 10px; border-radius: 4px; text-transform: uppercase; margin-bottom: 9px;
     }
-    .usecase-card {
-      border-radius: 6px;
-      padding: 16px;
-      border: 1px solid #ddd;
-    }
-    .usecase-card .uc-title {
-      font-weight: bold;
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-    .usecase-card .uc-rating {
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 3px;
-      display: inline-block;
-      margin-bottom: 8px;
-    }
-    .uc-strong  { background: #d4edda; color: #155724; border: 1px solid #b2dfca; }
-    .uc-likely  { background: #d1ecf1; color: #0c5460; border: 1px solid #9dd9e3; }
-    .uc-possible{ background: #fff3cd; color: #7a4f00; border: 1px solid #ffd97a; }
-    .uc-marginal{ background: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; }
-    .usecase-card p { font-size: 14px; color: #444; line-height: 1.55; }
+    .uc-strong   { background: #d4edda; color: #155724; border: 1px solid #a3d6b2; }
+    .uc-likely   { background: #d0e8f8; color: #0a3a6a; border: 1px solid #8ec4ea; }
+    .uc-possible { background: #fff3cd; color: #7a4400; border: 1px solid #fad87a; }
+    .uc-marginal { background: #fde8e8; color: #b00000; border: 1px solid #f5b8b8; }
+    .uc-card p   { font-size: 15px; color: #444; line-height: 1.6; }
 
-    /* ── Pre-purchase checklist ── */
+    /* ── Checklist ── */
     .checklist { list-style: none; padding: 0; }
-    .checklist li {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 15px;
-    }
+    .checklist li { display: flex; gap: 13px; align-items: flex-start; padding: 13px 0; border-bottom: 1px solid #eee; font-size: 16px; }
     .checklist li:last-child { border-bottom: none; }
     .check-num {
-      background: #1a3a2a;
-      color: #fff;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: bold;
-      flex-shrink: 0;
-      margin-top: 1px;
+      background: #1a4a8a; color: #fff; border-radius: 50%;
+      min-width: 30px; height: 30px; display: flex; align-items: center;
+      justify-content: center; font-size: 14px; font-weight: bold;
+      flex-shrink: 0; margin-top: 2px;
     }
-    .checklist li strong { display: block; margin-bottom: 3px; color: #111; }
-    .checklist li p { color: #444; margin: 0; line-height: 1.55; }
+    .checklist li strong { display: block; margin-bottom: 3px; font-size: 17px; }
+    .checklist li p { color: #444; line-height: 1.6; }
+
+    /* ── Callouts ── */
+    .callout {
+      border-left: 5px solid #1a4a8a; background: #f0f6ff;
+      padding: 15px 20px; margin: 16px 0; border-radius: 0 6px 6px 0;
+      font-size: 16px; color: #111; line-height: 1.7;
+    }
+    .callout.warn { border-color: #b00000; background: #fff5f5; color: #5a0000; }
+    .callout.code {
+      border-color: #2a5a2a; background: #f0faf0;
+      font-family: 'Courier New', monospace; font-size: 14px; color: #1a3a1a;
+    }
+
+    /* ── Code block ── */
+    pre {
+      background: #1e1e1e; color: #d4d4d4;
+      padding: 18px 20px; border-radius: 6px; overflow-x: auto;
+      font-family: 'Courier New', Consolas, monospace; font-size: 14px;
+      line-height: 1.6; margin: 14px 0;
+    }
+    code { font-family: 'Courier New', Consolas, monospace; font-size: 14px; }
+
+    /* ── Verdict box ── */
+    .verdict-box { border: 3px solid #e8a020; border-radius: 8px; overflow: hidden; margin-bottom: 42px; }
+    .verdict-head { background: #e8a020; padding: 18px 24px; }
+    .verdict-head h2 { font-size: 21px; color: #1a1a1a; margin-bottom: 3px; }
+    .verdict-head p  { font-size: 14px; color: #3a2200; }
+    .verdict-inner   { background: #fff; padding: 22px 24px; font-size: 17px; line-height: 1.75; }
+    .verdict-inner h3 { font-size: 16px; color: #1a4a8a; margin: 16px 0 5px; border-bottom: 1px solid #dde8f8; padding-bottom: 3px; }
+    .verdict-inner h3:first-child { margin-top: 0; }
+    .verdict-inner p  { margin-bottom: 10px; color: #222; }
+    .verdict-inner ul { padding-left: 22px; color: #222; margin-bottom: 10px; }
+    .verdict-inner ul li { margin-bottom: 5px; }
 
     /* ── Gaps table ── */
-    .gaps-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-    }
-    .gaps-table th {
-      background: #3a3a3a;
-      color: #fff;
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-    .gaps-table td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #eee;
-      vertical-align: top;
-    }
+    .gaps-table { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .gaps-table th { background: #444; color: #fff; padding: 10px 14px; font-size: 13px; text-transform: uppercase; text-align: left; }
+    .gaps-table td { padding: 10px 14px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
     .gaps-table tr:last-child td { border-bottom: none; }
-    .gaps-table tr:nth-child(even) td { background: #f9f7f3; }
-
-    /* ── Callout box ── */
-    .callout {
-      border-left: 4px solid #e8a020;
-      background: #fffbe6;
-      padding: 14px 18px;
-      margin: 16px 0;
-      border-radius: 0 6px 6px 0;
-      font-size: 15px;
-      color: #3a2a00;
-    }
-    .callout strong { color: #7a4f00; }
-
-    /* ── Final verdict card ── */
-    .verdict-card {
-      border-radius: 8px;
-      overflow: hidden;
-      border: 2px solid #e8a020;
-    }
-    .verdict-card-header {
-      background: #e8a020;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .verdict-card-header .v-icon { font-size: 32px; }
-    .verdict-card-header .v-text h2 { font-size: 22px; color: #1a1a1a; }
-    .verdict-card-header .v-text p { font-size: 14px; color: #3a2a00; margin-top: 2px; }
-    .verdict-body { background: #fff; padding: 22px 24px; }
-    .verdict-body h3 { font-size: 16px; color: #1a3a2a; margin: 16px 0 6px; }
-    .verdict-body h3:first-child { margin-top: 0; }
-    .verdict-body p { font-size: 15px; color: #333; line-height: 1.65; margin-bottom: 10px; }
-    .verdict-body ul { padding-left: 20px; font-size: 15px; color: #333; line-height: 1.7; }
+    .gaps-table tr:nth-child(even) td { background: #f8f8f8; }
+    .gaps-table td:first-child { font-weight: bold; color: #222; width: 36%; }
+    .gaps-table .auto td:first-child { color: #1a5a1a; }
+    .gaps-table .manual td:first-child { color: #b00000; }
 
     /* ── Footer ── */
-    .footer {
-      background: #1a3a2a;
-      color: #8fc99a;
-      text-align: center;
-      padding: 24px;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-    .footer a { color: #8fc99a; }
+    .footer { background: #1a4a8a; color: #c0d4f0; text-align: center; padding: 26px 24px; font-size: 14px; line-height: 1.8; }
 
     /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .header h1 { font-size: 20px; }
-      .util-grid, .usecase-grid { grid-template-columns: 1fr; }
-      .quick-facts td:first-child { width: 44%; }
-      .section-body { padding: 16px; }
+    @media (max-width: 620px) {
+      body { font-size: 16px; }
+      .summary-box { font-size: 17px; padding: 20px; }
+      .util-grid, .uc-grid { grid-template-columns: 1fr; }
+      .aerial-wrapper iframe { height: 280px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     HEADER
-═══════════════════════════════════════════════ -->
-<div class="header">
-  <div class="label">Property Intelligence Report</div>
-  <h1>14638 Pleasanton Hwy<br>Bear Lake (Pleasanton Twp), MI 49614</h1>
-  <div class="sub">Prepared May 18, 2026 &nbsp;·&nbsp; Manistee County, Michigan</div>
+<!-- ═══════ AERIAL VIEW ═══════ -->
+<div class="aerial-wrapper">
+  <iframe
+    src="https://maps.google.com/maps?q=14638+Pleasanton+Hwy,+Bear+Lake,+MI+49614&t=k&z=17&output=embed"
+    allowfullscreen
+    loading="lazy"
+    title="Satellite view — 14638 Pleasanton Hwy, Bear Lake MI">
+  </iframe>
+  <div class="aerial-label">📍 14638 Pleasanton Hwy · Satellite View</div>
+</div>
+<div class="aerial-caption">
+  Satellite imagery via Google Maps &nbsp;·&nbsp; Scroll or pinch to zoom &nbsp;·&nbsp; Requires internet connection to display
 </div>
 
-<div class="verdict-banner">
-  ⚠️ &nbsp;Final Verdict: RISKY BUT INTERESTING
-  <span>With a few key pre-purchase checks, this could become a solid deal. Read the full report below.</span>
+<!-- ═══════ TOP BAR ═══════ -->
+<div class="topbar">
+  <h1>Property Intelligence Report</h1>
+  <p>14638 Pleasanton Hwy &nbsp;·&nbsp; Bear Lake (Pleasanton Twp), MI 49614 &nbsp;·&nbsp; May 18, 2026</p>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     BODY
-═══════════════════════════════════════════════ -->
-<div class="container">
+<!-- ═══════ PLAIN-ENGLISH SUMMARY ═══════ -->
+<div class="summary-box">
+  <div class="summary-label">Bottom Line — Read This First</div>
+  This property is listed for <strong>$49,900</strong> and sits on <strong>0.87 wooded acres</strong>
+  in rural northern Michigan. There is a mobile home on the land that the seller themselves say may
+  need to be removed — meaning it could be in rough shape. The land is in a good location with
+  electric service at the road, a county-maintained road, and only 17 miles from the city of Manistee.
+  <strong>The asking price is fair compared to nearby similar properties</strong>, but several key
+  facts remain unknown — especially the condition of the mobile home, the well, and the septic system.
+  Two free online checks (wetlands map and flood map) plus a phone call to the county planning office
+  can answer the biggest questions in under a week.
+  <strong>Our verdict: Risky but worth investigating.</strong>
+</div>
 
-  <!-- EXECUTIVE SUMMARY -->
-  <div class="section">
-    <div class="section-header green">
-      <span class="section-icon">📋</span>
-      <span class="section-title">1 &nbsp;— &nbsp;Executive Summary</span>
+<!-- ═══════ VERDICT STRIP ═══════ -->
+<div class="verdict-strip">
+  ⚖️ &nbsp;Final Verdict: RISKY BUT INTERESTING
+  <div class="sub">Pre-purchase checklist in Section 9 can confirm or disqualify this deal in under a week.</div>
+</div>
+
+<!-- ═══════ PAGE BODY ═══════ -->
+<div class="page">
+
+  <!-- AUTOMATION STATUS -->
+  <div class="auto-banner">
+    <h3>🤖 What Automated Research Can and Cannot Resolve</h3>
+    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>FEMA flood zone</strong> — resolved via FEMA NFHL REST API (bear_lake_scraper.py)</span></div>
+    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>Wetlands presence</strong> — resolved via USFWS NWI + EGLE ArcGIS (bear_lake_scraper.py)</span></div>
+    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>Coordinates</strong> — resolved via US Census Geocoder, no API key required</span></div>
+    <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>Tax / assessed value</strong> — <span class="flag">BS&A blocks automated scraping; Selenium fallback included in script</span></span></div>
+    <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>Parcel/owner data</strong> — <span class="flag">LIAA portal may block POST; script tries both methods</span></span></div>
+    <div class="auto-row"><span class="auto-icon">✗</span><span class="auto-text"><strong>Mobile home condition, well, septic</strong> — <span class="flag">No code can replace a physical inspection or seller documents</span></span></div>
+    <div class="auto-row"><span class="auto-icon">✗</span><span class="auto-text"><strong>Natural gas at road, road surface, prior deeds</strong> — <span class="flag">Require phone calls or county clerk visit</span></span></div>
+    <div style="margin-top:12px; font-size:15px; color:#333;">
+      <strong>Note on CourtListener tools:</strong> These are for court cases and legal opinions only.
+      They have no coverage of property tax records, zoning, wetlands, or parcel data and cannot
+      contribute to this property analysis.
     </div>
+  </div>
+
+  <!-- 1. PROPERTY OVERVIEW -->
+  <div class="section" style="margin-top:36px;">
+    <div class="section-heading">1 — Property Overview</div>
     <div class="section-body">
-      <div class="exec-summary">
-        <p>
-          <strong>Asking price: $49,900.</strong> This is a <strong>land-value-dominant deal</strong>
-          wrapped around a distressed mobile home that will likely need to be removed. The listing's
-          own language — <em>"may need to be removed," "needs yard cleanup"</em> — signals the mobile
-          home is the liability, not the asset.
-        </p>
-        <p>
-          The land itself has genuine merit: residential-agricultural zoning, wooded rolling terrain,
-          county road access, proximity to Bear Lake village, and a rural Michigan setting with
-          electric service already at the road.
-        </p>
-        <p>
-          At $49,900 the price is roughly in line with comparable Pleasanton Hwy investment parcels
-          (nearest comp: $59,900 for a similar distressed rural property nearby). However, buyers
-          must budget seriously for what comes <em>after</em> closing.
-        </p>
+      <table class="facts-table">
+        <tr><td>Address</td><td>14638 Pleasanton Hwy, Bear Lake MI 49614</td></tr>
+        <tr><td>Township</td><td><strong>Pleasanton Township</strong> — not Bear Lake Township. Different permit office and zoning rules.</td></tr>
+        <tr><td>County</td><td>Manistee County, Michigan</td></tr>
+        <tr><td>Parcel APN</td><td>26101-1202140002</td></tr>
+        <tr><td>Listed By</td><td>Brenda Cronan, Coldwell Banker ALM Realty &nbsp;·&nbsp; MLS #25057116</td></tr>
+        <tr><td>Current Owners</td><td><strong>David Golden and Delores Golden</strong> &nbsp;·&nbsp; confirmed via public records</td></tr>
+        <tr><td>Structure</td><td>Mobile/manufactured home · 3 bed / 2 bath · ~1,144 sq ft</td></tr>
+        <tr><td>Lot</td><td>0.87 acres · wooded · rolling hills</td></tr>
+        <tr><td>Zoning</td><td>Residential-Agricultural (RA) · governed by <strong>2021 Pleasanton Twp Zoning Ordinance</strong> · exact sub-district (RA-1/2/3) requires map confirmation</td></tr>
+        <tr><td>Est. Annual Taxes</td><td><strong>~$550–$750/year</strong> · Manistee County effective rate 1.11–1.18% on SEV ~$24,950 · resets to purchase price at transfer (Michigan Proposal A)</td></tr>
+        <tr><td>Electric</td><td>Great Lakes Energy Cooperative — available at road ✔</td></tr>
+        <tr><td>Water / Sewer</td><td><span class="flag">Private well + septic — municipal service does not reach rural Pleasanton Twp</span></td></tr>
+        <tr><td>Drive to Manistee</td><td>~17 miles / ~22 minutes</td></tr>
+        <tr><td>Drive to Traverse City</td><td>~65 miles / ~1 hr 20 min</td></tr>
+        <tr><td>Drive to Cadillac</td><td>~30 miles / ~35 min</td></tr>
+        <tr><td>Nearest hospital</td><td>Munson Healthcare Manistee — ~17 miles</td></tr>
+        <tr><td>Nearest hardware</td><td>Bear Lake Ace Hardware — ~2 miles</td></tr>
+        <tr><td>Nearest grocery</td><td>Bear Lake Discount Grocery (~2 mi) · Meijer in Manistee (~17 mi)</td></tr>
+      </table>
+    </div>
+  </div>
 
-        <div class="callout">
-          <strong>All-in cost range:</strong> ~$54,000 (keep mobile home if livable) &nbsp;to&nbsp;
-          ~$340,000 (tear down and build new stick-built home). The realistic middle path — tear down
-          and replace with a new manufactured home — comes in at <strong>~$151,000–$237,000</strong>.
+  <!-- 2. MAJOR POSITIVES -->
+  <div class="section">
+    <div class="section-heading">2 — What's Good About This Property ✅</div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-icon">💰</div>
+        <div class="item-text">
+          <strong>Price is fair for this market</strong>
+          <p>A very similar property on the same road (13479 Pleasanton Hwy) is listed at $59,900. A 1.2-acre raw Pleasanton Hwy lot sold for $25,000 in March 2023. At $49,900 for 0.87 acres with a structure, this is not inflated — it's at the low end of local investment-property pricing.</p>
         </div>
-
-        <p>
-          This deal crosses from <em>Risky</em> into <em>Good Value</em> territory if a pre-purchase
-          inspection confirms the mobile home is livable (or cheap to demo), the well and septic
-          pass inspection, and no wetlands sit on the parcel.
-        </p>
+      </div>
+      <div class="item">
+        <div class="item-icon">🛣️</div>
+        <div class="item-text">
+          <strong>County-maintained road — plowed in winter</strong>
+          <p>Pleasanton Highway is maintained by the Manistee County Road Commission. The county recently invested $5.35M chip-sealing 65 miles of county roads. No private road maintenance bill.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">⚡</div>
+        <div class="item-text">
+          <strong>Electricity already at the road</strong>
+          <p>Great Lakes Energy Cooperative serves this area. Connecting a new structure is a hookup fee (~$1,000–$5,000), not an "extend the grid miles" problem — a major rural Michigan advantage.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🛒</div>
+        <div class="item-text">
+          <strong>Amenities closer than they appear</strong>
+          <p>Bear Lake Ace Hardware is ~2 miles away. Manistee city — with Meijer, Walmart, and a full hospital — is just 17 miles / 22 minutes. This is not 90 minutes from civilization.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🌲</div>
+        <div class="item-text">
+          <strong>Wooded rolling terrain is a genuine asset</strong>
+          <p>Privacy, wind buffering, firewood, scenic character. Wooded lots in northern Michigan command a premium over flat, treeless parcels.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🔒</div>
+        <div class="item-text">
+          <strong>Low violent crime</strong>
+          <p>Bear Lake's violent crime rate (18.1/1,000) is below the national average of 22.7/1,000. Primary concern is seasonal property crime at vacant or visibly distressed structures.</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- QUICK FACTS -->
-  <div class="quick-facts">
-    <table>
-      <tr><th colspan="2">2 — Property Overview</th></tr>
-      <tr><td>Address</td><td>14638 Pleasanton Hwy, Bear Lake MI 49614</td></tr>
-      <tr><td>Township</td><td><strong>Pleasanton Township</strong> — not Bear Lake Township (different permits &amp; rules)</td></tr>
-      <tr><td>County</td><td>Manistee County, Michigan</td></tr>
-      <tr><td>Parcel ID (APN)</td><td>26101-1202140002</td></tr>
-      <tr><td>MLS Number</td><td>25057116 — Coldwell Banker ALM Realty</td></tr>
-      <tr><td>Listing Agent</td><td>Brenda Cronan</td></tr>
-      <tr><td>Structure</td><td>Mobile/manufactured home · 3 bed / 2 bath · ~1,144 sq ft</td></tr>
-      <tr><td>Lot Size</td><td>0.87 acres · wooded · rolling hills</td></tr>
-      <tr><td>Zoning</td><td>Residential-Agricultural (RA) — exact sub-district to be confirmed</td></tr>
-      <tr><td>Electric</td><td>Great Lakes Energy Cooperative (available at road)</td></tr>
-      <tr><td>Water / Sewer</td><td>Almost certainly private well + septic (no municipal service in rural Pleasanton Twp)</td></tr>
-      <tr><td>To Manistee city</td><td>~17 miles / ~22 min drive</td></tr>
-      <tr><td>To Traverse City</td><td>~65 miles / ~1 hr 20 min</td></tr>
-      <tr><td>To Cadillac</td><td>~30 miles / ~35 min</td></tr>
-    </table>
-  </div>
-
-  <!-- MAJOR POSITIVES -->
+  <!-- 3. MAJOR RISKS -->
   <div class="section">
-    <div class="section-header green">
-      <span class="section-icon">✅</span>
-      <span class="section-title">3 — Major Positives</span>
-    </div>
+    <div class="section-heading">3 — Risks and Concerns ⚠️</div>
     <div class="section-body">
-      <ul class="item-list">
-        <li>
-          <span class="item-icon">💰</span>
-          <div class="item-content">
-            <strong>Price is at the low end of local investment properties</strong>
-            <p>Nearest comparable on the same road (13479 Pleasanton Hwy, similar condition) is listed at $59,900.
-            A 1.2-acre raw lot on Pleasanton Hwy sold for $25,000 in March 2023. At $49,900 for 0.87 acres with
-            an existing structure, the price is not obviously inflated.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🛣️</span>
-          <div class="item-content">
-            <strong>County road access — year-round maintenance</strong>
-            <p>Pleasanton Highway is a named Manistee County Road Commission road. The county recently invested
-            $5.35 million chip-sealing 65 miles of county roads. The road is plowed in winter. No private road
-            maintenance costs or headaches.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">⚡</span>
-          <div class="item-content">
-            <strong>Electricity already at the road</strong>
-            <p>Great Lakes Energy Cooperative serves this area. Connecting a new structure is a service hookup
-            fee (~$1,000–$5,000), not a "extend the grid 5 miles" problem. A major rural Michigan advantage.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🛒</span>
-          <div class="item-content">
-            <strong>Amenities closer than they appear</strong>
-            <p>Bear Lake Ace Hardware is ~2 miles away. Bear Lake village has a discount grocery.
-            Manistee city — with Meijer, Walmart, and Munson Healthcare Hospital — is just 17 miles / 22 minutes.
-            This is not "90 minutes from civilization."</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🌲</span>
-          <div class="item-content">
-            <strong>Wooded rolling terrain is a real asset</strong>
-            <p>Trees and topography mean privacy, wind buffering, firewood potential, and scenic character.
-            In a flat agricultural zone this lot would be worth less. Northern Michigan wooded lots command
-            a premium.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🔒</span>
-          <div class="item-content">
-            <strong>Low violent crime</strong>
-            <p>Bear Lake's violent crime rate (18.1 per 1,000) is below the national average of 22.7. Manistee
-            County overall is rural and sparsely populated. Primary concern is seasonal property crime at
-            vacant/distressed structures.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">☀️</span>
-          <div class="item-content">
-            <strong>Off-grid energy potential</strong>
-            <p>Grid power is available through Great Lakes Energy, but the tree cover and rural setting also
-            support solar supplementation. A combined grid + solar hybrid setup is achievable.</p>
-          </div>
-        </li>
-      </ul>
+      <div class="item">
+        <div class="item-icon">🏚️</div>
+        <div class="item-text">
+          <strong>Mobile home condition is completely unknown <span class="badge badge-h">High</span></strong>
+          <p>The listing says it <em>"may need to be removed."</em> Without an inspection you are buying blind. Pre-1976 units have no safety code compliance; pre-1989 structures commonly contain asbestos. <span class="flag">Must inspect before purchasing.</span></p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">☣️</div>
+        <div class="item-text">
+          <strong>Asbestos abatement could spike demolition cost <span class="badge badge-h">High</span></strong>
+          <p>Michigan law requires an asbestos survey before demolition of any pre-1989 structure. Professional abatement: <span class="flag">$2,000–$8,000+.</span> The mobile home's age has not been confirmed.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">💧</div>
+        <div class="item-text">
+          <strong>Well and septic status unknown <span class="badge badge-h">High</span></strong>
+          <p>The listing mentions neither. Scenarios: functional systems (inspect, ~$800–$1,500) → fine. Failed septic: <span class="flag">$7,000–$35,000.</span> Failed well: <span class="flag">$8,000–$15,000.</span> Soil that won't perc → engineered mound system: <span class="flag">$15,000–$35,000+.</span></p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🌿</div>
+        <div class="item-text">
+          <strong>Possible wetlands could block all construction <span class="badge badge-m">Medium-High</span></strong>
+          <p>Pleasanton Township has a Wetland Overlay District. Manistee County has extensive mapped wetlands. If any part of this lot is regulated wetland, Michigan EGLE Part 303 permits are required before any digging — <span class="flag">and can be denied.</span> Check the free state wetlands map before closing.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">📋</div>
+        <div class="item-text">
+          <strong>Zoning may restrict replacement structure <span class="badge badge-m">Medium</span></strong>
+          <p>Pleasanton Township has RA-1, RA-2, and RA-3 sub-districts with different rules. A new manufactured home may require special approval depending on sub-district. <span class="flag">Tiny homes on wheels almost certainly not permitted.</span></p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">❄️</div>
+        <div class="item-text">
+          <strong>100–125 inches of annual snowfall <span class="badge badge-m">Medium</span></strong>
+          <p>Lake-effect snow from Lake Michigan (5 miles west). Foundations must go 42 inches deep per Michigan code. Heating, plowing, and winterization are real recurring costs.</p>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🌊</div>
+        <div class="item-text">
+          <strong>FEMA flood zone not yet confirmed <span class="badge badge-l">Low-Medium</span></strong>
+          <p>"Rolling hills" description is encouraging, but the specific FEMA designation has not been verified. If in a flood zone, insurance adds $800–$3,000/year. <em>Run the free online check — takes 2 minutes.</em></p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- MAJOR RISKS -->
+  <!-- 4. COSTS -->
   <div class="section">
-    <div class="section-header amber">
-      <span class="section-icon">⚠️</span>
-      <span class="section-title">4 — Major Risks</span>
-    </div>
+    <div class="section-heading">4 — Estimated Costs After Purchase 💵</div>
     <div class="section-body">
-      <ul class="item-list">
-        <li>
-          <span class="item-icon">🏚️</span>
-          <div class="item-content">
-            <strong>Mobile home condition is completely unknown <span class="risk-badge risk-high">High Risk</span></strong>
-            <p>The listing says the mobile home "may need to be removed." Without an inspection you are buying
-            blind. Pre-1976 mobile homes have no safety code compliance. Pre-1989 structures commonly contain
-            asbestos. If the home is structurally unsound, flooded, or infested, full demolition is the
-            only option.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">☣️</span>
-          <div class="item-content">
-            <strong>Asbestos abatement could spike costs dramatically <span class="risk-badge risk-high">High Risk</span></strong>
-            <p>Michigan law requires an asbestos survey before demolishing any pre-1989 structure. Professional
-            abatement on a single-wide mobile home runs $2,000–$8,000+. This cost is invisible until you
-            open the walls.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">💧</span>
-          <div class="item-content">
-            <strong>Well and septic status is unknown <span class="risk-badge risk-high">High Risk</span></strong>
-            <p>The listing mentions neither. If existing systems are functional → inspection cost ~$800–$1,500.
-            If the septic has failed or needs replacement → $7,000–$35,000. If soil won't drain properly
-            (common on rolling, wooded terrain), an <em>engineered mound system</em> is required:
-            $15,000–$35,000+. If the well has failed → another $8,000–$15,000.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🌿</span>
-          <div class="item-content">
-            <strong>Possible wetlands on the parcel <span class="risk-badge risk-med">Medium-High Risk</span></strong>
-            <p>Pleasanton Township's zoning code has a Wetland Overlay District. Manistee County has
-            extensive mapped wetlands. If any portion of this 0.87-acre parcel is in a regulated wetland,
-            Michigan state permits are required before any digging, grading, or construction — and permits
-            can be denied entirely. <em>Check the state wetlands map before closing.</em></p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">📐</span>
-          <div class="item-content">
-            <strong>Zoning may restrict replacement structure type <span class="risk-badge risk-med">Medium Risk</span></strong>
-            <p>Pleasanton Township has multiple RA sub-districts (RA-1, RA-2, RA-3) with different rules.
-            A new manufactured/mobile home may need special approval depending on the sub-district.
-            Tiny homes on wheels are almost certainly <em>not</em> permitted. Verify with the county
-            planning department before purchasing.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🌱</span>
-          <div class="item-content">
-            <strong>Small lot limits homestead ambitions <span class="risk-badge risk-med">Medium Risk</span></strong>
-            <p>0.87 wooded acres on rolling hills leaves very limited flat, usable space after setbacks and
-            tree cover. The practical gardening/building zone may be as small as 5,000–12,000 sq ft. Not
-            suited for livestock or large food production.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🔥</span>
-          <div class="item-content">
-            <strong>Natural gas availability uncertain <span class="risk-badge risk-low">Low-Medium</span></strong>
-            <p>Superior Energy Company serves the Bear Lake village core, but whether a gas line actually
-            runs to this rural address on Pleasanton Hwy is unconfirmed. Budget for propane delivery as
-            the heating backup.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">❄️</span>
-          <div class="item-content">
-            <strong>100–125 inches of annual snowfall <span class="risk-badge risk-med">Medium Risk</span></strong>
-            <p>Lake Michigan is 5 miles west, putting this area in a heavy lake-effect snow corridor.
-            Foundation footings must go at least 42 inches deep by Michigan code. Heating costs, plowing,
-            and winterization are real recurring expenses. An uninsulated mobile home will be very expensive
-            to heat.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🌊</span>
-          <div class="item-content">
-            <strong>FEMA flood zone not yet confirmed <span class="risk-badge risk-low">Low-Medium</span></strong>
-            <p>"Rolling hills" description is encouraging, but the specific flood zone designation for this
-            parcel has not been verified. If in a flood zone, insurance adds $800–$3,000/year to carrying
-            costs.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🚨</span>
-          <div class="item-content">
-            <strong>Vacant distressed property attracts trouble <span class="risk-badge risk-low">Low-Medium</span></strong>
-            <p>If left empty during the planning/permitting phase, a visibly distressed mobile home invites
-            vandalism, squatting, and theft (copper, appliances). Plan for either minimal security measures
-            or expedited demolition.</p>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- DEMO / CLEANUP COSTS -->
-  <div class="section">
-    <div class="section-header blue">
-      <span class="section-icon">🔨</span>
-      <span class="section-title">5 — Estimated Cleanup &amp; Demo Costs</span>
-    </div>
-    <div class="section-body">
+      <p style="margin-bottom:18px; font-size:17px;">All costs are <strong>in addition to</strong> the $49,900 purchase price.</p>
 
       <div class="scenario">
-        <div class="scenario-header">
-          Scenario A &nbsp;·&nbsp; Mobile Home Is Livable — Minimum Viable
-          <span class="scenario-range">All-in: ~$54,000 – ~$65,000</span>
-        </div>
+        <div class="scenario-head">Scenario A — Mobile Home Is Livable (Best Case) <span class="scenario-total">All-in: ~$54,000–$65,000</span></div>
         <table>
-          <tr><td>Pre-purchase inspection (home + well + septic)</td><td>$800</td><td>$1,500</td></tr>
-          <tr><td>Junk &amp; yard cleanup</td><td>$1,000</td><td>$3,000</td></tr>
-          <tr><td>Minor repairs (roof, plumbing, electrical)</td><td>$2,000</td><td>$8,000</td></tr>
-          <tr><td>Heating system service or replacement</td><td>$500</td><td>$3,000</td></tr>
-          <tr class="total-row"><td>Additional cost beyond purchase</td><td>$4,300</td><td>$15,500</td></tr>
+          <tr><td>Inspection (home + well + septic)</td><td>$800</td><td>$1,500</td></tr>
+          <tr><td>Yard and junk cleanup</td><td>$1,000</td><td>$3,000</td></tr>
+          <tr><td>Repairs (roof, plumbing, electrical)</td><td>$2,000</td><td>$8,000</td></tr>
+          <tr><td>Heating system</td><td>$500</td><td>$3,000</td></tr>
+          <tr class="total-row"><td>Extra cost beyond purchase</td><td>$4,300</td><td>$15,500</td></tr>
         </table>
       </div>
 
       <div class="scenario">
-        <div class="scenario-header">
-          Scenario B &nbsp;·&nbsp; Tear Down — Keep Land Only
-          <span class="scenario-range">All-in: ~$58,000 – ~$78,000</span>
-        </div>
+        <div class="scenario-head">Scenario B — Tear Down, Keep Land Only <span class="scenario-total">All-in: ~$58,000–$78,000</span></div>
         <table>
           <tr><td>Asbestos inspection</td><td>$300</td><td>$600</td></tr>
-          <tr><td>Asbestos abatement (if found)</td><td>$2,000</td><td>$8,000</td></tr>
-          <tr><td>Mobile home demolition &amp; removal</td><td>$3,000</td><td>$10,000</td></tr>
-          <tr><td>Debris &amp; junk removal</td><td>$1,500</td><td>$5,000</td></tr>
-          <tr><td>Demolition permit</td><td>$200</td><td>$500</td></tr>
-          <tr><td>Site clearing / stump removal (optional)</td><td>$1,000</td><td>$4,000</td></tr>
-          <tr class="total-row"><td>Additional cost beyond purchase</td><td>$8,000</td><td>$28,100</td></tr>
+          <tr><td><span class="flag">Asbestos abatement (if found)</span></td><td>$2,000</td><td>$8,000</td></tr>
+          <tr><td>Mobile home demolition + removal</td><td>$3,000</td><td>$10,000</td></tr>
+          <tr><td>Debris / junk hauling</td><td>$1,500</td><td>$5,000</td></tr>
+          <tr><td>Demo permit</td><td>$200</td><td>$500</td></tr>
+          <tr><td>Site clearing (optional)</td><td>$1,000</td><td>$4,000</td></tr>
+          <tr class="total-row"><td>Extra cost beyond purchase</td><td>$8,000</td><td>$28,100</td></tr>
         </table>
       </div>
 
       <div class="scenario">
-        <div class="scenario-header">
-          Scenario C &nbsp;·&nbsp; Tear Down + New Manufactured Home
-          <span class="scenario-range">All-in: ~$151,000 – ~$237,000</span>
-        </div>
+        <div class="scenario-head">Scenario C — Tear Down + New Manufactured Home <span class="scenario-total">All-in: ~$151,000–$237,000</span></div>
         <table>
-          <tr><td>Demo (Scenario B costs)</td><td>$8,000</td><td>$28,100</td></tr>
-          <tr><td>New manufactured/modular home (1,200–1,400 sq ft)</td><td>$60,000</td><td>$90,000</td></tr>
-          <tr><td>Foundation &amp; site prep</td><td>$10,000</td><td>$25,000</td></tr>
+          <tr><td>Demo (Scenario B)</td><td>$8,000</td><td>$28,100</td></tr>
+          <tr><td>New manufactured home (1,200–1,400 sq ft)</td><td>$60,000</td><td>$90,000</td></tr>
+          <tr><td>Foundation + site prep</td><td>$10,000</td><td>$25,000</td></tr>
           <tr><td>New well</td><td>$8,000</td><td>$12,000</td></tr>
           <tr><td>New septic (conventional)</td><td>$10,000</td><td>$20,000</td></tr>
-          <tr><td>Permits &amp; utility hookup</td><td>$5,000</td><td>$12,000</td></tr>
-          <tr class="total-row"><td>Additional cost beyond purchase</td><td>$101,000</td><td>$187,100</td></tr>
+          <tr><td>Permits + utility hookup</td><td>$5,000</td><td>$12,000</td></tr>
+          <tr class="total-row"><td>Extra cost beyond purchase</td><td>$101,000</td><td>$187,100</td></tr>
         </table>
       </div>
 
       <div class="scenario">
-        <div class="scenario-header">
-          Scenario D &nbsp;·&nbsp; Tear Down + New Stick-Built Home
-          <span class="scenario-range">All-in: ~$234,000 – ~$340,000</span>
-        </div>
+        <div class="scenario-head">Scenario D — Tear Down + New Stick-Built House <span class="scenario-total">All-in: ~$234,000–$340,000</span></div>
         <table>
-          <tr><td>Demo (Scenario B costs)</td><td>$8,000</td><td>$28,100</td></tr>
-          <tr><td>New construction, 1,200 sq ft, northern Michigan</td><td>$150,000</td><td>$210,000</td></tr>
+          <tr><td>Demo (Scenario B)</td><td>$8,000</td><td>$28,100</td></tr>
+          <tr><td>New construction, 1,200 sq ft, northern MI</td><td>$150,000</td><td>$210,000</td></tr>
           <tr><td>New well</td><td>$8,000</td><td>$12,000</td></tr>
           <tr><td>New septic (conventional)</td><td>$10,000</td><td>$20,000</td></tr>
           <tr><td>Permits, design, hookup</td><td>$8,000</td><td>$20,000</td></tr>
-          <tr class="total-row"><td>Additional cost beyond purchase</td><td>$184,000</td><td>$290,100</td></tr>
+          <tr class="total-row"><td>Extra cost beyond purchase</td><td>$184,000</td><td>$290,100</td></tr>
         </table>
       </div>
 
-      <div class="callout">
-        <strong>⚠️ Engineered Mound Septic Wildcard:</strong> If the soil drainage test (perc test) fails,
-        a conventional septic is not allowed and an engineered mound system is required. That adds
-        $8,000–$20,000 to any scenario above. This is not uncommon on rolling, wooded northern Michigan lots.
+      <div class="callout warn">
+        <strong>⚠ Engineered Mound Septic Wildcard:</strong> If the soil drainage test fails, a conventional
+        septic is not allowed. An engineered mound system is required and adds <strong>$8,000–$20,000</strong>
+        to any scenario. This is common on rolling, wooded northern Michigan land.
       </div>
     </div>
   </div>
 
-  <!-- UTILITIES -->
+  <!-- 5. UTILITIES -->
   <div class="section">
-    <div class="section-header teal">
-      <span class="section-icon">🔌</span>
-      <span class="section-title">6 — Utility &amp; Infrastructure Analysis</span>
-    </div>
+    <div class="section-heading">5 — Utilities &amp; Infrastructure 🔌</div>
     <div class="section-body">
       <div class="util-grid">
-        <div class="util-card">
-          <div class="util-name">Electric</div>
-          <div class="util-status status-good">✔ Available at road</div>
-          <div class="util-note">Great Lakes Energy Cooperative. Service hookup for a new structure: ~$1,000–$5,000.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Natural Gas</div>
-          <div class="util-status status-warn">⚠ Uncertain</div>
-          <div class="util-note">Superior Energy Co. serves Bear Lake village. Rural Pleasanton Hwy coverage unverified. Call (231) 362-2520 to confirm.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Propane</div>
-          <div class="util-status status-good">✔ Available</div>
-          <div class="util-note">Delivery service available throughout northern Michigan. Standard backup heating fuel if no gas line.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Well (water)</div>
-          <div class="util-status status-warn">⚠ Assumed — not confirmed</div>
-          <div class="util-note">Almost certainly well water. If existing and functional, inspect &amp; test. If absent or failed: $8,000–$15,000 replacement.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Septic</div>
-          <div class="util-status status-warn">⚠ Assumed — not confirmed</div>
-          <div class="util-note">DHD#10 governs Manistee County. Conventional: $10,000–$20,000. Engineered mound: $15,000–$35,000.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Road Access</div>
-          <div class="util-status status-good">✔ County-maintained</div>
-          <div class="util-note">Manistee County Road Commission. Year-round plowing service. Chip-seal improvement program recently completed.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Cell Coverage</div>
-          <div class="util-status status-good">✔ Strong</div>
-          <div class="util-note">Verizon &amp; AT&amp;T: 100% coverage reported. T-Mobile 5G: 99.9%. Actual signal under tree canopy may vary.</div>
-        </div>
-        <div class="util-card">
-          <div class="util-name">Internet</div>
-          <div class="util-status status-good">✔ Starlink available</div>
-          <div class="util-note">Starlink confirmed in 49614. $120/mo + $599 hardware. Spectrum cable covers ~58% of zip. DSL also available.</div>
-        </div>
+        <div class="util-card"><div class="util-name">Electric</div><div class="util-status status-ok">✔ Available at road</div><div class="util-note">Great Lakes Energy Coop. New hookup: ~$1,000–$5,000.</div></div>
+        <div class="util-card"><div class="util-name">Natural Gas</div><div class="util-status status-warn">⚠ Not confirmed</div><div class="util-note">Superior Energy serves village core. Rural Pleasanton Hwy coverage unverified. Call (231) 362-2520.</div></div>
+        <div class="util-card"><div class="util-name">Propane</div><div class="util-status status-ok">✔ Available</div><div class="util-note">Delivery widely available. Standard heating fuel if no gas line at road.</div></div>
+        <div class="util-card"><div class="util-name">Well (Water)</div><div class="util-status status-unk">? Unknown</div><div class="util-note">Almost certainly private well. If functional → inspect. If absent/failed → $8,000–$15,000.</div></div>
+        <div class="util-card"><div class="util-name">Septic</div><div class="util-status status-unk">? Unknown</div><div class="util-note">DHD#10 governs Manistee County. Conventional: $10–$20K. Mound: $15–$35K.</div></div>
+        <div class="util-card"><div class="util-name">Road</div><div class="util-status status-ok">✔ County-maintained</div><div class="util-note">Manistee County Road Commission. Year-round plowing. No private road cost.</div></div>
+        <div class="util-card"><div class="util-name">Cell Coverage</div><div class="util-status status-ok">✔ Strong</div><div class="util-note">Verizon + AT&amp;T 100% coverage. T-Mobile 5G at 99.9%. Tree cover may reduce signal.</div></div>
+        <div class="util-card"><div class="util-name">Internet</div><div class="util-status status-ok">✔ Starlink available</div><div class="util-note">Starlink confirmed in 49614. $120/mo + $599 hardware. Spectrum cable ~58% of zip.</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ZONING -->
+  <!-- 6. ZONING -->
   <div class="section">
-    <div class="section-header purple">
-      <span class="section-icon">📜</span>
-      <span class="section-title">7 — Zoning &amp; Legal Considerations</span>
-    </div>
+    <div class="section-heading">6 — Zoning &amp; Legal Considerations 📋</div>
     <div class="section-body">
-      <p style="margin-bottom:16px;">
-        <strong>Jurisdiction:</strong> Pleasanton Township &nbsp;·&nbsp;
-        <strong>Zoning:</strong> Residential-Agricultural (RA) &nbsp;·&nbsp;
-        <strong>Sub-district:</strong> RA-1, RA-2, or RA-3 — must be confirmed on the 2018 zoning map.<br>
-        <strong>Administered by:</strong> Manistee County Planning Dept under service contract — call (231) 929-5000.
-      </p>
-
-      <ul class="item-list">
-        <li>
-          <span class="item-icon">❓</span>
-          <div class="item-content">
-            <strong>Is a new manufactured home permitted?</strong>
-            <p>HUD-code manufactured homes on permanent foundations are commonly allowed in Michigan RA zones,
-            but the specific sub-district determines this. Confirm before purchasing.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">❓</span>
-          <div class="item-content">
-            <strong>Are tiny homes or accessory dwellings allowed?</strong>
-            <p>Not confirmed. Michigan rural zones typically do not permit tiny homes on wheels (THOWs).
-            A small code-compliant structure on a permanent foundation is the safer path.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">❓</span>
-          <div class="item-content">
-            <strong>Minimum lot size for new construction?</strong>
-            <p>At 0.87 acres, the parcel may be right at the minimum threshold in some sub-districts.
-            Verify the lot meets requirements before planning any new build.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">🌿</span>
-          <div class="item-content">
-            <strong>Wetland Overlay District</strong>
-            <p>Pleasanton Township's zoning includes a Wetland Overlay. If any part of this parcel
-            is classified as wetland, Michigan EGLE Part 303 permits are required before any digging
-            or construction. Permits can be denied. Check the state wetlands map immediately.</p>
-          </div>
-        </li>
-        <li>
-          <span class="item-icon">📏</span>
-          <div class="item-content">
-            <strong>Expected setbacks</strong>
-            <p>Typical northern Michigan RA: 35–50 ft from road, 10–15 ft sides, 35 ft rear.
-            On a 0.87-acre lot, these setbacks meaningfully limit where any new structure can be placed.
-            Confirm exact numbers in the Pleasanton Township Zoning Ordinance.</p>
-          </div>
-        </li>
-      </ul>
-
-      <div style="margin-top:18px; padding:14px 16px; background:#f0ede6; border-radius:6px; font-size:14px; color:#333; line-height:1.6;">
-        <strong>Permitting contacts:</strong><br>
-        Manistee County Planning: 415 3rd St, Manistee MI &nbsp;·&nbsp; (231) 929-5000<br>
-        Pleasanton Twp Planning Commission: 2nd Monday each month, 6pm, 8958 Lumley Rd, Bear Lake<br>
-        DHD#10 (well &amp; septic permits): (231) 876-3823<br>
-        Overall difficulty: <strong>Low to Moderate</strong> — rural Manistee County is not a regulatory minefield.
+      <p style="margin-bottom:16px;"><strong>Administered by:</strong> Manistee County Planning Dept &nbsp;·&nbsp; <strong>(231) 929-5000</strong> &nbsp;·&nbsp; 415 3rd St, Manistee MI</p>
+      <div class="item">
+        <div class="item-icon">❓</div>
+        <div class="item-text"><strong>New manufactured home permitted?</strong><p>Probably yes in most Michigan RA zones, but the specific sub-district (RA-1/2/3) must be confirmed. Call planning before purchasing.</p></div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🚫</div>
+        <div class="item-text"><strong>Tiny homes on wheels not permitted</strong><p>Michigan rural RA zones typically prohibit THOWs. A permanent foundation structure is required.</p></div>
+      </div>
+      <div class="item">
+        <div class="item-icon">🌿</div>
+        <div class="item-text"><strong>Wetland Overlay could block construction</strong><p>Check <strong>michigan.gov/egle/maps-data/wetlands-map-viewer</strong> before closing — free, 5 minutes.</p></div>
+      </div>
+      <div class="item">
+        <div class="item-icon">📏</div>
+        <div class="item-text"><strong>Setbacks limit placement on a small lot</strong><p>Typical RA: 35–50 ft from road, 10–15 ft sides, 35 ft rear. On 0.87 acres this significantly narrows where any structure can go.</p></div>
+      </div>
+      <div class="callout">Overall permitting difficulty: <strong>Low to Moderate.</strong> Rural Manistee County is not a difficult environment. Main complexity is the DHD#10 well/septic site evaluation.
       </div>
     </div>
   </div>
 
-  <!-- COMPS -->
+  <!-- 7. COMPS -->
   <div class="section">
-    <div class="section-header green">
-      <span class="section-icon">📊</span>
-      <span class="section-title">8 — Comparable Value Analysis</span>
-    </div>
+    <div class="section-heading">7 — Comparable Sales &amp; Market Value 📊</div>
     <div class="section-body">
-      <table class="data-table" style="margin-bottom:22px;">
-        <tr>
-          <th>Address</th>
-          <th>Acres</th>
-          <th>Status</th>
-          <th>Price</th>
-          <th>$/Acre</th>
-        </tr>
-        <tr class="subject-row">
-          <td>14638 Pleasanton Hwy <em>(subject)</em></td>
-          <td>0.87</td>
-          <td>Active</td>
-          <td>$49,900</td>
-          <td>$57,356</td>
-        </tr>
-        <tr>
-          <td>13479 Pleasanton Hwy</td>
-          <td>—</td>
-          <td>Active</td>
-          <td>$59,900</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td>1 acre Pleasanton Hwy (raw land)</td>
-          <td>1.20</td>
-          <td>Sold Mar 2023</td>
-          <td>$25,000</td>
-          <td>$20,833</td>
-        </tr>
-        <tr>
-          <td>14544 Pleasanton Hwy</td>
-          <td>9.99</td>
-          <td>Active</td>
-          <td>$118,000</td>
-          <td>$11,803</td>
-        </tr>
-        <tr>
-          <td>Large recreational tract (area)</td>
-          <td>95.94</td>
-          <td>Sold Feb 2025</td>
-          <td>$270,000</td>
-          <td>$2,813</td>
-        </tr>
+      <table class="comps-table" style="margin-bottom:20px;">
+        <tr><th>Property</th><th>Acres</th><th>Status</th><th>Price</th><th>$/Acre</th></tr>
+        <tr class="subject"><td>14638 Pleasanton Hwy ← This property</td><td>0.87</td><td>For Sale</td><td>$49,900</td><td>$57,356</td></tr>
+        <tr><td>13479 Pleasanton Hwy (similar investment)</td><td>—</td><td>For Sale</td><td>$59,900</td><td>—</td></tr>
+        <tr><td>1 acre Pleasanton Hwy (raw land)</td><td>1.20</td><td>Sold Mar 2023</td><td>$25,000</td><td>$20,833</td></tr>
+        <tr><td>14544 Pleasanton Hwy (larger tract)</td><td>9.99</td><td>For Sale</td><td>$118,000</td><td>$11,803</td></tr>
       </table>
-
-      <table class="data-table" style="margin-bottom:20px;">
-        <tr><th colspan="2">Manistee County Market Context (2025–2026)</th></tr>
-        <tr><td>County median sold price</td><td>$238,000 – $262,000</td></tr>
-        <tr><td>County median price per sq ft</td><td>$160</td></tr>
-        <tr><td>Residential land avg per acre</td><td>~$30,900</td></tr>
-        <tr><td>All rural land avg per acre</td><td>~$18,800</td></tr>
-        <tr><td>Average days on market</td><td>87 days (trending up)</td></tr>
-        <tr><td>Bear Lake median list price</td><td>$320,000–$390,000 <em>(waterfront-skewed)</em></td></tr>
+      <table class="comps-table" style="margin-bottom:18px;">
+        <tr><th colspan="2">Manistee County Market (2025–2026)</th></tr>
+        <tr><td>Median sold price</td><td>$238,000–$262,000</td></tr>
+        <tr><td>Median price/sq ft</td><td>$160</td></tr>
+        <tr><td>Residential land avg/acre</td><td>~$30,900</td></tr>
+        <tr><td>Average days on market</td><td>87 days (trending slower)</td></tr>
       </table>
-
-      <div class="callout">
-        <strong>Bottom line on value:</strong> The mobile home has <em>negative</em> intrinsic value —
-        it costs money to remove. The premium paid over raw land ($49,900 vs. ~$25,000–$30,000 for
-        comparable empty lots) is roughly $20,000–$25,000. That premium is only justified if the mobile
-        home is livable. <strong>If full demo + asbestos abatement is needed, you are likely overpaying
-        by $15,000–$35,000 versus buying raw land.</strong> Land value alone does not justify the asking
-        price without a pre-purchase inspection.
+      <div class="callout warn">
+        <strong>Reality check:</strong> The mobile home has <em>negative</em> value — it costs money to deal with.
+        Raw land here is worth ~$25,000–$32,000. <strong>If full demo + asbestos abatement is required,
+        you may be overpaying by $15,000–$35,000 vs. buying raw land.</strong>
+        The asking price is only fair if the mobile home is livable or cheap to demolish.
       </div>
     </div>
   </div>
 
-  <!-- INVESTMENT POTENTIAL -->
+  <!-- 8. USE CASES -->
   <div class="section">
-    <div class="section-header blue">
-      <span class="section-icon">📈</span>
-      <span class="section-title">9 — Investment Potential by Use Case</span>
-    </div>
+    <div class="section-heading">8 — How Could This Property Be Used? 🏠</div>
     <div class="section-body">
-      <div class="usecase-grid" style="margin-bottom:20px;">
-        <div class="usecase-card">
-          <div class="uc-title">Small Homestead</div>
-          <div class="uc-rating uc-marginal">Marginal</div>
-          <p>0.87 wooded acres is small for serious food production or livestock. Usable flat space may be
-          only 5,000–12,000 sq ft after setbacks and trees. Good for a mini-homestead; not a farm.</p>
-        </div>
-        <div class="usecase-card">
-          <div class="uc-title">Off-Grid / Semi-Rural Living</div>
-          <div class="uc-rating uc-strong">Strong Fit</div>
-          <p>Well + septic + grid electric = complete off-grid-capable setup. Private, wooded, quiet, and
-          accessible. This is the best natural use for the land's character.</p>
-        </div>
-        <div class="usecase-card">
-          <div class="uc-title">Mobile Home Replacement</div>
-          <div class="uc-rating uc-likely">Likely Viable</div>
-          <p>HUD-code manufactured homes on permanent foundations are commonly permitted in Michigan RA zones.
-          Most cost-effective rebuild path. Verify zoning sub-district first.</p>
-        </div>
-        <div class="usecase-card">
-          <div class="uc-title">Tiny Home Replacement</div>
-          <div class="uc-rating uc-possible">Possible — Verify First</div>
-          <p>A small code-compliant structure on a permanent foundation may work. Tiny homes on wheels
-          (THOWs) are almost certainly not permitted. Confirm with county planning before purchasing.</p>
-        </div>
-        <div class="usecase-card">
-          <div class="uc-title">Workshop / Storage</div>
-          <div class="uc-rating uc-strong">Yes — Viable</div>
-          <p>Accessory structures (garages, workshops, pole barns) are generally permitted in RA zones.
-          A 24×36 or 30×40 pole barn may fit within setbacks. Good for contractors or hobbyists.</p>
-        </div>
-        <div class="usecase-card">
-          <div class="uc-title">Long-term Land Hold</div>
-          <div class="uc-rating uc-likely">Solid</div>
-          <p>Northern Michigan rural land has appreciated 5–10%/yr. Wooded residential parcels on
-          maintained county roads have strong hold value. Illiquid — plan for 87+ days to resell.</p>
-        </div>
+      <div class="uc-grid">
+        <div class="uc-card"><div class="uc-name">Off-Grid / Rural Living</div><div class="uc-rating uc-strong">Strong Fit</div><p>Well + septic + grid electric = complete off-grid package. Private, wooded, quiet. Best natural fit for this land.</p></div>
+        <div class="uc-card"><div class="uc-name">Workshop / Storage</div><div class="uc-rating uc-strong">Yes — Viable</div><p>Garages and pole barns generally permitted in RA zones. Could fit a 24×36 ft building. Good for contractors or hobbyists.</p></div>
+        <div class="uc-card"><div class="uc-name">New Manufactured Home</div><div class="uc-rating uc-likely">Likely Viable</div><p>Most cost-effective rebuild path ($151K–$237K all-in). Verify zoning sub-district first.</p></div>
+        <div class="uc-card"><div class="uc-name">Long-Term Land Hold</div><div class="uc-rating uc-likely">Solid</div><p>Northern MI land appreciating 5–10%/yr. Plan for 87+ days to resell — not a quick flip.</p></div>
+        <div class="uc-card"><div class="uc-name">Tiny Home (permanent)</div><div class="uc-rating uc-possible">Verify First</div><p>Permanent small structure may be allowed. Tiny homes on wheels almost certainly not. Confirm with county planning.</p></div>
+        <div class="uc-card"><div class="uc-name">Small Homestead</div><div class="uc-rating uc-marginal">Marginal</div><p>0.87 wooded acres is small for serious farming. Good for a large garden + chickens. Not a real agricultural operation.</p></div>
       </div>
     </div>
   </div>
 
-  <!-- RECOMMENDED STRATEGY -->
+  <!-- 9. BEFORE YOU BUY -->
   <div class="section">
-    <div class="section-header teal">
-      <span class="section-icon">🗺️</span>
-      <span class="section-title">10 — Recommended Strategy</span>
-    </div>
+    <div class="section-heading">9 — Before You Buy: Action Checklist ✅</div>
     <div class="section-body">
-      <p style="margin-bottom:18px; font-size:16px;">
-        <strong>Do these 6 things before committing to purchase.</strong> Most can be done with phone
-        calls and free online tools in under a week.
-      </p>
+      <p style="margin-bottom:18px; font-size:17px;"><strong>Do all 6 before signing anything.</strong> Most can be done in under a week.</p>
       <ol class="checklist">
         <li>
           <div class="check-num">1</div>
-          <div>
-            <strong>Order a mobile home inspection ($300–$500)</strong>
-            <p>Hire a Michigan licensed home inspector experienced with manufactured housing.
-            This is non-negotiable — the entire value case rests on what they find.</p>
-          </div>
+          <div><strong>Get a mobile home inspection ($300–$500)</strong>
+          <p>Licensed Michigan inspector experienced with manufactured housing. Non-negotiable — the entire value case depends on this result.</p></div>
         </li>
         <li>
           <div class="check-num">2</div>
-          <div>
-            <strong>Check for wetlands on the parcel (free, 5 minutes)</strong>
-            <p>Go to: <strong>michigan.gov/egle/maps-data/wetlands-map-viewer</strong> and enter the address.
-            If wetlands appear anywhere on the lot, get a professional wetland consultant before proceeding.</p>
-          </div>
+          <div><strong>Check for wetlands — free, 5 minutes</strong>
+          <p>Go to: <strong>michigan.gov/egle/maps-data/wetlands-map-viewer</strong> · Enter the address. If anything shows on the lot, get a wetland consultant before proceeding.</p></div>
         </li>
         <li>
           <div class="check-num">3</div>
-          <div>
-            <strong>Check the FEMA flood map (free)</strong>
-            <p>Go to: <strong>msc.fema.gov/portal/search</strong> — enter the address and confirm the
-            property is in Zone X (minimal flood hazard).</p>
-          </div>
+          <div><strong>Check the FEMA flood map — free</strong>
+          <p>Go to: <strong>msc.fema.gov/portal/search</strong> · Confirm the parcel is in Zone X (minimal hazard). Zone A or AE = flood insurance required = $800–$3,000/year.</p></div>
         </li>
         <li>
           <div class="check-num">4</div>
-          <div>
-            <strong>Call Manistee County Planning: (231) 929-5000</strong>
-            <p>Ask: <em>"Can I place a new HUD-code manufactured home on a permanent foundation at
-            14638 Pleasanton Hwy after removing the existing mobile home?"</em> Get verbal confirmation
-            and ask for it in writing.</p>
-          </div>
+          <div><strong>Call Manistee County Planning: (231) 929-5000</strong>
+          <p>Ask: <em>"Can I put a new manufactured home on a permanent foundation at 14638 Pleasanton Hwy after removing the existing mobile home?"</em> Get it in writing.</p></div>
         </li>
         <li>
           <div class="check-num">5</div>
-          <div>
-            <strong>Look up the property taxes online</strong>
-            <p>Go to: <strong>maps.liaa.org/manisteeparcels/propertysearch.asp</strong> and search for
-            parcel number <strong>26101-1202140002</strong>. This shows assessed value and annual tax amount.</p>
-          </div>
+          <div><strong>Look up the property taxes online</strong>
+          <p>Go to: <strong>maps.liaa.org/manisteeparcels/propertysearch.asp</strong> · Search parcel <strong>26101-1202140002</strong>. Shows assessed value and annual tax bill. Also try: <strong>bsaonline.com/?uid=2022</strong></p></div>
         </li>
         <li>
           <div class="check-num">6</div>
-          <div>
-            <strong>Request well &amp; septic records from the seller</strong>
-            <p>Ask for any prior inspection records, well drilling logs, and septic permits.
-            If they can't produce them, make a well water test and septic inspection a condition of purchase.</p>
-          </div>
+          <div><strong>Ask seller for well and septic records</strong>
+          <p>Request any prior inspection records, well drilling logs, and septic permits. If none, make a well water test and septic inspection a written purchase contingency.</p></div>
         </li>
       </ol>
-
       <div class="callout" style="margin-top:20px;">
-        <strong>Negotiating tip:</strong> If the inspection reveals demo or remediation costs, use those
-        findings to negotiate $5,000–$15,000 off the asking price. Investment-property sellers in this
-        market expect inspection-based negotiation.
+        <strong>Negotiating tip:</strong> If inspection reveals cleanup costs, negotiate $5,000–$15,000 off the asking price. Investment-property sellers expect inspection-based negotiation.
       </div>
+    </div>
+  </div>
 
-      <div style="margin-top:20px; padding:16px 18px; background:#f0ede6; border-radius:6px;">
-        <strong style="display:block; margin-bottom:8px; font-size:16px;">Best-case all-in path (~$150,000–$180,000):</strong>
-        <ol style="padding-left:20px; font-size:15px; line-height:1.8; color:#333;">
-          <li>Purchase at or below asking: $49,900</li>
-          <li>Demolish mobile home (seek free/donation removal services): $0–$10,000</li>
-          <li>New manufactured home on permanent foundation: $70,000–$90,000</li>
-          <li>Well and septic: $18,000–$30,000</li>
-          <li>Site prep, permits, utility hookup: $12,000–$20,000</li>
-          <li><strong>Result:</strong> A modern 1,200–1,400 sq ft home on a wooded rural lot —
-          sellable at $140,000–$200,000 in today's Manistee County market.</li>
-        </ol>
+  <!-- 10. AUTOMATION SCRIPT -->
+  <div class="section">
+    <div class="section-heading">10 — Automation Script (Python) 🐍</div>
+    <div class="section-body">
+      <p style="margin-bottom:14px; font-size:17px;">
+        The companion file <code>bear_lake_scraper.py</code> automates the data-retrievable checks.
+        Install dependencies and run:
+      </p>
+      <pre>pip install requests beautifulsoup4 lxml
+pip install selenium undetected-chromedriver   # optional Selenium fallback
+
+python bear_lake_scraper.py</pre>
+
+      <p style="margin-top:16px; margin-bottom:12px; font-size:16px;"><strong>What it checks automatically:</strong></p>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">✔</span><span class="auto-text" style="font-size:16px;">US Census Geocoder — exact lat/lon (free, no API key)</span></div>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">✔</span><span class="auto-text" style="font-size:16px;">FEMA NFHL REST API (layer 28) — flood zone + SFHA flag</span></div>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">✔</span><span class="auto-text" style="font-size:16px;">USFWS NWI MapServer — wetland features within 100m of parcel</span></div>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">⚠</span><span class="auto-text" style="font-size:16px;">BS&A Online — tax records (requests attempt + Selenium fallback)</span></div>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">⚠</span><span class="auto-text" style="font-size:16px;">LIAA parcel portal — owner, acreage, legal description</span></div>
+      <div class="auto-row" style="margin:6px 0;"><span class="auto-icon">📄</span><span class="auto-text" style="font-size:16px;">Outputs <code>bear_lake_data.json</code> with all results</span></div>
+
+      <div class="callout" style="margin-top:18px;">
+        <strong>Why BS&A and LIAA may block automated requests:</strong> Both portals use ASP.NET
+        session tokens and some JavaScript rendering. The script tries direct POST first; if blocked,
+        it falls back to <code>undetected-chromedriver</code> Selenium. If both fail, the script
+        prints the direct manual URL. For production use, consider
+        <strong>Regrid API</strong>, <strong>ATTOM Data</strong>, or <strong>PropStream</strong>
+        (paid, but clean REST APIs with no scraping needed).
       </div>
     </div>
   </div>
 
   <!-- FINAL VERDICT -->
-  <div class="verdict-card" style="margin-bottom:28px;">
-    <div class="verdict-card-header">
-      <div class="v-icon">⚖️</div>
-      <div class="v-text">
-        <h2>11 — Final Verdict: &nbsp;RISKY BUT INTERESTING</h2>
-        <p>With the right pre-purchase checks, this has a clear path to "good value."</p>
-      </div>
+  <div class="verdict-box">
+    <div class="verdict-head">
+      <h2>11 — Final Verdict: RISKY BUT INTERESTING ⚖️</h2>
+      <p>Pre-purchase checks can confirm or disqualify this deal in under a week.</p>
     </div>
-    <div class="verdict-body">
+    <div class="verdict-inner">
       <h3>Why not "Avoid"</h3>
-      <p>The price is appropriate. The location has genuine merit. Infrastructure fundamentals are sound
-      (grid power, county road, rural setting). The land has real long-term hold value in a steadily
-      appreciating northern Michigan market.</p>
+      <p>The price is appropriate. Electric at the road, county-maintained access, 22 minutes from Manistee, wooded land appreciating 5–10%/yr in a genuine northern Michigan rural market.</p>
 
       <h3>Why not "Good Value" yet</h3>
-      <p>The mobile home's condition is completely unverified. A single bad inspection result — asbestos
-      roof, failed septic, soil that won't drain, or wetlands on the parcel — can turn a $55,000 entry
-      into a $90,000+ cleanup problem. Too many unknowns remain open.</p>
+      <p>Mobile home condition is a complete unknown. A single bad result — asbestos roof, failed septic, non-percing soil, or wetlands on the lot — can turn a $55,000 entry into a $90,000+ cleanup. Too many unknowns remain open.</p>
 
-      <h3>What would make it "Good Value"</h3>
+      <h3>Path to "Good Value"</h3>
       <ul>
-        <li>Mobile home inspection returns livable <em>or</em> cheap-to-demo result</li>
-        <li>Demo bids come in under $10,000 with no asbestos complications</li>
-        <li>DHD#10 site evaluation confirms conventional septic is viable</li>
-        <li>Wetland map returns clear for the parcel</li>
-        <li>County planning confirms new manufactured home is permitted by-right</li>
+        <li>Inspection confirms mobile home is livable OR demo costs under $10,000 total</li>
+        <li>DHD#10 soil test confirms conventional septic is viable</li>
+        <li>EGLE wetlands map returns clear for the parcel</li>
+        <li>County planning confirms new manufactured home permitted by-right</li>
+        <li>FEMA map confirms Zone X</li>
       </ul>
 
-      <h3>The bottom line</h3>
-      <p>Two free online searches (wetlands + flood map) and two phone calls (county planning + inspect
-      the home) can qualify or disqualify this deal in under a week. If everything comes back clean,
-      move quickly — Pleasanton Hwy investment parcels at this price don't sit on the market
-      indefinitely.</p>
+      <h3>Bottom line</h3>
+      <p>Run the <code>bear_lake_scraper.py</code> script for FEMA and wetlands answers today.
+      Make two phone calls (county planning, Superior Energy). Order the home inspection.
+      If all come back clean — move on this quickly. Pleasanton Hwy investment parcels
+      at this price don't sit on the market indefinitely.</p>
     </div>
   </div>
 
   <!-- DATA GAPS -->
   <div class="section">
-    <div class="section-header gray">
-      <span class="section-icon">🔍</span>
-      <span class="section-title">Data Gaps — Items Still Needing Verification</span>
-    </div>
+    <div class="section-heading">12 — Data Status: What's Known vs. Still Needed 🔍</div>
     <div class="section-body">
       <table class="gaps-table">
-        <tr><th>What</th><th>How to Resolve</th></tr>
-        <tr>
-          <td>Assessed value, taxable value &amp; annual taxes</td>
-          <td>maps.liaa.org — search parcel 26101-1202140002 &nbsp;·&nbsp; or bsaonline.com/?uid=2022</td>
-        </tr>
-        <tr>
-          <td>Exact RA zoning sub-district (RA-1 / 2 / 3)</td>
-          <td>2018 Pleasanton Township Zoning Map PDF (pleasantontownship.org)</td>
-        </tr>
-        <tr>
-          <td>Wetland presence on parcel</td>
-          <td>EGLE Wetlands Map Viewer: michigan.gov/egle/maps-data/wetlands-map-viewer</td>
-        </tr>
-        <tr>
-          <td>FEMA flood zone</td>
-          <td>msc.fema.gov/portal/search — enter the address</td>
-        </tr>
-        <tr>
-          <td>Natural gas at this road address</td>
-          <td>Call Superior Energy Co: (231) 362-2520</td>
-        </tr>
-        <tr>
-          <td>Prior sale history / prior owners</td>
-          <td>Manistee County Clerk, 415 3rd St, Manistee MI</td>
-        </tr>
-        <tr>
-          <td>Mobile home year-built &amp; condition</td>
-          <td>On-site inspection by licensed Michigan home inspector</td>
-        </tr>
-        <tr>
-          <td>Well log &amp; septic permit records</td>
-          <td>Request from seller; or check DHD#10 records</td>
-        </tr>
-        <tr>
-          <td>Road surface type (paved vs. gravel here)</td>
-          <td>Manistee County Road Commission: (231) 723-3566</td>
-        </tr>
+        <tr><th>Item</th><th>Status</th><th>Source / Action</th></tr>
+        <tr class="auto"><td>Owner name</td><td>✔ Confirmed</td><td>David Golden and Delores Golden (NeighborWho public records)</td></tr>
+        <tr class="auto"><td>Est. annual taxes</td><td>✔ Estimated</td><td>~$550–$750/yr · Manistee County 1.11–1.18% effective rate on SEV ~$24,950</td></tr>
+        <tr class="auto"><td>Market / comps</td><td>✔ Complete</td><td>Multiple Pleasanton Hwy sales, county market data researched</td></tr>
+        <tr class="auto"><td>Infrastructure / utilities</td><td>✔ Complete</td><td>Great Lakes Energy, Superior Energy, DHD#10, road commission</td></tr>
+        <tr class="auto"><td>Crime / climate / services</td><td>✔ Complete</td><td>BestPlaces, Climate-Data.org, direct searches</td></tr>
+        <tr class="auto"><td>Zoning ordinance version</td><td>✔ Updated</td><td>2021 Pleasanton Township Zoning Ordinance confirmed (supersedes 2016)</td></tr>
+        <tr><td>Exact annual tax amount</td><td>⚠ Estimate only</td><td>Confirm at bsaonline.com/?uid=2022 · search APN 26101-1202140002</td></tr>
+        <tr><td>FEMA flood zone</td><td>⚠ 2-min check</td><td>msc.fema.gov/portal/search — rolling hills suggests Zone X</td></tr>
+        <tr><td>Wetlands on parcel</td><td>⚠ 5-min check</td><td>michigan.gov/egle/maps-data/wetlands-map-viewer</td></tr>
+        <tr><td>Exact RA sub-district</td><td>⚠ 10-min check</td><td>Download 2018 Pleasanton Township Zoning Map PDF</td></tr>
+        <tr class="manual"><td>Mobile home condition / age</td><td>✗ Needs inspection</td><td>Licensed MI inspector · ~$300–$500 · most critical unknown</td></tr>
+        <tr class="manual"><td>Well + septic records</td><td>✗ Needs seller</td><td>Request from David/Delores Golden or check DHD#10: (231) 876-3823</td></tr>
+        <tr class="manual"><td>Natural gas at road</td><td>✗ Phone call</td><td>Superior Energy Co: (231) 362-2520</td></tr>
+        <tr class="manual"><td>Road surface type</td><td>✗ Phone call</td><td>Manistee County Road Commission: (231) 723-3566</td></tr>
+        <tr class="manual"><td>Prior sale history / deed</td><td>✗ County clerk</td><td>Manistee County Clerk · 415 3rd St, Manistee MI</td></tr>
       </table>
+      <div style="margin-top:14px; font-size:14px; color:#555;">
+        ✔ = resolved &nbsp;·&nbsp; ⚠ = quick free lookup needed (owner can do in minutes) &nbsp;·&nbsp; ✗ = requires physical action or phone call
+      </div>
     </div>
   </div>
 
-</div><!-- end .container -->
+</div><!-- end .page -->
 
 <div class="footer">
-  Property Intelligence Report &nbsp;·&nbsp; 14638 Pleasanton Hwy, Bear Lake MI 49614<br>
-  Prepared May 18, 2026 &nbsp;·&nbsp; Manistee County, Michigan<br><br>
-  <em>Sources: Zillow · Redfin · Coldwell Banker · MiHomePropertySearch · Manistee County GIS ·
-  Pleasanton Township · Great Lakes Energy · Superior Energy Co. · Bear Lake Ace Hardware ·
-  Munson Healthcare · DHD#10 · EGLE · FEMA MSC · Manistee County Road Commission ·
-  Rocket Homes · LandSearch · SepticAndWell.com · MichiganSeptic.com · Houzeo ·
-  HomeAdvisor · Climate-Data.org · BestPlaces · CoverageCritic</em>
+  Property Intelligence Report &nbsp;·&nbsp; 14638 Pleasanton Hwy, Bear Lake MI 49614 &nbsp;·&nbsp; May 18, 2026<br>
+  Sources: Zillow · Redfin · Coldwell Banker · NeighborWho (owner) · Manistee County GIS · Pleasanton Township ·
+  2021 Pleasanton Township Zoning Ordinance · 2025 Pleasanton Township Master Plan ·
+  Great Lakes Energy · Superior Energy · Munson Healthcare · DHD#10 · EGLE · FEMA ·
+  Manistee County Road Commission · Rocket Homes · LandSearch · Ownwell (tax rates) ·
+  SepticAndWell.com · MichiganSeptic.com · Houzeo · HomeAdvisor · Climate-Data.org · BestPlaces
 </div>
 
 </body>
