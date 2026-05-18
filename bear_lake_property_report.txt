@@ -1,0 +1,588 @@
+================================================================================
+PROPERTY INTELLIGENCE REPORT
+14638 Pleasanton Hwy, Bear Lake (Pleasanton Twp), MI 49614
+================================================================================
+Report Date: May 18, 2026 | Spec: Due Diligence Pre-Purchase Analysis
+
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+
+Asking Price: $49,900 | Structure: 3BR/2BA mobile home, ~1,144 sq ft | Lot: 0.87 acres, wooded/rolling
+
+This is a land-value-dominant deal wrapped around a distressed mobile home that
+will likely need to be removed. The listing's own language ("may need to be
+removed," "needs yard cleanup") signals the mobile home is the liability, not
+the asset. The land itself has genuine merit -- residential-agricultural zoning,
+wooded rolling terrain, county road access, proximity to the Bear Lake village
+core, and a clean rural Michigan setting with usable utility access points.
+
+At $49,900 the asking price is roughly in line with comparable Pleasanton Hwy
+investment parcels (nearest comp at $59,900 for a similar distressed rural
+property). However, buyers must budget seriously for what comes after closing --
+mobile home removal, potential asbestos abatement, well/septic evaluation, and
+any build-out. All-in costs range from ~$60,000 (minimum viable, keep the
+mobile home if livable) to $280,000+ (tear down and build new).
+
+Preliminary Verdict: RISKY BUT INTERESTING -- with a clear path to Good Value
+if pre-purchase inspection confirms a livable or low-cost-to-rehab mobile home,
+existing well/septic passing inspection, and no wetlands on the parcel.
+
+
+================================================================================
+2. PROPERTY OVERVIEW
+================================================================================
+
+Address          : 14638 Pleasanton Hwy, Bear Lake MI 49614
+Township         : Pleasanton Township (NOT Bear Lake Township -- diff. jurisdiction)
+County           : Manistee County
+Parcel APN       : 26101-1202140002
+MLS              : 25057116 (MichRIC/WMLS)
+Listing Agent    : Brenda Cronan, Coldwell Banker ALM Realty
+Structure        : Mobile/manufactured home, 3 bed/2 bath, ~1,144 sq ft
+Lot              : 0.87 acres, wooded, rolling hills
+Zoning           : Residential-Agricultural (RA) -- Pleasanton Township
+Electric Provider: Great Lakes Energy Cooperative
+Water/Sewer      : Almost certainly private well + septic (municipal does not
+                   reach rural Pleasanton Twp)
+Distance to Manistee   : ~17 miles / ~22 min
+Distance to Traverse City : ~65 miles / ~1 hr 20 min
+Distance to Cadillac   : ~30 miles / ~35 min
+
+IMPORTANT JURISDICTION NOTE: The mailing address says "Bear Lake" but the
+parcel sits in Pleasanton Township, not Bear Lake Township. Zoning, permitting,
+and building rules run through the Manistee County Planning Dept (under a
+service contract with Pleasanton Twp), not the Bear Lake Township office. This
+matters for permits, variance applications, and code enforcement.
+
+
+================================================================================
+3. MAJOR POSITIVES
+================================================================================
+
+1. PRICE IS AT THE LOW END OF THE LOCAL INVESTMENT-PROPERTY RANGE
+   Nearest comparable -- 13479 Pleasanton Hwy, a similar rural investment
+   property on the same road -- is listed at $59,900. A 1.20-acre raw
+   Pleasanton Hwy lot sold in March 2023 for $25,000. At $49,900 for 0.87
+   acres with an existing structure (even a distressed one), the price is not
+   obviously inflated.
+
+2. COUNTY ROAD ACCESS, YEAR-ROUND MAINTENANCE
+   Pleasanton Highway is a named Manistee County Road Commission road. The
+   county recently chip-sealed 65 miles of paved county roads in a $5.35M
+   program. This road gets plowed in winter (though response time in heavy snow
+   may lag primary routes). No private road maintenance headache.
+
+3. ELECTRICITY ALREADY AT THE ROAD
+   Great Lakes Energy Cooperative serves this area. Getting power connected to
+   a new structure is a hookup/service fee problem, not an "extend the grid"
+   problem. That's a meaningful cost difference in rural Michigan.
+
+4. RURAL AMENITIES CLOSER THAN THEY LOOK
+   Bear Lake Ace Hardware is within ~2 miles on Chippewa Hwy. Bear Lake village
+   (discount grocery) is right there. Manistee city -- with a Meijer, Walmart,
+   Munson Healthcare hospital, and full services -- is only 17 miles/22 minutes.
+   This is not a "90 minutes to civilization" situation.
+
+5. WOODED ROLLING TERRAIN HAS AESTHETIC AND PRACTICAL VALUE
+   "Wooded rolling hills" = privacy, wind buffer, firewood potential, scenic
+   character. In a flat agricultural zone this lot would be worth less; trees
+   and topography in northern Michigan are a genuine asset.
+
+6. LOW VIOLENT CRIME
+   Bear Lake's violent crime rate (18.1/1,000) is below the national average
+   (22.7/1,000). Manistee County overall is rural and low-population. Primary
+   risk is seasonal property crime at vacant/visibly distressed structures.
+
+7. OFF-GRID ENERGY POTENTIAL
+   Great Lakes Energy territory means grid power is available, but the site's
+   tree cover and rural setting also support solar supplementation. Combined
+   solar + grid hybrid is achievable.
+
+
+================================================================================
+4. MAJOR RISKS
+================================================================================
+
+RISK 1 -- MOBILE HOME CONDITION IS THE CENTRAL UNKNOWN [HIGH]
+   The listing explicitly telegraphs the mobile home may need full removal.
+   Pre-1976 mobile homes in Michigan have no HUD code compliance; pre-1989
+   structures carry asbestos probability in floor tiles, roofing, and
+   insulation. If the home is non-structural, flooded, or infested, the only
+   viable path is demolition. Without an on-site inspection you're buying blind.
+
+RISK 2 -- ASBESTOS ABATEMENT COST SPIKE [HIGH]
+   If the mobile home predates 1989, Michigan law requires an asbestos survey
+   before demolition. Professional abatement for a single-wide mobile home runs
+   $2,000-$8,000+ depending on material quantity. Add this to demo costs.
+   Without seeing the home's year-built sticker or a prior inspection report,
+   this is unbudgeted exposure.
+
+RISK 3 -- WELL AND SEPTIC STATUS UNKNOWN [HIGH]
+   Rural Pleasanton Township means well and septic. The listing makes no mention
+   of the condition of either system. Possibilities:
+   - Functional systems: inspection cost ~$800-$1,500, proceed
+   - Failed/absent septic: $7,000-$35,000 replacement depending on soil perc
+   - Failed/contaminated well: $8,000-$15,000 replacement
+   - If soil won't perc conventionally (common with rolling terrain and certain
+     Manistee County soils), an engineered mound system is required:
+     $15,000-$35,000+
+
+RISK 4 -- WETLAND OVERLAY [MEDIUM-HIGH]
+   Pleasanton Township's zoning code has a Wetland Overlay District. Manistee
+   County has extensive NWI-mapped wetlands throughout. If any portion of the
+   0.87-acre parcel is in a regulated wetland, Michigan Part 303 permits are
+   required before any fill, grading, or construction activity -- and permits
+   can be denied. Do not close without running this parcel through EGLE's
+   Wetlands Map Viewer.
+
+RISK 5 -- ZONING FOR REPLACEMENT STRUCTURES [MEDIUM]
+   Mobile/manufactured homes are not universally permitted by-right in all
+   Michigan RA zones. Pleasanton Township's RA ordinance details specific
+   sub-districts (RA-1, RA-2, RA-3) with different permitted uses. If you plan
+   to replace the mobile home with another manufactured unit or a tiny home,
+   confirm with the Manistee County Planning Dept (231-929-5000) that the
+   specific sub-district allows it before purchasing. Tiny homes on wheels
+   (THOWs) are typically not permitted in Michigan's rural residential zones.
+
+RISK 6 -- SMALL LOT LIMITS HOMESTEAD USE [MEDIUM]
+   0.87 acres with wooded rolling terrain leaves limited flat, usable acreage.
+   After the existing structure footprint, setbacks (likely 35-50 ft from road,
+   10-15 ft sides, 35 ft rear), and tree cover, the functional buildable/
+   cultivatable area may be 5,000-15,000 sq ft of usable ground. Serious
+   livestock, large gardens, or outbuildings on this lot will be constrained.
+
+RISK 7 -- NATURAL GAS AVAILABILITY UNCERTAIN [LOW-MEDIUM]
+   Superior Energy Company serves the Bear Lake village area. Whether a gas line
+   runs to 14638 Pleasanton Hwy specifically is unconfirmed. Rural parcels
+   outside the village core may have no gas service. Budget for propane delivery
+   as the fallback for heating if building new.
+
+RISK 8 -- 100-125 INCHES ANNUAL SNOWFALL [MEDIUM]
+   Lake-effect snow from Lake Michigan (5 miles west) dumps heavily on this
+   corridor. Foundation footings must go 42 inches minimum; expect heating,
+   plowing, and winterization costs to be material. An uninsulated or poorly
+   insulated mobile home will be expensive to heat.
+
+RISK 9 -- NO FLOOD ZONE DATA CONFIRMED [LOW-MEDIUM]
+   Property description as "rolling hills" is encouraging, but the FEMA flood
+   zone for this specific parcel has not been confirmed. Any low-lying drainage
+   easements or unnamed creek proximity need to be checked before closing.
+   Flood insurance on a rural mortgage can add $800-$3,000/year.
+
+RISK 10 -- PROPERTY CRIME AT VACANT STRUCTURES
+   If left vacant while planning/permitting, the visibly distressed mobile home
+   becomes a magnet for vandalism, squatting, and copper/appliance theft. Budget
+   for minimal security measures or expedite the demo timeline.
+
+
+================================================================================
+5. ESTIMATED CLEANUP / DEMO COSTS
+================================================================================
+
+SCENARIO A: MOBILE HOME IS LIVABLE -- MINIMUM VIABLE APPROACH
+------------------------------------------------------------------------
+Item                                             Low        High
+------------------------------------------------------------------------
+Pre-purchase inspection (home + well + septic)  $800       $1,500
+Junk/yard cleanup                               $1,000     $3,000
+Minor repairs (roof patch, plumbing, elec.)     $2,000     $8,000
+Heating system service/replacement              $500       $3,000
+------------------------------------------------------------------------
+Additional Cost Beyond Purchase                 $4,300     $15,500
+ALL-IN TOTAL                                    ~$54,000   ~$65,000
+------------------------------------------------------------------------
+
+SCENARIO B: MOBILE HOME TEARDOWN -- LAND ONLY
+------------------------------------------------------------------------
+Item                                             Low        High
+------------------------------------------------------------------------
+Asbestos inspection                             $300       $600
+Asbestos abatement (if found)                   $2,000     $8,000
+Mobile home demolition/removal                  $3,000     $10,000
+Debris/junk removal                             $1,500     $5,000
+Demo permit                                     $200       $500
+Stump/site clearing (optional)                  $1,000     $4,000
+------------------------------------------------------------------------
+Additional Cost Beyond Purchase                 $8,000     $28,100
+ALL-IN TOTAL (bare land)                        ~$58,000   ~$78,000
+------------------------------------------------------------------------
+
+SCENARIO C: TEAR DOWN + NEW MANUFACTURED HOME
+------------------------------------------------------------------------
+Item                                             Low        High
+------------------------------------------------------------------------
+Demo (Scenario B)                               $8,000     $28,100
+New manufactured/modular home (1,200-1,400 sqft)$60,000   $90,000
+Foundation/site prep                            $10,000    $25,000
+New well                                        $8,000     $12,000
+New septic (conventional)                       $10,000    $20,000
+Permits and utility hookup                      $5,000     $12,000
+------------------------------------------------------------------------
+Additional Cost Beyond Purchase                 $101,000   $187,100
+ALL-IN TOTAL                                    ~$151,000  ~$237,000
+------------------------------------------------------------------------
+
+SCENARIO D: TEAR DOWN + NEW STICK-BUILT HOME
+------------------------------------------------------------------------
+Item                                             Low        High
+------------------------------------------------------------------------
+Demo (Scenario B)                               $8,000     $28,100
+New construction 1,200 sq ft, northern MI       $150,000   $210,000
+New well                                        $8,000     $12,000
+New septic (conventional)                       $10,000    $20,000
+Permits, design, hookup                         $8,000     $20,000
+------------------------------------------------------------------------
+Additional Cost Beyond Purchase                 $184,000   $290,100
+ALL-IN TOTAL                                    ~$234,000  ~$340,000
+------------------------------------------------------------------------
+
+ENGINEERED MOUND SEPTIC WILDCARD: If soil perc fails, add $8,000-$20,000 to
+any septic line above. This is not rare in rolling/wooded Manistee County
+terrain.
+
+
+================================================================================
+6. UTILITY / INFRASTRUCTURE ANALYSIS
+================================================================================
+
+Electric
+  Status : Available at road
+  Notes  : Great Lakes Energy Cooperative; service hookup ~$1,000-$5,000 for
+           new structure
+
+Natural Gas
+  Status : Uncertain
+  Notes  : Superior Energy Co. serves Bear Lake village; rural Pleasanton Hwy
+           coverage unverified -- call (231) 362-2520
+
+Propane
+  Status : Available
+  Notes  : Delivery service throughout northern Michigan; standard fallback if
+           no gas line
+
+Well
+  Status : Assumed -- not confirmed
+  Notes  : If existing, inspect and test; if absent or failed, budget
+           $8,000-$15,000
+
+Septic
+  Status : Assumed -- not confirmed
+  Notes  : DHD#10 governs Manistee County; conventional system $10,000-$20,000;
+           mound system $15,000-$35,000
+
+Road Access
+  Status : County-maintained
+  Notes  : Pleasanton Hwy maintained by Manistee County Road Commission;
+           year-round plow service
+
+INFRASTRUCTURE VERDICT: Electric access is the biggest infrastructure positive.
+Well and septic status is the biggest financial unknown and must be resolved
+before or immediately after purchase. Natural gas is a bonus if available but
+not expected -- plan for propane.
+
+
+================================================================================
+7. ZONING / LEGAL CONSIDERATIONS
+================================================================================
+
+Township : Pleasanton Township (Manistee County Planning administers under
+           service contract)
+Zoning   : Residential-Agricultural (RA) -- specific sub-district (RA-1, RA-2,
+           or RA-3) requires verification against the 2018 Zoning Map
+
+KEY ZONING QUESTIONS TO VERIFY BEFORE CLOSING:
+
+1. Is a new manufactured/modular home permitted by-right?
+   In many Michigan RA zones, HUD-code manufactured homes on permanent
+   foundations are permitted. Mobile homes on non-permanent foundations may
+   require special use approval.
+
+2. Is a tiny home or accessory dwelling permitted?
+   Pleasanton Township ordinance details not fully confirmed; contact Manistee
+   County Planning at (231) 929-5000.
+
+3. Minimum lot size for new construction?
+   At 0.87 acres, the parcel may be at or just above minimum lot size
+   thresholds. Verify this does not restrict certain structure types.
+
+4. Wetland Overlay
+   Pleasanton Township's zoning includes a Wetland Overlay District. If any
+   portion of the parcel falls within it, Michigan EGLE Part 303 permits are
+   required before construction. Check EGLE Wetlands Viewer immediately.
+   URL: https://www.michigan.gov/egle/maps-data/wetlands-map-viewer
+
+5. Setbacks
+   Typical northern Michigan RA setbacks: 35-50 ft from road ROW, 10-15 ft
+   side yard, 35 ft rear. On a 0.87-acre lot these will meaningfully constrain
+   placement of any new structure. Verify exact numbers in the Pleasanton
+   Township Zoning Ordinance PDF.
+   URL: https://manisteecountymi.gov/DocumentCenter/View/1201/
+        Pleasanton-Township-Zoning-Ordinance-PDF
+
+PERMITTING CONTACTS:
+  Manistee County Planning        : 415 3rd St, Manistee MI | (231) 929-5000
+  Pleasanton Twp Planning Comm.   : 2nd Monday, 6pm, 8958 Lumley Rd, Bear Lake
+  DHD#10 (well/septic)            : (231) 876-3823 | https://www.dhd10.org
+  Manistee County Building Permits: https://www.manisteecountymi.gov/513/Permits
+
+OVERALL PERMITTING DIFFICULTY: LOW TO MODERATE. Rural Manistee County is not a
+regulatory minefield. No known special overlay restrictions beyond the wetland
+concern. DHD#10 runs a professional operation. Main complexity is the well/
+septic site evaluation and any zoning variance if the mobile home replacement
+triggers a special use review.
+
+
+================================================================================
+8. COMPARABLE VALUE ANALYSIS
+================================================================================
+
+DIRECT COMPARABLES (Pleasanton Hwy / Bear Lake area)
+------------------------------------------------------------------------
+Address                    Acres   Status        Price     $/Acre
+------------------------------------------------------------------------
+14638 Pleasanton Hwy (subj) 0.87  Active        $49,900   $57,356
+13479 Pleasanton Hwy        Unkn  Active        $59,900   --
+1 acre Pleasanton Hwy       1.20  Sold Mar 2023 $25,000   $20,833
+14544 Pleasanton Hwy        9.99  Active        $118,000  $11,803
+Large tract, Pleasanton area 95.94 Sold Feb 2025 $270,000  $2,813
+------------------------------------------------------------------------
+Notes: Mobile home present on subject; 1-acre comp was raw land; large tract
+is recreational.
+
+MARKET CONTEXT (Manistee County, 2025-2026)
+------------------------------------------------------------------------
+County median sold price        : $238,000-$262,000
+County median price/sq ft       : $160
+Residential land avg/acre       : ~$30,900
+All rural land avg/acre         : ~$18,800
+Avg days on market              : 87 days (trending up)
+Bear Lake median list price     : $320,000-$390,000 (waterfront-skewed)
+------------------------------------------------------------------------
+
+VALUE ASSESSMENT:
+
+The subject property at $49,900 is priced above raw land comps (~$25,000 for
+comparable area lots) but below what the same land would be worth as a finished
+residential lot. The mobile home has negative intrinsic value -- it costs money
+to remove -- but the listing prices in the "maybe the mobile home works" wager.
+The premium over raw land is roughly $20,000-$25,000.
+
+  If the mobile home is livable: $49,900 is fair to good value.
+
+  If the mobile home requires full demo + asbestos abatement: You're effectively
+  paying $49,900-$65,000 for land worth $25,000-$32,000 after demolition costs
+  -- an overpay of $15,000-$35,000 relative to raw land.
+
+Land value alone does NOT justify the asking price without inspection. The
+mobile home's condition is the determinative variable.
+
+
+================================================================================
+9. INVESTMENT POTENTIAL
+================================================================================
+
+BY USE CASE:
+
+Small Homestead          : MARGINAL
+  0.87 wooded acres is small for meaningful food production or animals. Usable
+  flat area after setbacks and trees could be as little as 5,000-12,000 sq ft.
+  Good for a mini-homestead (large garden, few chickens, root cellar), not a
+  serious agricultural operation.
+
+Tiny Home Replacement    : POSSIBLE -- VERIFY ZONING FIRST
+  Michigan's 2021 Residential Code allows small homes, but Pleasanton Township
+  RA zoning may restrict minimum floor area or require permanent foundations.
+  Tiny homes on wheels are almost certainly not permitted. A small code-
+  compliant manufactured home on a permanent foundation is the most likely
+  viable path.
+
+Mobile Home Replacement  : LIKELY VIABLE
+  HUD-code manufactured homes on permanent foundations are commonly permitted
+  in Michigan RA zones. This is the cost-effective rebuild path ($151,000-
+  $237,000 all-in). Verify sub-district in zoning map first.
+
+Workshop / Storage Use   : YES
+  Accessory structures (garages, workshops, storage buildings) are generally
+  permitted in RA zones. At 0.87 acres there's room for a 24x36 or 30x40 pole
+  barn if setbacks allow. This alone could justify purchase for a contractor or
+  hobbyist needing rural storage.
+
+Off-Grid / Semi-Rural    : STRONG FIT
+  Well + septic + Great Lakes Energy = a complete off-grid-capable package. The
+  parcel is private, wooded, quiet, and accessible. This is the best natural-fit
+  use case for the land character.
+
+LONG-TERM RESALE POTENTIAL:
+Northern Michigan rural land has been appreciating 5-10%/yr in recent years,
+driven by remote work demand, recreation/tourism interest, and Traverse City
+metro sprawl. A well-maintained residential parcel on a maintained county road
+in Manistee County has solid long-term hold value. The downside is illiquidity
+-- 87 days average DOM and a thin buyer pool means this is not a quick-flip
+asset.
+
+
+================================================================================
+10. RECOMMENDED STRATEGY
+================================================================================
+
+PRE-PURCHASE (BEFORE CLOSING):
+
+1. Order a mobile home inspection
+   Hire a Michigan licensed home inspector experienced with manufactured
+   housing. Cost: ~$300-$500. Non-negotiable. The entire value thesis depends
+   on this.
+
+2. Run EGLE Wetlands Map Viewer
+   Takes 5 minutes online. If wetlands appear on or adjacent to the parcel, get
+   a licensed wetland consultant to do a preliminary assessment before
+   proceeding.
+   URL: https://www.michigan.gov/egle/maps-data/wetlands-map-viewer
+
+3. Check FEMA Flood Map
+   Confirm Zone X (minimal hazard) for the parcel.
+   URL: https://msc.fema.gov/portal/search
+
+4. Call Manistee County Planning: (231) 929-5000
+   Ask: "Is 14638 Pleasanton Hwy in Pleasanton Township, and can I place a new
+   HUD-code manufactured home on a permanent foundation after removing the
+   existing mobile home?" Get verbal confirmation and follow up in writing.
+
+5. Pull parcel taxes and assessed value
+   URL: https://maps.liaa.org/manisteeparcels/propertysearch.asp
+        (search APN 26101-1202140002)
+   Alt: https://bsaonline.com/?uid=2022
+
+6. Request well and septic records from seller
+   Ask for any prior DHD#10 inspection records, well logs, and septic permits.
+   If none exist, budget for a well water test ($50-$200) and septic inspection
+   ($300-$500) as purchase contingencies.
+
+POST-PURCHASE (IF PROCEEDING):
+
+If mobile home is livable:
+  - Minimum viable: clean up yard, inspect all systems, make necessary repairs,
+    use as-is for 1-3 years while planning permanent build
+  - Budget $5,000-$15,000 for immediate stabilization
+
+If mobile home is teardown:
+  - Get three demolition bids; ask each contractor to include asbestos survey
+    in scope
+  - Delay demo until you have confirmed zoning approval and DHD10 site
+    evaluation for new septic
+  - Demo and septic/well work can often be sequenced to minimize cost
+
+BEST-CASE PATH TO $150,000-$180,000 ALL-IN WORKABLE PROPERTY:
+  1. Purchase at or below ask: $49,900
+  2. Demo mobile home (seek free/donation removal): $0-$10,000
+  3. New manufactured home on permanent foundation: $70,000-$90,000
+  4. Well and septic: $18,000-$30,000
+  5. Site prep, permits, hookup: $12,000-$20,000
+  6. Result: A functional, modern 1,200-1,400 sq ft manufactured home on a
+     wooded rural lot -- sellable at $140,000-$200,000 in this market.
+
+
+================================================================================
+11. FINAL VERDICT
+================================================================================
+
+VERDICT: RISKY BUT INTERESTING
+
+Why not "avoid":
+  The price is appropriate, the location has genuine merit, the infrastructure
+  fundamentals are sound (grid power, county road, rural setting), and the use
+  cases for off-grid living, basic homestead, or workshop are legitimate.
+  Northern Michigan land has real long-term hold value.
+
+Why not "good value" yet:
+  The mobile home's condition is completely unverified. A single failed
+  inspection -- asbestos-laden roof, failed septic, non-percing soils -- can
+  turn this from a $55,000 entry into a $90,000 cleanup problem. The wetland
+  question is unanswered. The zoning sub-district hasn't been confirmed for the
+  intended replacement structure.
+
+Path to "Good Value":
+  This crosses into good value territory if:
+  - Mobile home inspection returns livable or low-cost-to-repair result, OR
+  - Demo bids come in under $10,000 total with no asbestos
+  - DHD#10 site eval confirms conventional septic is viable
+  - Wetland check returns clear
+  - Zoning confirms new manufactured home is permitted by-right
+
+Negotiating room:
+  If inspection reveals demo costs, use that as leverage for a $5,000-$15,000
+  price reduction. Investment-property sellers in this category expect
+  negotiation based on inspection findings.
+
+Bottom line:
+  With 2-3 phone calls and two online checks (EGLE wetlands, FEMA flood map),
+  you can qualify or disqualify this property in under a week. If it comes back
+  clean, the deal is worth pursuing -- Pleasanton Hwy investment parcels at this
+  price point don't sit indefinitely.
+
+
+================================================================================
+DATA GAPS REQUIRING MANUAL VERIFICATION
+================================================================================
+
+Item                           How to Resolve
+------------------------------------------------------------------------
+Assessed/taxable value         maps.liaa.org -- search APN 26101-1202140002
+  + annual taxes               Alt: bsaonline.com/?uid=2022
+
+Exact RA sub-district          2018 Pleasanton Twp Zoning Map PDF:
+  (RA-1/2/3)                   pleasantontownship.org/uploads/1/1/3/9/
+                               113947797/20180614_zoning_map.pdf
+
+Wetland presence on parcel     EGLE Wetlands Map Viewer:
+                               michigan.gov/egle/maps-data/wetlands-map-viewer
+
+FEMA flood zone                msc.fema.gov/portal/search
+
+Natural gas at road            Call Superior Energy Co: (231) 362-2520
+
+Prior sale history / deed      Manistee County Clerk, 415 3rd St, Manistee MI
+
+Mobile home year-built         On-site inspection by licensed MI inspector
+  + condition
+
+Well log / septic permit       Request from seller; or DHD#10 records
+
+Road surface (paved vs.        Manistee County Road Commission: (231) 723-3566
+  gravel at this address)
+
+
+================================================================================
+SOURCES
+================================================================================
+
+Zillow -- 14638 Pleasanton Hwy listing
+Redfin -- Manistee County market data
+Coldwell Banker -- 1-acre Pleasanton Hwy comp (sold March 2023)
+MiHomePropertySearch -- MLS 25057116
+Manistee County GIS / Property Search -- manisteecountymi.gov/333
+Pleasanton Township -- pleasantontownship.org
+Pleasanton Township Zoning Ordinance -- manisteecountymi.gov (2016, amended)
+Bear Lake Township -- Two Lake Collaborative Sewer Authority
+Great Lakes Energy Cooperative -- gtlakes.com
+Superior Energy Company -- secnaturalgas.com
+Bear Lake Ace Hardware -- acehardware.com/store-details/09205
+Munson Healthcare Manistee Hospital -- munsonhealthcare.org/manistee-hospital
+District Health Department #10 -- dhd10.org
+FEMA Flood Map Service Center -- msc.fema.gov
+EGLE Wetlands Map Viewer -- michigan.gov/egle/maps-data/wetlands-map-viewer
+Manistee County Road Commission -- manisteecrc.org
+Redfin Manistee County Market Report
+Rocket Homes Bear Lake Market Report
+LandSearch Manistee County -- landsearch.com
+SepticAndWell.com -- Michigan septic and well cost data
+MichiganSeptic.com -- engineered septic cost guide 2026
+Houzeo -- Michigan home construction costs
+HomeAdvisor -- demolition cost data
+Climate-Data.org -- Bear Lake climate
+BestPlaces / Homefacts -- Bear Lake crime statistics
+
+================================================================================
+END OF REPORT
+================================================================================
