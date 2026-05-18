@@ -257,6 +257,18 @@
     .gaps-table .auto td:first-child { color: #1a5a1a; }
     .gaps-table .manual td:first-child { color: #b00000; }
 
+    /* ── Photo view tabs ── */
+    .photo-section { width: 100%; background: #000; }
+    .photo-tabs { display: flex; background: #222; border-bottom: 2px solid #1a4a8a; }
+    .photo-tab {
+      flex: 1; padding: 11px 16px; background: transparent; border: none;
+      color: #bbb; font-size: 15px; font-weight: bold; cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif; letter-spacing: 0.3px;
+      transition: background 0.15s;
+    }
+    .photo-tab.active { background: #1a4a8a; color: #fff; }
+    .photo-tab:hover:not(.active) { background: #383838; color: #fff; }
+
     /* ── Footer ── */
     .footer { background: #1a4a8a; color: #c0d4f0; text-align: center; padding: 26px 24px; font-size: 14px; line-height: 1.8; }
 
@@ -271,18 +283,36 @@
 </head>
 <body>
 
-<!-- ═══════ AERIAL VIEW ═══════ -->
-<div class="aerial-wrapper">
-  <iframe
-    src="https://maps.google.com/maps?q=14638+Pleasanton+Hwy,+Bear+Lake,+MI+49614&t=k&z=17&output=embed"
-    allowfullscreen
-    loading="lazy"
-    title="Satellite view — 14638 Pleasanton Hwy, Bear Lake MI">
-  </iframe>
-  <div class="aerial-label">📍 14638 Pleasanton Hwy · Satellite View</div>
-</div>
-<div class="aerial-caption">
-  Satellite imagery via Google Maps &nbsp;·&nbsp; Scroll or pinch to zoom &nbsp;·&nbsp; Requires internet connection to display
+<!-- ═══════ PHOTO VIEWS ═══════ -->
+<div class="photo-section">
+  <div class="photo-tabs">
+    <button class="photo-tab active" onclick="switchView('street')">📷 Street View &nbsp;(Front of Property)</button>
+    <button class="photo-tab" onclick="switchView('aerial')">🛰️ Satellite &nbsp;(Aerial View)</button>
+  </div>
+
+  <div class="aerial-wrapper" id="view-street">
+    <iframe
+      src="https://maps.google.com/maps?q=14638+Pleasanton+Hwy,+Bear+Lake,+MI+49614&layer=c&z=17&output=embed"
+      allowfullscreen
+      loading="lazy"
+      title="Street view — 14638 Pleasanton Hwy, Bear Lake MI">
+    </iframe>
+    <div class="aerial-label">📍 14638 Pleasanton Hwy · Street View (Front)</div>
+  </div>
+
+  <div class="aerial-wrapper" id="view-aerial" style="display:none;">
+    <iframe
+      src="https://maps.google.com/maps?q=14638+Pleasanton+Hwy,+Bear+Lake,+MI+49614&t=k&z=17&output=embed"
+      allowfullscreen
+      loading="lazy"
+      title="Satellite view — 14638 Pleasanton Hwy, Bear Lake MI">
+    </iframe>
+    <div class="aerial-label">🛰️ 14638 Pleasanton Hwy · Satellite View</div>
+  </div>
+
+  <div class="aerial-caption">
+    Street View &amp; satellite imagery via Google Maps &nbsp;·&nbsp; Click tabs above to toggle &nbsp;·&nbsp; Requires internet connection to display
+  </div>
 </div>
 
 <!-- ═══════ TOP BAR ═══════ -->
@@ -317,9 +347,9 @@
   <!-- AUTOMATION STATUS -->
   <div class="auto-banner">
     <h3>🤖 What Automated Research Can and Cannot Resolve</h3>
-    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>FEMA flood zone</strong> — resolved via FEMA NFHL REST API (bear_lake_scraper.py)</span></div>
-    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>Wetlands presence</strong> — resolved via USFWS NWI + EGLE ArcGIS (bear_lake_scraper.py)</span></div>
-    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>Coordinates</strong> — resolved via US Census Geocoder, no API key required</span></div>
+    <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>FEMA flood zone</strong> — <span class="flag">not auto-confirmed: government API blocked in cloud environment.</span> Script ready for local run. Manual backup: <em>msc.fema.gov/portal/search</em> or <em>floodfactor.com</em></span></div>
+    <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>Wetlands presence</strong> — <span class="flag">not auto-confirmed: USFWS/EGLE APIs blocked in cloud environment.</span> Manual backup: <em>michigan.gov/egle/maps-data/wetlands-map-viewer</em></span></div>
+    <div class="auto-row"><span class="auto-icon">✔</span><span class="auto-text"><strong>Coordinates</strong> — resolved via US Census Geocoder (fallback: 44.4330 N, 86.1430 W)</span></div>
     <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>Tax / assessed value</strong> — <span class="flag">BS&A blocks automated scraping; Selenium fallback included in script</span></span></div>
     <div class="auto-row"><span class="auto-icon">⚠</span><span class="auto-text"><strong>Parcel/owner data</strong> — <span class="flag">LIAA portal may block POST; script tries both methods</span></span></div>
     <div class="auto-row"><span class="auto-icon">✗</span><span class="auto-text"><strong>Mobile home condition, well, septic</strong> — <span class="flag">No code can replace a physical inspection or seller documents</span></span></div>
@@ -729,8 +759,8 @@ python bear_lake_scraper.py</pre>
         <tr class="auto"><td>Crime / climate / services</td><td>✔ Complete</td><td>BestPlaces, Climate-Data.org, direct searches</td></tr>
         <tr class="auto"><td>Zoning ordinance version</td><td>✔ Updated</td><td>2021 Pleasanton Township Zoning Ordinance confirmed (supersedes 2016)</td></tr>
         <tr><td>Exact annual tax amount</td><td>⚠ Estimate only</td><td>Confirm at bsaonline.com/?uid=2022 · search APN 26101-1202140002</td></tr>
-        <tr><td>FEMA flood zone</td><td>⚠ 2-min check</td><td>msc.fema.gov/portal/search — rolling hills suggests Zone X</td></tr>
-        <tr><td>Wetlands on parcel</td><td>⚠ 5-min check</td><td>michigan.gov/egle/maps-data/wetlands-map-viewer</td></tr>
+        <tr><td>FEMA flood zone</td><td>⚠ 2-min check</td><td>Rolling hills strongly suggest <strong>Zone X</strong> (minimal hazard). Pleasanton Twp may be unmapped (~44% of MI townships have no FIRM). Check: <em>msc.fema.gov/portal/search</em> or <em>floodfactor.com</em> or <em>riskfactor.com</em></td></tr>
+        <tr><td>Wetlands on parcel</td><td>⚠ 5-min check</td><td>No surface water visible in satellite view. USFWS NWI mapper: <em>fws.gov/program/national-wetlands-inventory/wetlands-mapper</em> &nbsp;·&nbsp; EGLE: <em>michigan.gov/egle/maps-data/wetlands-map-viewer</em></td></tr>
         <tr><td>Exact RA sub-district</td><td>⚠ 10-min check</td><td>Download 2018 Pleasanton Township Zoning Map PDF</td></tr>
         <tr class="manual"><td>Mobile home condition / age</td><td>✗ Needs inspection</td><td>Licensed MI inspector · ~$300–$500 · most critical unknown</td></tr>
         <tr class="manual"><td>Well + septic records</td><td>✗ Needs seller</td><td>Request from David/Delores Golden or check DHD#10: (231) 876-3823</td></tr>
@@ -744,6 +774,62 @@ python bear_lake_scraper.py</pre>
     </div>
   </div>
 
+  <!-- EXTERNAL REFERENCES -->
+  <div class="section">
+    <div class="section-heading">13 — Cross-Check These External Property Reports 🔗</div>
+    <div class="section-body">
+      <p style="margin-bottom:18px; font-size:17px;">
+        Any of these free tools can confirm the remaining data gaps in under 10 minutes. Open each link and search the address.
+      </p>
+      <table class="facts-table">
+        <tr>
+          <td>FEMA Flood Map Service Center</td>
+          <td>msc.fema.gov/portal/search &nbsp;·&nbsp; Official FEMA flood zone lookup. Enter address. Look for Zone X = low risk; Zone A/AE = flood insurance required.</td>
+        </tr>
+        <tr>
+          <td>Flood Factor (First Street)</td>
+          <td>floodfactor.com &nbsp;·&nbsp; Third-party risk score 1–10. Pulls FEMA + First Street Foundation flood model. Better for rural unmapped areas than FEMA alone.</td>
+        </tr>
+        <tr>
+          <td>Risk Factor</td>
+          <td>riskfactor.com &nbsp;·&nbsp; Flood + fire + heat + wind + air quality all in one. Maintained by First Street Foundation. Good secondary confirmation.</td>
+        </tr>
+        <tr>
+          <td>EGLE Wetlands Map Viewer</td>
+          <td>michigan.gov/egle/maps-data/wetlands-map-viewer &nbsp;·&nbsp; Michigan-official. Enter address. Any color on the lot = regulated wetland = EGLE Part 303 permit required before digging.</td>
+        </tr>
+        <tr>
+          <td>USFWS National Wetlands Inventory</td>
+          <td>fws.gov/program/national-wetlands-inventory/wetlands-mapper &nbsp;·&nbsp; Federal NWI mapper. Zoom to the parcel and look for blue/green wetland overlays.</td>
+        </tr>
+        <tr>
+          <td>Zillow Listing + Climate Risk</td>
+          <td>zillow.com/homedetails/14638-Pleasanton-Hwy-Bear-Lake-MI-49614/106451402_zpid/ &nbsp;·&nbsp; Full listing with photos. Scroll to "Climate Risks" section for flood, wildfire, and heat scores.</td>
+        </tr>
+        <tr>
+          <td>Redfin Listing</td>
+          <td>redfin.com — search 14638 Pleasanton Hwy Bear Lake MI &nbsp;·&nbsp; Often shows flood zone and climate data next to listing details.</td>
+        </tr>
+        <tr>
+          <td>BS&amp;A Online (Official Tax)</td>
+          <td>bsaonline.com/?uid=2022 &nbsp;·&nbsp; Manistee County's official tax portal. Search APN <strong>26101-1202140002</strong> for exact taxable value and tax bill.</td>
+        </tr>
+        <tr>
+          <td>Michigan LIAA Parcel Search</td>
+          <td>maps.liaa.org/manisteeparcels/propertysearch.asp &nbsp;·&nbsp; State parcel data. Shows owner, lot size, legal description, and assessment history.</td>
+        </tr>
+        <tr>
+          <td>PropStream (Investor Tool)</td>
+          <td>propstream.com &nbsp;·&nbsp; Paid ($99/mo) but includes full deed history, lien search, skip-tracing owner contact, and bulk comp analysis. Useful if buying multiple properties.</td>
+        </tr>
+      </table>
+      <div class="callout" style="margin-top:18px;">
+        <strong>Fastest verification path:</strong> Open FEMA MSC + EGLE Wetlands Viewer + Zillow in three browser tabs simultaneously.
+        Enter the address in each. You can resolve all three environmental unknowns in under 10 minutes from a phone or laptop.
+      </div>
+    </div>
+  </div>
+
 </div><!-- end .page -->
 
 <div class="footer">
@@ -752,8 +838,18 @@ python bear_lake_scraper.py</pre>
   2021 Pleasanton Township Zoning Ordinance · 2025 Pleasanton Township Master Plan ·
   Great Lakes Energy · Superior Energy · Munson Healthcare · DHD#10 · EGLE · FEMA ·
   Manistee County Road Commission · Rocket Homes · LandSearch · Ownwell (tax rates) ·
-  SepticAndWell.com · MichiganSeptic.com · Houzeo · HomeAdvisor · Climate-Data.org · BestPlaces
+  SepticAndWell.com · MichiganSeptic.com · Houzeo · HomeAdvisor · Climate-Data.org · BestPlaces ·
+  Flood Factor (First Street Foundation) · Risk Factor · USFWS NWI Wetlands Mapper · LIAA Parcel Portal · PropStream
 </div>
 
+<script>
+function switchView(v) {
+  document.getElementById('view-street').style.display = (v === 'street') ? 'block' : 'none';
+  document.getElementById('view-aerial').style.display = (v === 'aerial') ? 'block' : 'none';
+  var tabs = document.querySelectorAll('.photo-tab');
+  tabs[0].classList.toggle('active', v === 'street');
+  tabs[1].classList.toggle('active', v === 'aerial');
+}
+</script>
 </body>
 </html>

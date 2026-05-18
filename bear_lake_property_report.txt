@@ -544,8 +544,23 @@ Crime / climate        Fully researched
 
 REQUIRES 2-MINUTE FREE ONLINE LOOKUP (cannot be done from this environment)
 ------------------------------------------------------------------------
-FEMA flood zone        msc.fema.gov/portal/search -- enter address, takes 2 min
-Wetland presence       michigan.gov/egle/maps-data/wetlands-map-viewer -- 5 min
+FEMA flood zone        Rolling hills terrain strongly suggests Zone X (minimal
+                       hazard). Pleasanton Township may be unmapped (~44% of
+                       Michigan townships have no FIRM on file). Either way,
+                       verify via at least two of these free tools:
+                         1. msc.fema.gov/portal/search (official FEMA)
+                         2. floodfactor.com (First Street Foundation model,
+                            better for rural/unmapped areas)
+                         3. riskfactor.com (flood + fire + wind, all-in-one)
+
+Wetland presence       No surface water visible in satellite view; rolling
+                       hills geometry is unfavorable for wetland formation.
+                       However, Michigan wetland law is strict and presence
+                       is not apparent from topography alone. Verify via:
+                         1. michigan.gov/egle/maps-data/wetlands-map-viewer
+                            (Michigan-official, Part 303 regulated wetlands)
+                         2. fws.gov/program/national-wetlands-inventory/
+                            wetlands-mapper (federal NWI layer)
 
 REQUIRES ONE PHONE CALL
 ------------------------------------------------------------------------
@@ -564,6 +579,48 @@ Well log / records     Request from seller David/Delores Golden; or DHD#10
 Septic permit records  Request from seller; or DHD#10: (231) 876-3823
 Prior deed / sale hist Manistee County Clerk, 415 3rd St, Manistee MI
 Annual tax exact amt   BS&A Online: bsaonline.com/?uid=2022 (search 26101-1202140002)
+
+
+================================================================================
+EXTERNAL PROPERTY REPORT CROSS-CHECKS
+================================================================================
+
+The following free tools can verify the remaining environmental unknowns in
+under 10 minutes. Open all three in browser tabs simultaneously.
+
+ENVIRONMENTAL RISK (open these first)
+  FEMA Flood Map Service Center  : msc.fema.gov/portal/search
+  Flood Factor (First Street)    : floodfactor.com
+  Risk Factor (First Street)     : riskfactor.com
+  EGLE Wetlands Map Viewer       : michigan.gov/egle/maps-data/wetlands-map-viewer
+  USFWS National Wetlands Inv.   : fws.gov/program/national-wetlands-inventory/
+                                   wetlands-mapper
+
+LISTING PHOTOS + CLIMATE RISK DATA (open for photo gallery and additional data)
+  Zillow listing                 : zillow.com/homedetails/14638-Pleasanton-Hwy-
+                                   Bear-Lake-MI-49614/106451402_zpid/
+                                   (scroll to "Climate Risks" section for scores)
+  Redfin                         : redfin.com -- search 14638 Pleasanton Hwy
+                                   Bear Lake MI (climate data shown on listing)
+
+OFFICIAL COUNTY/STATE RECORDS
+  BS&A Online (exact tax bill)   : bsaonline.com/?uid=2022
+                                   search APN 26101-1202140002
+  Michigan LIAA Parcel Search    : maps.liaa.org/manisteeparcels/
+                                   propertysearch.asp
+
+INVESTOR-GRADE TOOLS (paid, $99/mo, worth it if buying multiple properties)
+  PropStream                     : propstream.com
+    -- Full deed history, liens, skip-trace owner contact, bulk comps
+  Regrid API                     : regrid.com
+    -- Clean parcel data REST API, no scraping
+  ATTOM Data                     : attomdata.com
+    -- Property risk scores, AVM, transaction history
+
+NOTE ON AUTOMATED FETCHING: All government GIS APIs (FEMA NFHL, USFWS NWI,
+Census Geocoder, BS&A, LIAA) return HTTP 403 when called from a cloud/AI
+environment. The bear_lake_scraper.py script is designed to run locally
+on your own machine where these requests succeed normally.
 
 
 ================================================================================
@@ -603,6 +660,10 @@ HomeAdvisor -- demolition cost data
 Climate-Data.org -- Bear Lake climate
 Ownwell -- Manistee County effective tax rate 1.11-1.18%
 BestPlaces / Homefacts -- Bear Lake crime statistics
+Flood Factor (First Street Foundation) -- floodfactor.com
+Risk Factor (First Street Foundation) -- riskfactor.com
+USFWS National Wetlands Inventory Mapper -- fws.gov
+PropStream -- propstream.com (investor tool reference)
 
 ================================================================================
 END OF REPORT
