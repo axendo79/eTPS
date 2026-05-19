@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicLens Report — John James</title>
+<style>
+  :root {
+    --cl-navy:    #0d1b2a;
+    --cl-dark:    #1b2a3b;
+    --cl-mid:     #243447;
+    --cl-border:  #2e4057;
+    --cl-text:    #e8edf2;
+    --cl-muted:   #8ba0b5;
+    --cl-accent:  #4fa3e0;
+    --cl-green:   #2ecc71;
+    --cl-yellow:  #f1c40f;
+    --cl-orange:  #e67e22;
+    --cl-red:     #e74c3c;
+    --cl-purple:  #9b59b6;
+    --cl-teal:    #1abc9c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cl-navy);
+    color: var(--cl-text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--cl-dark);
+    border-bottom: 2px solid var(--cl-accent);
+    padding: 20px 32px 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+  }
+  .cl-wordmark {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--cl-accent);
+    text-transform: uppercase;
+  }
+  .cl-tagline {
+    font-size: 11px;
+    color: var(--cl-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-bottom: 2px;
+  }
+  .cl-meta {
+    margin-left: auto;
+    text-align: right;
+    font-size: 11px;
+    color: var(--cl-muted);
+  }
+
+  /* ── Disclaimer banner ── */
+  .disclaimer-banner {
+    background: #1a2a1a;
+    border-left: 4px solid var(--cl-teal);
+    padding: 12px 32px;
+    font-size: 12px;
+    color: #a8c8b0;
+  }
+  .disclaimer-banner strong { color: var(--cl-teal); }
+
+  /* ── Layout ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+  .card {
+    background: var(--cl-dark);
+    border: 1px solid var(--cl-border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .card-title {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cl-accent);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .identity-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .identity-office {
+    font-size: 13px;
+    color: var(--cl-accent);
+    margin-bottom: 10px;
+  }
+  .identity-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--cl-border);
+    font-size: 12px;
+  }
+  .identity-row:last-child { border-bottom: none; }
+  .identity-label { color: var(--cl-muted); }
+  .identity-value { color: var(--cl-text); font-weight: 500; text-align: right; max-width: 60%; }
+
+  .status-active {
+    display: inline-block;
+    background: #1a3a2a;
+    color: var(--cl-teal);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--cl-teal);
+    margin-bottom: 10px;
+  }
+
+  .election-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .election-table td { padding: 5px 4px; border-bottom: 1px solid var(--cl-border); }
+  .el-race { color: var(--cl-muted); white-space: nowrap; padding-right: 8px; }
+  .outcome-win { color: var(--cl-green); }
+  .outcome-loss { color: #c0392b; }
+
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li {
+    font-size: 12px;
+    color: var(--cl-muted);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--cl-border);
+  }
+  ul.plain li:last-child { border-bottom: none; }
+
+  /* ── Main content ── */
+  .content { display: flex; flex-direction: column; gap: 28px; }
+
+  section h2 {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cl-accent);
+    margin-bottom: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--cl-border);
+    padding-bottom: 6px;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+  .badge-verified   { background: #1a3a1a; color: var(--cl-green);  border: 1px solid var(--cl-green); }
+  .badge-probable   { background: #3a2e00; color: var(--cl-yellow); border: 1px solid var(--cl-yellow); }
+  .badge-contextual { background: #2a2a1a; color: #c8b400;          border: 1px solid #c8b400; }
+  .badge-unverified { background: #2a1a1a; color: var(--cl-orange); border: 1px solid var(--cl-orange); }
+  .badge-review     { background: #2a1a00; color: var(--cl-orange); border: 1px solid var(--cl-orange); }
+  .badge-violation  { background: #2a0000; color: var(--cl-red);    border: 1px solid var(--cl-red); }
+  .badge-clear      { background: #1a3a1a; color: var(--cl-green);  border: 1px solid var(--cl-green); }
+  .badge-context    { background: #1a1a2a; color: var(--cl-purple); border: 1px solid var(--cl-purple); }
+
+  /* ── Findings ── */
+  .finding {
+    background: var(--cl-dark);
+    border: 1px solid var(--cl-border);
+    border-left: 3px solid var(--cl-border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .finding:has(.badge-verified)   { border-left-color: var(--cl-green); }
+  .finding:has(.badge-probable)   { border-left-color: var(--cl-yellow); }
+  .finding:has(.badge-contextual) { border-left-color: #c8b400; }
+  .finding:has(.badge-unverified) { border-left-color: var(--cl-orange); }
+  .claim { margin: 6px 0 6px; font-size: 13px; line-height: 1.5; }
+  .source { font-size: 11px; color: var(--cl-muted); font-family: monospace; }
+  .uncertainty { font-size: 11px; color: var(--cl-yellow); margin-top: 6px; background: #2a2600; padding: 6px 8px; border-radius: 4px; }
+
+  /* ── Flags ── */
+  .flag {
+    background: var(--cl-mid);
+    border: 1px solid var(--cl-orange);
+    border-left: 4px solid var(--cl-orange);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .flag-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .flag-icon { font-size: 16px; }
+  .flag-desc { font-size: 13px; line-height: 1.5; margin-bottom: 6px; }
+  .severity-note { font-size: 11px; color: var(--cl-teal); margin-top: 6px; background: #0d2a25; padding: 6px 8px; border-radius: 4px; }
+
+  /* ── FEC Review Items ── */
+  .review-item {
+    background: #1a1200;
+    border: 1px solid var(--cl-orange);
+    border-left: 4px solid var(--cl-red);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .review-icon { font-size: 16px; color: var(--cl-orange); }
+  .review-detail { font-size: 13px; line-height: 1.5; margin-bottom: 6px; color: #d4c090; }
+  .no-violation-box {
+    background: #0a1a0a;
+    border: 1px solid var(--cl-teal);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: #a8c8b0;
+  }
+  .no-violation-box strong { color: var(--cl-teal); }
+
+  /* ── Sources ── */
+  .source-list { list-style: none; padding: 0; }
+  .source-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--cl-border);
+    font-size: 12px;
+    color: var(--cl-muted);
+    font-family: monospace;
+  }
+  .source-list li:last-child { border-bottom: none; }
+  .source-list a { color: var(--cl-accent); text-decoration: none; }
+  .source-list a:hover { text-decoration: underline; }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--cl-dark);
+    border-top: 1px solid var(--cl-border);
+    padding: 20px 32px;
+    font-size: 11px;
+    color: var(--cl-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer .footer-warning {
+    color: #a8c8b0;
+    max-width: 700px;
+  }
+
+  /* ── Summary metrics ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .metric {
+    background: var(--cl-mid);
+    border: 1px solid var(--cl-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .metric-value { font-size: 24px; font-weight: 700; color: var(--cl-accent); }
+  .metric-label { font-size: 10px; color: var(--cl-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .metric-value.orange { color: var(--cl-orange); }
+  .metric-value.yellow { color: var(--cl-yellow); }
+  .metric-value.red    { color: var(--cl-red); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="cl-wordmark">CivicLens</div>
+    <div class="cl-tagline">Evidence-First Civic Research</div>
+  </div>
+  <div class="cl-meta">
+    Report generated: 2026-05-19<br>
+    Profile version: v0.1 &nbsp;|&nbsp; eTPS spec: v0.1<br>
+    Status: PRE-PUBLICATION — verify all figures before release
+  </div>
+</header>
+
+<div class="disclaimer-banner">
+  <strong>IMPORTANT:</strong>
+  This report is based solely on publicly available records. Patterns and flags do not imply
+  coordination, improper conduct, illegality, or wrongdoing. No adjudicated violations are
+  established. All FEC figures require primary-source verification at fec.gov before publication.
+  No person is accused of any crime or ethics violation by this report.
+</div>
+
+<main>
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+
+    <div class="card">
+      <div class="card-title">Identity</div>
+      <div class="status-active">● INCUMBENT</div>
+      <div class="identity-name">John James</div>
+      <div class="identity-office">U.S. Representative</div>
+      <div class="identity-row">
+        <span class="identity-label">Jurisdiction</span>
+        <span class="identity-value">Michigan's 10th Congressional District</span>
+      </div>
+      <div class="identity-row">
+        <span class="identity-label">Party</span>
+        <span class="identity-value">Republican</span>
+      </div>
+      <div class="identity-row">
+        <span class="identity-label">Current status</span>
+        <span class="identity-value">Incumbent. Sworn in January 2023. Two prior unsuccessful U.S. Senate campaigns (2018, 2020).</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Election History</div>
+      <table class="election-table">
+        
+            <tr>
+                <td class="el-race">2018: Michigan U.S. Senate</td>
+                <td class="outcome-loss">Lost to Stabenow (D), 45.8% v 52.3%</td>
+            </tr>
+            <tr>
+                <td class="el-race">2020: Michigan U.S. Senate</td>
+                <td class="outcome-loss">Lost to Peters (D), 48.50% v 49.97% (≈87k-vote margin)</td>
+            </tr>
+            <tr>
+                <td class="el-race">2022: Michigan 10th CD</td>
+                <td class="outcome-win">Won vs. Marlinga (D), ≈1.3% margin</td>
+            </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Committee Assignments</div>
+      <ul class="plain">
+        <li>House Foreign Affairs Committee (verify current status at clerk.house.gov)</li><li>House Armed Services Committee (verify current status at clerk.house.gov)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Affiliated Committees / PACs</div>
+      <ul class="plain">
+        <li>James for Michigan — principal authorized campaign committee (verify at fec.gov)</li><li>Additional leadership PAC and outside-spending relationships require FEC primary lookup</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Report Summary</div>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value">8</div>
+          <div class="metric-label">Findings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value orange">4</div>
+          <div class="metric-label">Flags</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value yellow">4</div>
+          <div class="metric-label">FEC Review</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── Main content ── -->
+  <div class="content">
+
+    <section>
+      <h2>Research Findings</h2>
+      
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">Elected to U.S. House of Representatives, Michigan's 10th Congressional District, November 2022. Sworn in January 2023. Represents a district covering Macomb County and portions of Oakland County.</p>
+            <p class="source">Source: [Public record] 2022-11 ref: Michigan SOS certified results — mvic.sos.state.mi.us — certified general election results</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">U.S. Army veteran: served as combat helicopter pilot, deployed to Iraq under Operation Iraqi Freedom. Rank at separation: Captain. Disclosed in official public biographical records.</p>
+            <p class="source">Source: [Public record] 2023 — clerk.house.gov — official U.S. House records and biography</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">President and CEO of James Group International, a third-party logistics and automotive supply chain company headquartered in Warren, Michigan. Relationship disclosed as a financial interest in U.S. House filings.</p>
+            <p class="source">Source: [Official disclosure] 2023 — clerk.house.gov — U.S. House financial disclosure filings</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">2020 Michigan U.S. Senate: Gary Peters (D) 49.97%, John James (R) 48.50%. Margin approximately 87,000 votes from ~5.2 million cast (≈1.5 pct pts). Result certified by Michigan Secretary of State.</p>
+            <p class="source">Source: [Public record] 2020-11 ref: Michigan SOS certified results — mvic.sos.state.mi.us — certified general election results</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">2018 Michigan U.S. Senate: Debbie Stabenow (D) 52.3%, John James (R) 45.8%. Margin approximately 6.5 percentage points. Result certified by Michigan Secretary of State.</p>
+            <p class="source">Source: [Public record] 2018-11 ref: Michigan SOS certified results — mvic.sos.state.mi.us</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-verified">VERIFIED</span>
+            <p class="claim">2022 Michigan House 10th District: John James (R) defeated Carl Marlinga (D) by approximately 1.3 percentage points — among the closest Michigan House results in the 2022 cycle. Result certified by Michigan SOS.</p>
+            <p class="source">Source: [Public record] 2022-11 ref: Michigan SOS certified results — mvic.sos.state.mi.us — certified general election results</p>
+            
+        </div>
+        <div class="finding">
+            <span class="badge badge-probable">PROBABLE</span>
+            <p class="claim">2020 Senate campaign finance: according to publicly reported aggregations, James raised approximately $16.5M for the 2020 cycle. Outside independent expenditures were also reported. All figures require primary-source verification at fec.gov before publication.</p>
+            <p class="source">Source: [FEC filing] 2018–2020 — fec.gov/data/receipts — search: John James, Michigan, Senate (Figures approximate — verify primary source before publication)</p>
+            <p class="uncertainty">⚠ Approximate figure from reported aggregations. Verify independently at fec.gov/data/receipts before publication.</p>
+        </div>
+        <div class="finding">
+            <span class="badge badge-probable">PROBABLE</span>
+            <p class="claim">House committee assignments disclosed as of 2023: House Foreign Affairs Committee and House Armed Services Committee. Current assignments require verification at clerk.house.gov — committee membership changes each Congress.</p>
+            <p class="source">Source: [Public record] 2023 — clerk.house.gov — official U.S. House records and biography</p>
+            <p class="uncertainty">⚠ Committee assignments change each Congress. Verify current status at clerk.house.gov before relying on this record.</p>
+        </div>
+    </section>
+
+    <section>
+      <h2>Irregularity Flags</h2>
+      <div class="no-violation-box">
+        <strong>Methodology note:</strong> Flags identify patterns from public records only.
+        They do not establish wrongdoing, coordination, or illegality.
+        Each flag requires independent primary-source verification before any inference is drawn.
+        The absence of a flag does not mean no pattern exists — only that none was identified
+        within the scope of this profile.
+      </div>
+      
+        <div class="flag">
+            <div class="flag-header">
+                <span class="flag-icon">⚖</span>
+                <strong>Close race — certified result</strong>
+                
+            </div>
+            <p class="flag-desc">The 2020 Michigan U.S. Senate race produced a margin of approximately 1.5 percentage points — among the closest Michigan Senate contests in recent decades. Certified by the Michigan Secretary of State. The records indicate no adjudicated irregularity.</p>
+            <p class="source">Source: [Public record] 2020-11 ref: Michigan SOS certified results — mvic.sos.state.mi.us — certified general election results</p>
+            <p class="severity-note">Note: Certified result per Michigan SOS. Temporal pattern noted for timeline completeness only. No evidence currently establishes any procedural irregularity.</p>
+        </div>
+        <div class="flag">
+            <div class="flag-header">
+                <span class="flag-icon">🔁</span>
+                <strong>Recount event — public record</strong>
+                <span class="badge badge-context">ADDITIONAL CONTEXT REQUIRED</span>
+            </div>
+            <p class="flag-desc">Public reporting in November 2020 indicated James's campaign considered a recount petition following the close Senate result. No recount petition was ultimately certified; James subsequently conceded. Recount petitions are a legally permitted campaign action.</p>
+            <p class="source">Source: [Source-backed journalism] 2020-11 — Public news reporting, November 2020 (Requires specific, named journalism citation for publication-grade provenance)</p>
+            <p class="severity-note">Note: No adjudicated irregularity. Recount consideration is legally permitted. Primary journalism citation required before this finding is published.</p>
+        </div>
+        <div class="flag">
+            <div class="flag-header">
+                <span class="flag-icon">🗺</span>
+                <strong>Funding geography</strong>
+                <span class="badge badge-context">ADDITIONAL CONTEXT REQUIRED</span>
+            </div>
+            <p class="flag-desc">In competitive Senate cycles (2018, 2020), out-of-state donor contributions are documented in FEC filings. Geographic concentration in James's filings requires primary-source FEC analysis to quantify. Out-of-state fundraising in high-profile Senate races is common and legal. The records indicate no evidence currently establishes an irregularity.</p>
+            <p class="source">Source: [FEC filing] 2018–2020 — fec.gov/data/receipts — search: John James, Michigan, Senate (Figures approximate — verify primary source before publication)</p>
+            <p class="severity-note">Note: Out-of-state fundraising is common and legal. Requires FEC primary-source analysis at fec.gov before any inference.</p>
+        </div>
+        <div class="flag">
+            <div class="flag-header">
+                <span class="flag-icon">🏭</span>
+                <strong>Industry concentration</strong>
+                <span class="badge badge-context">ADDITIONAL CONTEXT REQUIRED</span>
+            </div>
+            <p class="flag-desc">James Group International operates in automotive logistics. Sector-level donor concentration in logistics/automotive industry in FEC filings requires independent primary-source analysis. The business relationship is a disclosed financial interest — the filings show a documented relationship, not a finding of wrongdoing.</p>
+            <p class="source">Source: [FEC filing] 2018–2022 — fec.gov/data/receipts — sector analysis requires independent query (No conclusions drawn — pattern requires a primary FEC query)</p>
+            <p class="severity-note">Note: Disclosed business relationship is not evidence of wrongdoing. Sector donor pattern requires an independent fec.gov query to assess.</p>
+        </div>
+    </section>
+
+    <section>
+      <h2>FEC Compliance Review — Patterns Warranting Investigation</h2>
+      <div class="no-violation-box">
+        <strong>No violations established.</strong>
+        The items below identify regulatory patterns that a researcher, journalist, or
+        watchdog organization should verify against primary FEC filings. None of these
+        items constitute a finding of a campaign finance violation. All require
+        primary-source review at fec.gov before any conclusion can be drawn.
+      </div>
+      
+        <div class="review-item">
+            <div class="review-header">
+                <span class="review-icon">⚑</span>
+                <strong>2020 Cycle Filing Deadline Compliance</strong>
+                <span class="badge badge-review">REQUIRES FEC VERIFICATION</span>
+            </div>
+            <p class="review-detail">The 2020 Senate cycle reportedly involved approximately $16.5M in receipts. FEC regulations require quarterly reports (11 CFR §104.5) and pre-election reports within 12 days of a general election. Whether all filing deadlines were met — and whether any amendments were filed — requires primary-source verification at fec.gov/data/filings.</p>
+            <p class="source">Regulatory basis: FEC filing rules, 11 CFR §104.5; verify at fec.gov/data/filings</p>
+            <p class="severity-note">Note: No violation established. Pattern warrants primary-source FEC review.</p>
+        </div>
+        <div class="review-item">
+            <div class="review-header">
+                <span class="review-icon">⚑</span>
+                <strong>Outside Spending and Coordination Rules</strong>
+                <span class="badge badge-review">REQUIRES FEC VERIFICATION</span>
+            </div>
+            <p class="review-detail">Significant independent expenditures were publicly reported in support of James's 2020 Senate campaign. Federal law (52 U.S.C. §30116(a)(7)) prohibits coordination between candidate campaigns and independent expenditure-only committees (Super PACs). The records indicate no coordination has been established. This pattern requires independent FEC compliance review.</p>
+            <p class="source">Regulatory basis: 52 U.S.C. §30116(a)(7); FEC coordination rules; fec.gov/legal-resources/</p>
+            <p class="severity-note">Note: No coordination has been established. Outside spending in competitive Senate races is common and legal absent prohibited coordination.</p>
+        </div>
+        <div class="review-item">
+            <div class="review-header">
+                <span class="review-icon">⚑</span>
+                <strong>Recount-Period Campaign Finance Activity (Nov–Dec 2020)</strong>
+                <span class="badge badge-review">REQUIRES FEC VERIFICATION</span>
+            </div>
+            <p class="review-detail">Campaign finance receipts and expenditures during the November–December 2020 post-election period are publicly reportable under FEC rules. Whether any unusual or late-cycle transactions occurred during the period when a recount petition was under consideration requires primary-source review of FEC post-general and year-end filings.</p>
+            <p class="source">Regulatory basis: FEC post-general report period; fec.gov/data/filings — search 2020 year-end</p>
+            <p class="severity-note">Note: No irregularity established. Post-election finance activity is publicly reported; pattern requires FEC primary-source review before any inference.</p>
+        </div>
+        <div class="review-item">
+            <div class="review-header">
+                <span class="review-icon">⚑</span>
+                <strong>Individual Contribution Limit Compliance</strong>
+                <span class="badge badge-review">REQUIRES FEC VERIFICATION</span>
+            </div>
+            <p class="review-detail">The 2020 election cycle individual contribution limit was $2,800 per election to a candidate committee (52 U.S.C. §30116(a)(1)(A)). In high-volume fundraising cycles (≈$16.5M reported), over-limit contributions sometimes require amended filings or refunds. Whether any amendment activity occurred requires primary-source FEC query of the James for Michigan committee filings.</p>
+            <p class="source">Regulatory basis: 52 U.S.C. §30116(a)(1)(A); fec.gov/data/receipts — filter by committee</p>
+            <p class="severity-note">Note: Over-limit contributions requiring amendment are common in high-volume cycles and do not establish a violation if properly remediated. Requires FEC review.</p>
+        </div>
+    </section>
+
+    <section>
+      <h2>Source References</h2>
+      <ul class="source-list">
+        <li>FEC campaign finance filings — <a href="https://www.fec.gov/data/" target="_blank">fec.gov/data/</a></li>
+        <li>FEC legal resources &amp; regulations — <a href="https://www.fec.gov/legal-resources/" target="_blank">fec.gov/legal-resources/</a></li>
+        <li>U.S. House official records — <a href="https://clerk.house.gov/" target="_blank">clerk.house.gov/</a></li>
+        <li>Michigan SOS certified election results — <a href="https://mvic.sos.state.mi.us/" target="_blank">mvic.sos.state.mi.us/</a></li>
+        <li>CourtListener (federal court records) — <a href="https://www.courtlistener.com/" target="_blank">courtlistener.com/</a></li>
+        <li>FEC individual receipts search — <a href="https://www.fec.gov/data/receipts/individual-contributions/" target="_blank">fec.gov/data/receipts/individual-contributions/</a></li>
+        <li>FEC committee filings — <a href="https://www.fec.gov/data/filings/" target="_blank">fec.gov/data/filings/</a></li>
+        <li>Outside spending (independent expenditures) — <a href="https://www.fec.gov/data/independent-expenditures/" target="_blank">fec.gov/data/independent-expenditures/</a></li>
+      </ul>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-warning">
+    CivicLens v0.1 — Evidence-first civic research.
+    This document is based entirely on publicly available records.
+    No person named herein is accused of any crime, ethics violation, or improper conduct.
+    Patterns identified require independent verification. Not for publication without
+    primary-source corroboration of all figures marked PROBABLE or requiring FEC verification.
+  </div>
+  <div>Generated 2026-05-19 &nbsp;|&nbsp; eTPS spec v0.1</div>
+</footer>
+
+</body>
+</html>
