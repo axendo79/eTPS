@@ -1,177 +1,58 @@
 # eTPS — Effective Tokens Per Second
-**A quality-adjusted throughput metric for local AI inference.**
 
-> Spec v0.1 | Author: Joshua Holliday / True Vector Media | License: MIT
+Research into user reconstruction burden and model generation throughput.
 
----
+**Status: v0.2 measurement design; implementation remains v0.1. No validated v0.2 scores, frozen executable corpus, or controlled comparison is available.**
 
-## The Problem With Raw TPS
+The preserved code baseline is `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. Its audit identified measurement defects; passing its self-tests does not establish benchmark validity. See [implementation limitations](docs/V0.1_STATUS.md).
 
-Raw tokens per second tells you how fast a model generates tokens. It doesn't tell you whether those tokens were useful.
+## What v0.2 measures
 
-A model that generates 80 TPS but hallucinates, requires correction rounds, and reconstructs context every session may deliver *less* value than a 25 TPS model with persistent memory and high first-pass accuracy.
+Report raw generation TPS and reconstruction ratio (RR) separately. RR measures the fraction of newly delivered user input attributable to authorized re-supply of previously established state. The benchmark defines retention obligations; the evaluated system cannot redefine them.
 
-Marketing TOPS numbers have the same problem. Intel's 99 platform TOPS sounds better than AMD's 80 — until you realize 77 of Intel's TOPS come from the GPU running at full power draw, while AMD's NPU delivers AI inference at a fraction of the thermal cost. The number obscures more than it reveals.
+The candidate `eTPS = TPS × (1 − RR)` remains a **labeled experimental index**, not measured useful output per second. It discounts a generation-side rate using an input-side fraction and does not capture every retry, retrieval, or waiting cost. Its tradeoff rankings have no validated external objective yet. The old Efficiency × Quality × Continuity formula and eScore factors are not carried into the v0.2 design.
 
-**eTPS fixes this.** It measures effective progress toward a useful answer, not raw generation speed.
+Acceptance is binary at the trial boundary under a frozen recovery policy. Successful recovery may pass while first-attempt retention fails. Report both, with RR, re-supply tokens, attempts, timing and available processing costs. Do not let fast wrong answers count as accepted work or hide failures behind accepted-only summaries.
 
----
+## Read the design
 
-## The Formula
+- [Measurement contract — draft 3](docs/v0.2/MEASUREMENT_CONTRACT.md): current consolidated definitions and explicitly marked proposals.
+- [Architecture](ARCHITECTURE.md): existing modules versus proposed measurement flow.
+- [Status and next steps](docs/STATUS.md): settled decisions, open details and release prerequisites.
+- [Clause review](docs/v0.2/CLAUSE_REVIEW.md): span matching, author conflicts and comparison boundaries.
+- [Counterexamples](docs/v0.2/COUNTEREXAMPLES.md) and [acceptance/timing review](docs/v0.2/ACCEPTANCE_TIMING_REVIEW.md): historical paper attacks, not executed benchmark evidence.
+- [Provenance](docs/v0.2/PROVENANCE.md): user requirements, endorsements and model-authored proposals.
+- [Contributing](CONTRIBUTING.md): review and change requirements.
 
-```
-eTPS = TPS_raw × Efficiency × Quality × Continuity
-```
+## Current work order
 
-| Component | Measures | Range |
-|---|---|---|
-| **TPS_raw** | Raw token generation speed | Hardware dependent |
-| **Efficiency** | Token waste ratio (corrections, reconstruction, refusals) | 0.0 – 1.0 |
-| **Quality** | Answer correctness, hallucination penalties, task completion | 0.1 – 1.0 |
-| **Continuity** | Context retention across multi-turn sessions | 0.0 – 1.0 |
+1. Settle remaining contract details and attack them with counterexamples.
+2. Build the deterministic corpus with frozen answer predicates and recovery spans.
+3. Repair scorer, runner and replay persistence against that corpus.
+4. Run controlled experiments under a prepublished manifest.
 
-**Key design decision:** Efficiency and Quality are independent axes. Correction rounds affect Quality only. Token waste affects Efficiency only. The same event is never penalized twice.
+No dependency installation or model endpoint is needed to review the documents. Existing Python programs are legacy prototypes, not a v0.2 quick start. Their self-tests and demonstrations must not be presented as validated benchmark runs.
 
----
+The first intended experiment compares the same Gemini model/configuration with and without a memory layer, using identical scheduled input, decoding and budget policies. Recovery may differ only through frozen branches. Nyx must be allowed to lose. Author affiliation with Nyx is disclosed; the initial developer-authored profile is non-canonical. Backend energy unavailable means no system-energy-per-accepted-task result; local retrieval energy is component telemetry only.
 
-## What eTPS Penalizes
+An unfrozen corpus exists locally but is intentionally excluded from this documentation publication. No corpus task files, tokenizer lock, token goldens or their hashes are included.
 
-- Hallucinations (confirmed)
-- Correction rounds required to reach a usable answer
-- Context reconstruction — re-explaining facts the model should already know
-- Task failure
-- Unprompted refusals on valid tasks
+Pilot counts and failure branches must be fixed in advance. All attempts are disclosed; an incomplete comparison is not a Nyx win. Protocol repairs require a newly frozen manifest and both-arm reruns. Prior workload exposure is self-disclosed separately from independent evidence that the manifest hash was published before the run.
 
-## What eTPS Rewards
+Website work, leaderboard expansion, account features, eScore and SEIT redesign are deferred. Documentation does not establish a hosted service or result-submission pipeline.
 
-- First-pass accuracy
-- Context retention across turns
-- Efficient token use
-- Session continuity
+## Repository map
 
----
+| File | Present role |
+|---|---|
+| `scorer.py` | Legacy v0.1 arithmetic and self-tests |
+| `task_validator.py` | Legacy endpoint demonstration and heuristic scoring |
+| `logger.py` | Legacy SQLite storage and summaries |
+| `seit.py` | Legacy energy-related companion calculations |
+| `user_profile.py`, `leaderboard.py` | Legacy profile/export/ranking utilities |
+| `docs/v0.2/` | Draft measurement design and paper reviews |
+| `docs/history/v0.1/` | Preserved baseline documentation, not current guidance |
 
-## Complementary Metrics
+Author: Joshua Holliday / True Vector Media. [MIT license](LICENSE). Cite the exact document revision and status; do not cite an unreleased v1 specification as established methodology.
 
-eTPS is designed to work alongside two companion metrics:
-
-**Raw TPS** — baseline generation speed. eTPS without TPS_raw context is incomplete.
-
-**SEIT (Sustained Effective Inference Throughput)** — power-normalized sustained throughput:
-
-```
-SEIT = (Sustained TPS × Quality Factor) / Watts
-```
-
-SEIT exposes thermal efficiency under load — the gap between peak and sustained eTPS reveals throttling, memory pressure, and system stability. This is where platform TOPS marketing claims collapse under real-world conditions.
-
----
-
-## Repo Structure
-
-```
-eTPS/
-├── scorer.py           # Core formula — pure math, no I/O, fully testable
-├── logger.py           # SQLite persistence — WAL mode, versioned schema
-├── task_validator.py   # First benchmark task — run against live endpoint
-├── CLAUDE.md           # Claude Code context file
-└── README.md
-```
-
----
-
-## Quick Start
-
-```bash
-# 1. Install dependency
-pip install openai
-
-# 2. Validate the scorer (no API needed)
-python scorer.py
-
-# 3. Validate the logger (no API needed)
-python logger.py
-
-# 4. Run your first benchmark (requires local inference endpoint)
-python task_validator.py \
-  --base-url http://localhost:1234/v1 \
-  --model your-model-name \
-  --runs 3
-```
-
-Compatible with any OpenAI-compatible local inference server — LM Studio, Ollama, vLLM, llama.cpp server.
-
----
-
-## Hardware Declaration
-
-All published benchmark results require a full hardware declaration:
-
-| Field | Required | Notes |
-|---|---|---|
-| CPU model | Yes | |
-| GPU / iGPU | Yes | |
-| VRAM (GB) | If applicable | |
-| RAM (GB) | Yes | |
-| RAM channels | Yes | Single vs dual channel materially affects iGPU inference |
-| NPU TOPS | If applicable | |
-| Cooling | Yes | Active / passive / sustained thermal state |
-| Backend + version | Yes | llama.cpp, LM Studio, Ollama, etc. |
-| Model + quantization | Yes | |
-| MTP enabled | Yes | |
-| Memory system | Yes | none / vector_store / other |
-
-Results without full hardware declaration are not eligible for the public leaderboard.
-
----
-
-## User Data and Community
-
-eTPS is built to be more than a personal benchmark tool. The goal is a growing dataset of real-world inference performance across diverse hardware configurations — valuable for:
-
-- Individual users tracking performance over time
-- Hardware comparison across configurations
-- Researchers studying local inference efficiency
-- The broader AI community building on an open, reproducible standard
-
-Submitted benchmark results contribute to a shared dataset. Aggregate, anonymized hardware and performance data helps drive spec development and community tooling. A registered profile (coming in v0.2) enables persistent history, public leaderboard presence, and hardware trend tracking over time.
-
----
-
-## Spec Versioning
-
-Penalty constants and formula structure are locked per spec version. Changing weights after publication invalidates prior comparisons. All results include a `spec_version` field.
-
-Current: `v0.1` (pre-release — methodology validation phase)
-
-First public release: `v1.0` (pending first reproducible benchmark results)
-
----
-
-## Citation
-
-```
-Holliday, J. (2026). eTPS: Effective Tokens Per Second —
-A Quality-Adjusted Throughput Metric for Local AI Inference.
-True Vector Media. https://effectivetps.com/spec/v1
-```
-
----
-
-## Contributing
-
-Benchmark result submissions, methodology feedback, and task corpus contributions welcome via GitHub Issues and Pull Requests.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for submission format and result validation requirements.
-
----
-
-## Links
-
-- Spec document: [effectivetps.com](https://effectivetps.com) *(coming soon)*
-- True Vector Media: [truevectormedia.com](https://truevectormedia.com)
-- Author: Joshua Holliday / [@axendo79](https://github.com/axendo79)
-
----
-
-*eTPS is complementary to raw TPS, not a replacement. Both numbers matter. Neither alone tells the full story.*
+Draft 3 boundary revision: reject recovery spans whose endpoints cut tokens. Byte-span checks have passed; token-boundary checks remain blocked. Different tokenizer-lock hashes prohibit RR comparison, and the manifest must bind exact golden hashes.

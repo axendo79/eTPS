@@ -1,204 +1,35 @@
 # Contributing to eTPS
 
-## Overview
+Current priority: measurement validity. The implementation remains v0.1; the [v0.2 contract](docs/v0.2/MEASUREMENT_CONTRACT.md) is a draft. Read [status](docs/STATUS.md), [architecture](ARCHITECTURE.md) and [provenance](docs/v0.2/PROVENANCE.md) first.
 
-eTPS accepts three kinds of contributions:
+## Methodology and corpus review
 
-1. **Benchmark results** — run the pipeline on your hardware and submit
-2. **Methodology feedback** — propose changes to the spec, penalty values, or task design
-3. **Code contributions** — new tasks, tooling, data export, documentation
+Identify the clause/version, supply a concrete counterexample, and distinguish a proposed outcome from an executed result. Preserve model authorship and source attribution. Do not represent model agreement or synthetic happy-path tests as independent empirical validation.
 
-All three matter. Benchmark results are only trustworthy if the methodology is sound, and the methodology only improves with real-world data.
+Review recovery designation, answer predicates and temporal obligations before expanding tasks. Finite paraphrases must preserve state meaning, negation, time and authority. Test both changed wording with unchanged meaning and unchanged keywords with changed meaning. No live evaluator judgment may repair a scored manifest.
 
----
+Declare authorship, employment, funding and development interests in evaluated systems or components. The Nyx developer's profile remains developer-authored and non-canonical. Neutral treatment does not erase affiliation.
 
-## Submitting Benchmark Results
+## Code changes
 
-### Prerequisites
+Preserve baseline implementation until contract review and adversarial analysis support the change. Do not silently adjust v0.1 penalty constants, convert old scores to v0.2, or add new scoring factors. The deterministic corpus precedes scorer repair; its byte spans, branch links and expected verdicts must be reviewable.
 
-Before submitting, confirm each step passes on your machine:
+For eventual implementation changes, run checks appropriate to the changed behavior and add meaningful adversarial/replay tests. Legacy self-tests alone do not validate the methodology. Existing SQLite/raw-SQL conventions remain until an explicit architecture decision changes them. Documentation-only work needs link/status/claim verification rather than running endpoint or database demos.
 
-```bash
-python scorer.py          # All self-tests pass — no dependencies
-python logger.py          # Smoke test passes — no API needed
-python task_validator.py \
-  --base-url http://localhost:1234/v1 \
-  --model YOUR_MODEL \
-  --runs 3
-```
+Keep README, architecture, status and affected contract clauses synchronized. Label implemented behavior, proposed behavior, historical behavior and evidence level. Include migration notes for changes to scoring or stored-result interpretation.
 
-Minimum 3 runs required. Median is reported. Single-run results are not eligible for the leaderboard.
+## Experimental results
 
----
+There is no validated v0.2 submission format or leaderboard pipeline yet. Exploratory traces may inform methodology if clearly labeled; do not publish v0.1 output as a validated comparison.
 
-### Hardware Declaration
+Before the controlled experiment, freeze the profile/corpus/configuration and publish its hash with independent external evidence before a run-start record referencing it. A commit hash alone is not proof of timing. The owner has authorized this docs-only publication before manifest freeze. This does not authorize publishing corpus artifacts or starting model runs.
 
-All fields marked **Required** must be present. Results missing any required field will not appear on the public leaderboard.
+Each result identifies one profile/version/hash and corpus release. Report acceptance, first-attempt retention, R/I/RR, timing and processing costs with availability. List planned/attempted/valid/unavailable trials and reasons, including failures. The proposed first-pilot completeness rule requires zero unavailable RR trials for a complete-workload comparison; incomplete results remain diagnostics rather than a workload claim. This threshold is still a proposal pending freeze.
 
-| Field | Required | Notes |
-|---|---|---|
-| CPU model | Yes | Full name — e.g. `AMD Ryzen AI 9 HX 470` |
-| GPU / iGPU | Yes | Include both discrete and integrated if applicable |
-| VRAM (GB) | If applicable | Discrete GPU only; omit for iGPU-only runs |
-| RAM (GB) | Yes | Total system RAM |
-| RAM channels | Yes | `1` or `2` — single vs dual channel materially affects iGPU inference throughput |
-| NPU TOPS | If applicable | Manufacturer-declared platform TOPS; note if GPU contributes |
-| Storage type | Yes | e.g. `NVMe PCIe 4.0`, `NVMe PCIe 3.0`, `SATA SSD` |
-| Cooling | Yes | `active` / `passive` — note ambient temp if known |
-| Backend | Yes | e.g. `llama.cpp`, `LM Studio`, `Ollama`, `vLLM` |
-| Backend version | Yes | Exact version string |
-| Model name | Yes | e.g. `Qwen3.5-9B` |
-| Quantization | Yes | e.g. `Q4_K_XL`, `Q8_0`, `F16` |
-| Context window | Yes | Active context window size used during the run |
-| Temperature | Yes | Sampling temperature used |
-| MTP enabled | Yes | `true` / `false` — Multi-Token Prediction |
-| Memory system | Yes | `none` / `nyx_v2` / other — name and version |
+No cross-profile ranking, pooled result or metric substitution is permitted under the proposed comparison rule, even for the same system. Sampled validation of experimental eTPS must preserve its independently frozen objective, assumptions and individually identified reversed pairs. Missing backend energy means no system-energy-per-accepted-task claim.
 
-**Why RAM channels matter:** On integrated GPU systems, memory bandwidth is shared between CPU and GPU. Dual-channel doubles available bandwidth and can double inference throughput on the same hardware. A result from a single-channel system is not comparable to a dual-channel result on the same CPU — both must be declared.
+Freeze the number of paired pilot runs and task trials, all outcome transitions (including catch-all and exhausted retries), and stop conditions. Disclose every attempted, voided and unattempted slot; unavailable RR in either arm produces an incomplete comparison, not a winner. Do not rerun until a favorable complete result appears. Protocol repairs create a new manifest hash and external freeze record and require both arms to run again. Retain all previous attempts and revisions. Include attributable prior-run/workload-exposure disclosures; these are self-attested, not independently verified by timestamping. Documentation may be published before freeze; every scored run still requires prior completed manifest attestation.
 
-**Why NPU TOPS needs context:** Manufacturer platform TOPS numbers frequently include GPU TOPS running at full thermal load. Declare what was actually active during inference — NPU-only, iGPU-only, or combined — and note the backend's inference target.
+## Historical documentation
 
----
-
-### Result Validation Requirements
-
-Results submitted for the public leaderboard must meet all of the following:
-
-- **Minimum 3 runs** completed with the same seed and configuration
-- **spec_version declared** — results from different spec versions cannot be compared and will not appear on the same leaderboard page
-- **run_id included** — generated by `logger.py`, used for traceability
-- **Thermal state honest** — do not run benchmarks immediately after a cold boot, during OS updates, or with fan curves artificially set for benchmarking. Note if results are from a sustained session vs a fresh start.
-- **No artificial optimization** for the benchmark tasks specifically — the benchmark should reflect your typical inference workload conditions
-
-Results that fail validation will receive a comment explaining what's missing. They are not deleted — corrected submissions can reference the same `run_id`.
-
----
-
-### Submission Format
-
-Open a GitHub Issue with the label **`benchmark-result`** and include the following JSON block:
-
-```json
-{
-  "spec_version": "v0.1",
-  "run_id": "<uuid from logger.py output>",
-  "hardware": {
-    "cpu": "AMD Ryzen AI 9 HX 470",
-    "gpu": "Radeon 890M (iGPU)",
-    "vram_gb": null,
-    "ram_gb": 32,
-    "ram_channels": 2,
-    "npu_tops": 86,
-    "storage_type": "NVMe PCIe 4.0",
-    "cooling": "active"
-  },
-  "software": {
-    "backend": "llama.cpp",
-    "backend_version": "b3600",
-    "model_name": "Qwen3.5-9B",
-    "quantization": "Q4_K_XL",
-    "context_window": 8192,
-    "temperature": 0.7,
-    "mtp_enabled": true,
-    "memory_system": "nyx_v2",
-    "memory_system_version": "2.0.0"
-  },
-  "results": {
-    "etps_median": 38.2,
-    "etps_peak": 43.1,
-    "etps_floor": 35.8,
-    "tps_raw_median": 44.0,
-    "quality_factor_median": 0.91,
-    "continuity_factor_median": 0.87,
-    "efficiency_ratio_median": 0.96,
-    "run_count": 3
-  },
-  "seit": {
-    "seit": 1.3643,
-    "watts_avg": 28.0,
-    "power_source": "measured",
-    "thermal_stable": true,
-    "coefficient_of_variation": 0.038,
-    "sample_count": 3,
-    "window_seconds": 900
-  },
-  "notes": "Optional context about run conditions, thermal state, etc."
-}
-```
-
-You may paste the output of `result.summary()` and `seit_result.summary()` directly in the issue body — both are accepted alongside or instead of raw JSON.
-
----
-
-## Methodology Feedback
-
-Open a GitHub Issue with the label **`methodology`** to discuss:
-
-- Penalty constant values (any proposed change requires a new spec version)
-- New task proposals for the benchmark corpus
-- Formula refinements or edge cases
-- Definitions and measurement ambiguities
-- Cross-spec-version comparison approaches
-
-Methodology issues are the highest priority. The spec is the foundation — a flawed formula produces meaningless data at scale.
-
-### Proposing penalty constant changes
-
-Penalty constants are locked per spec version. If you believe a constant is miscalibrated:
-
-1. Open a `methodology` issue with the proposed value and justification
-2. Include at least one real benchmark run showing why the current value produces a misleading result
-3. If accepted, the change ships in the next spec version with full migration notes
-
-Do not submit PRs that change penalty values in `scorer.py` without a corresponding spec version bump and issue discussion.
-
----
-
-## Code Contributions
-
-PRs are welcome for:
-
-- **New benchmark tasks** — follow the `task_validator.py` structure; include task ID, category, expected references, and scoring logic
-- **Platform-specific tooling** — power measurement helpers, hardware detection, backend wrappers
-- **Data export and visualization** — leaderboard tooling, export formats
-- **Documentation** — clarifications, examples, translations
-
-### PR requirements
-
-- All existing self-tests must pass: `python scorer.py` and `python seit.py`
-- New code must include a smoke test or self-test block runnable with `python <file>.py`
-- No ORM — raw SQL only, consistent with `logger.py` design
-- No new Python dependencies beyond `openai` and the standard library without discussion
-- Commit messages should describe *why*, not just *what*
-
-### Spec-breaking changes
-
-Any PR that changes:
-- Penalty constant values in `scorer.py`
-- Formula structure in `calculate_etps()` or `calculate_seit()`
-- Schema in a way that invalidates existing stored results
-
-...requires:
-1. A new `SPEC_VERSION` string
-2. Updated `CLAUDE.md` file map
-3. Migration notes in the PR description explaining how existing results are affected
-
----
-
-## Data and Privacy
-
-Benchmark results submitted via GitHub Issues are public by default. If you register a profile on effectivetps.com (v0.2), you control:
-
-- Whether your display name appears on the leaderboard or results are listed anonymously
-- Whether your hardware and performance data is included in aggregate exports shared with AI companies and hardware vendors
-- Whether you receive updates on spec changes that may affect your historical results
-
-Aggregate exports are anonymized — individual results are not shared with third parties without explicit opt-in. See `user_profile.py` for the consent model.
-
----
-
-## Links
-
-- Spec document: [effectivetps.com](https://effectivetps.com) *(coming soon)*
-- Issues: [github.com/axendo79/eTPS/issues](https://github.com/axendo79/eTPS/issues)
-- Author: Joshua Holliday / [@axendo79](https://github.com/axendo79)
+The [v0.1 archive](docs/history/v0.1/README.md) preserves earlier instructions and claims for audit purposes. It is not current contribution, privacy, service-availability or scoring guidance. No new account, export or public-service promise is established by the legacy modules.
