@@ -1,19 +1,19 @@
 # eTPS contributor context
 
-Implementation: v0.1 at baseline `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. Current work: documentation-only v0.2 measurement design. Read [README](README.md), [architecture](ARCHITECTURE.md), [status](docs/STATUS.md), [contract](docs/v0.2/MEASUREMENT_CONTRACT.md) and [provenance](docs/v0.2/PROVENANCE.md).
+Implementation: v0.1 at baseline `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. Current work: experimental byte replay scorer alongside preserved v0.1 modules. Read [README](README.md), [architecture](ARCHITECTURE.md), [status](docs/STATUS.md), [contract](docs/v0.2/MEASUREMENT_CONTRACT.md) and [provenance](docs/v0.2/PROVENANCE.md).
 
 ## Required working rules
 
 - Read the current file before changing it; preserve user edits and the historical baseline.
-- Contract → adversarial review → deterministic corpus → scorer/runner/replay repair → controlled experiments.
-- RR stays input-based, with benchmark-designated obligations. TPS and RR are primary; eTPS is experimental. Do not restore v0.1's four-factor composition or eScore in v0.2.
+- Executable counterexamples and pure scorer → reviewed workload/criteria/budgets → runner/persistence → calibration → independently attested confirmation.
+- RR stays input-based, using character-aligned UTF-8 bytes and benchmark-designated obligations. TPS and RR are primary; eTPS is experimental. Do not restore v0.1's four-factor composition or eScore in v0.2.
 - Binary terminal acceptance is separate from first-attempt retention and measurement validity. Retain failed and unavailable trials.
 - Scripted recovery requires the linked failure, same active obligation and authorized branch. No treatment-dependent user recaps or private answer-key leakage.
 - No model judge or fuzzy matching for the finite deterministic pilot. Unknown user payload and wrong model answer are different outcomes.
 - Nyx must be allowed to lose. Disclose profile-author/system affiliation.
 - Do not expand website, leaderboard, accounts or SEIT before validity work.
 - Do not run legacy endpoint demos as if they were v0.2 validation; no dependencies are needed for document review.
-- No commit or push without explicit instruction. The current user authorizes docs-only publication before manifest freeze; do not include corpus artifacts or their hashes.
+- No commit or push without explicit instruction. The current user authorized local implementation, executable synthetic fixtures and affected policy updates; no model runs or remote publication were performed.
 
 ## Existing files
 

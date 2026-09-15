@@ -2,6 +2,10 @@
 
 Selected 2026-09-14 by Codex in response to the user's instruction to choose a mechanism. This is a documented design choice, not an executed stamp, freeze, commit or run. The first pilot is calibration; it estimates variability and protocol coverage, not confirmatory evidence of superiority.
 
+## Calibration exception adopted 2026-09-15
+
+The user endorsed deferring independent attestation to the first confirmatory manifest. Calibration requires a committed manifest hash, preserved exact artifacts and a complete attempt ledger, but no OTS proof or chained run-start declaration. Preserve all failures and revisions; a commit is not independent timing evidence. Calibration prohibits superiority claims. The procedure and proof gates below apply to confirmatory work only. No stamp or model run has occurred.
+
 ## Mechanism and reason
 
 Use OpenTimestamps with a completed Bitcoin-backed proof for the exact manifest bytes. Public calendars submit commitments; the proof permits verification against Bitcoin independently of the project. The service's calendar submission receipt is not sufficient: wait for an upgraded, verifiable Bitcoin attestation. Publish the original manifest and its .ots proof together so a stranger need not request either from the author.
@@ -10,9 +14,9 @@ Sources: [OpenTimestamps specification overview](https://opentimestamps.org/) an
 
 ## Project procedure
 
-1. Finish the corpus and calibration manifest. Include hashes of all scoring-relevant files, actual fixed pilot/trial counts, configuration, tokenizer, budgets, prior-exposure declaration, and this attestation policy. Commit manifest-only when explicitly authorized.
+1. Finish the corpus and confirmatory manifest. Include hashes of all scoring-relevant files, actual fixed pilot/trial counts, configuration, byte-unit version (plus optional tokenizer lock), budgets, prior-exposure declaration, and this attestation policy. Commit manifest-only when explicitly authorized.
 2. Stamp the exact manifest file, archive the receipt, upgrade to a completed Bitcoin proof, and verify it. Our conservative policy requires six confirmations of its anchoring block; this is a chosen project parameter, not an OpenTimestamps guarantee. Pin the verification tool version and preserve block height/hash and verification output.
-3. Publish downloadable manifest and proof before starting the pilot. File hosting is distribution, not the authority for time. A changed file will not verify against the original proof; a deleted file makes the public claim unverifiable until the bundle is restored. Pre-freeze documentation may already be public; it is not freeze evidence.
+3. Publish downloadable manifest and proof before starting confirmatory execution. File hosting is distribution, not the authority for time. A changed file will not verify against the original proof; a deleted file makes the public claim unverifiable until the bundle is restored. Pre-freeze documentation may already be public; it is not freeze evidence.
 4. Prepare a run-start declaration with the manifest hash, proof hash, anchoring block hash/height, planned run IDs and prior-exposure statement. Timestamp this declaration with OpenTimestamps too; require its verified anchor to be in a later block and meet the same confirmation policy before executing the declared run. Preserve and publish both proofs with results.
 5. Protocol repairs require a new manifest, new completed freeze proof and new run-start declaration; rerun both arms and retain prior attempts. Never reuse a successful old arm under the new manifest.
 
@@ -35,4 +39,4 @@ Choose and freeze the first pilot count after the corpus is authored and before 
 The calibration manifest must declare `purpose=calibration` and prohibit superiority, winner and confirmatory-comparison claims from those trials. Preserve arm-specific raw outcomes and paired observations for variance planning and audit; this restriction must not hide unfavorable data. The later planning method must acknowledge uncertainty in pilot variance estimates.
 
 
-Golden binding: the stamped manifest must commit to exact tokenizer-lock and token-golden file hashes and byte lengths. Publish those exact files with the manifest and completed proof. A manifest commitment covers its referenced golden hashes; individual separate stamps are optional, not required. A changed golden requires a new manifest and attestation, never an in-place replacement. Goldens remain ungenerated while tokenizer execution is blocked.
+Fixture binding: the confirmatory manifest commits to exact scoring-relevant artifact hashes and byte lengths, including byte fixtures. Bind tokenizer locks only when optional token telemetry is used. Changed scoring-relevant bytes require a new manifest and proof.
