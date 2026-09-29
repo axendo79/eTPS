@@ -14,7 +14,7 @@ from etps_v02.runner import implementation, replay_slot
 from etps_v02.scorer import InvalidRecord, union_length, validate
 from etps_v02.workload import decode, encode, raw_response, script_responses, validate_bundle
 from test_v02_runner import bundle, response
-from test_v02_scorer import fixture, user
+from test_v02_scorer import fixture, user, probe
 
 
 class HardeningTests(unittest.TestCase):
@@ -223,3 +223,23 @@ class HardeningTests(unittest.TestCase):
             pairing = checked["arm_pairing"][task]
             self.assertFalse(pairing["equal_planned_counts"])
             self.assertEqual(pairing["arms"][missing], {"planned": 0, "finished": 0, "rr_available": 0})
+
+    def test_v06_bypass_is_a_finding_not_an_admission_rejection(self):
+        m = fixture()
+        m["nodes"]["intro"]["next"] = "choice"
+        m["nodes"]["choice"] = probe({"choice": "normal"}, "p1", "recover")
+        findings = validate(m)
+        self.assertEqual(findings, [{"code": "recovery_failure_not_dominating",
+                                    "node": "recover", "failure": "p1"}])
+        store = self.create(manifest=m, slots=1,
+                            responses=[response(b'{"choice":"normal"}'), response(b'{}'), response()])
+        trial = run_offline(store, "slot-0")
+        self.assertTrue(trial["score"]["measurement_valid"])
+        self.assertEqual(trial["score"]["R"], 15)
+        self.assertIn("authoring_findings: recovery_failure_not_dominating", trial["warnings"])
+
+    def test_v06_dominating_probe_and_unreachable_bypass_have_no_finding(self):
+        m = fixture()
+        self.assertEqual(validate(m), [])
+        m["nodes"]["unused"] = user("", "recover")
+        self.assertEqual(validate(m), [])

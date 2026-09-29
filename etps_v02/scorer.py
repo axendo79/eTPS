@@ -214,11 +214,12 @@ def validate(manifest, *, authoring=True):
                 stack.extend((target, False) for target in targets)
     # Compute only reachability that recovery checks actually need. Do not keep
     # an all-pairs descendant matrix (quadratic even for a recovery-free chain).
-    def reachable(source, targets):
-        found, seen, pending = set(), set(), list(edges[source])
+    def reachable(source, targets, *, blocked=None, include_source=False):
+        found, seen = set(), set()
+        pending = [source] if include_source else list(edges[source])
         while pending and found != targets:
             current = pending.pop()
-            if current in seen:
+            if current in seen or current == blocked:
                 continue
             seen.add(current)
             if current in targets:
@@ -246,6 +247,11 @@ def validate(manifest, *, authoring=True):
                     findings.append({"code": "recovery_obligation_not_tested", "node": key,
                                      "failure": failure, "obligation": oid})
                 grants.setdefault((failure, oid), []).append(key)
+    # Diagnostic only: removing the failure probe reveals any route from start
+    # that bypasses it. Runtime still requires an observed eligible failure.
+    for failure, targets in recovery_targets.items():
+        for key in sorted(reachable(manifest["start"], targets, blocked=failure, include_source=True)):
+            findings.append({"code": "recovery_failure_not_dominating", "node": key, "failure": failure})
     for (failure, oid), users in grants.items():
         linked = {left: reachable(left, set(users) - {left}) for left in users}
         for i, left in enumerate(users):
