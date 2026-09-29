@@ -94,8 +94,11 @@ def validate(manifest, *, authoring=True):
     findings = []
     if authoring:
         limits.check_value_depth(manifest)
-    declared_fields(manifest, {"unit", "nodes", "obligations", "start"},
+    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema"},
                     "manifest", authoring, findings)
+    if "answer_schema" in manifest:
+        require(manifest["answer_schema"] == "typed-v1", "unsupported answer_schema")
+    answer_schema = manifest.get("answer_schema")
     require(isinstance(manifest["unit"], str) and manifest["unit"] in {UNIT, LEGACY_UNIT},
             "manifest.unit: unsupported accounting unit")
     nodes = mapping(manifest["nodes"], "manifest.nodes")
@@ -155,15 +158,15 @@ def validate(manifest, *, authoring=True):
                 require("unknown_answers" in node, "probe must declare unknown_answers (possibly empty)")
             mapping(node["next"], path + ".next")
             require(set(node["next"]) == OUTCOMES, "incomplete outcome policy")
-            require(isinstance(node["expected"], dict) and
-                    all(isinstance(k, str) and isinstance(v, str)
-                        for k, v in node["expected"].items()), "answers require string fields")
+            require(answer_object(node["expected"], answer_schema),
+                    "answers require typed-v1 fields" if answer_schema else "answers require string fields")
             if "unknown_answers" in node:
                 answers = node["unknown_answers"]
-                require(isinstance(answers, list) and all(isinstance(a, dict) and
-                        all(isinstance(k, str) and isinstance(v, str) for k, v in a.items())
-                        for a in answers), "unknown_answers must declare exact string-field objects")
-                require(node["expected"] not in answers, "correct/unknown declarations overlap")
+                require(isinstance(answers, list) and all(answer_object(a, answer_schema)
+                        for a in answers), "unknown_answers must declare exact typed-v1 objects"
+                        if answer_schema else "unknown_answers must declare exact string-field objects")
+                require(not any(answer_equal(node["expected"], a) for a in answers),
+                        "correct/unknown declarations overlap")
                 require(len({digest(a) for a in answers}) == len(answers), "duplicate unknown answer")
             tested = node.get("obligations", [])
             require(isinstance(tested, list) and all(isinstance(o, str) for o in tested),
@@ -295,19 +298,32 @@ def is_active(obligation, seen, index):
     return begin is not None and begin <= index and (end is None or index < end)
 
 
-def classify(event, expected, unknown_answers=()):
+def answer_object(answer, answer_schema=None):
+    """Typed values exclude bool explicitly; bool is a Python int subclass."""
+    return isinstance(answer, dict) and all(
+        isinstance(k, str) and (type(v) in (str, int, type(None))
+                               if answer_schema == "typed-v1" else isinstance(v, str))
+        for k, v in answer.items())
+
+
+def answer_equal(left, right):
+    """Flat equality without Python's bool/int or int/float coercions."""
+    return (isinstance(left, dict) and isinstance(right, dict) and left.keys() == right.keys()
+            and all(type(left[k]) is type(right[k]) and left[k] == right[k] for k in left))
+
+
+def classify(event, expected, unknown_answers=(), answer_schema=None):
     mapping(event, "event", ("status",))
     require(isinstance(event["status"], str) and event["status"] in {"ok", "timeout"},
             "event.status: unknown transport status")
     if event["status"] == "timeout":
         return "timeout"
     answer = event.get("answer")
-    if not isinstance(answer, dict) or not all(isinstance(k, str) and isinstance(v, str)
-                                               for k, v in answer.items()):
+    if not answer_object(answer, answer_schema):
         return "malformed"
-    if answer == expected:
+    if answer_equal(answer, expected):
         return "correct"
-    if answer in unknown_answers:
+    if any(answer_equal(answer, unknown) for unknown in unknown_answers):
         return "unknown"
     return "incorrect"
 
@@ -389,7 +405,8 @@ def score(manifest, record):
             current = node["next"]
         elif kind == "probe":
             attempts += 1
-            outcome = classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS))
+            outcome = classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS),
+                               manifest.get("answer_schema"))
             active = set()
             for oid in node.get("obligations", []):
                 obligation = manifest["obligations"][oid]

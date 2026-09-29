@@ -69,3 +69,25 @@ Local verification used Windows Python 3.14.2: all 118 tests passed, including t
 The user separately authorized V08 as an opt-in export format on one local branch, preserving default v1 output and all existing test files. Codex (Astra) authored the runner/CLI changes, `tests/test_v02_export_v2.py`, runner documentation, these appended provenance/status sections and the new V08 handoff. The historical audit, CORPUS_INTAKE and earlier handoffs remain unchanged. The requested Claude Opus 5.5 co-author trailer does not change this implementation authorship record.
 
 Local Windows Python 3.14.2 verification passes all 134 tests (118 existing plus 16 new), including v1 serialization/warning compatibility, opt-in head/envelope binding, coherent-rewrite acceptance, snapshot consistency and CLI behavior. The unchanged default-v1 audit retains every behavioral row; its syntax count increases only because of the new test file. Completeness binding is accident/truncation detection, not signing, attestation, proof of execution or corpus validation. Cross-slot chronology stays deferred because the schema has no global sequence. No model runs, dependency installs, legacy repairs or corpus work were performed. Work stops for Claude's check; Claude will push and open the PR after review. No push or PR was performed by Codex.
+
+## Typed-answer authorization and authorship (2026-09-29)
+
+The user authorized a local typed-answer extension and separate private mapping,
+with no model runs, pushes or legacy v0.1 changes. Codex (Astra) authored the
+opt-in schema, projection/comparison/replay changes, ten new synthetic tests and
+these documentation updates. All 134 existing tests remain unchanged; 144 tests
+pass on Windows Python 3.14. The requested co-author trailer credits Claude
+Opus 5.5; implementation authorship remains Codex (Astra).
+
+User mapping decisions D1-D3 select no unknown/refusal forms (unknown unreachable),
+bare retries without repeated questions, and current incorrect/malformed rules
+with transport failure on the timeout path, distinct from storage/controller
+invalidations. D5-D7 authorize hashed metadata or hash-bound sidecars for recap
+markers, new-content offsets and author affiliation, stored but not enforced.
+These decisions do not edit original source material or endorse semantic validity.
+No corpus text, payload, answer key or corpus artifact hash is included here.
+Per-field routing and D4 broader state semantics, D8 review/exposure, D9
+arms/budgets/counts and D10 acceptance/reference rules remain deferred.
+Boolean responses follow the explicit out-of-schema rule (malformed), never
+integer equality. Private derived fixtures are not model results. Claude reviews
+before any push; no push or PR was performed by Codex.

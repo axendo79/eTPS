@@ -1,5 +1,31 @@
 # Offline runner and replay store
 
+## Opt-in typed answers (2026-09-29)
+
+The descriptions of string-field projection below remain the default. A task
+manifest may opt in with top-level `"answer_schema": "typed-v1"`. Expected and
+unknown-answer objects, and projected responses, then allow flat string-keyed
+objects with string, integer or null values. Booleans, floats, containers and
+other shapes are malformed; integers and their string spellings are distinct.
+Equality compares each field's type and value. Missing/extra fields or a wrong
+valid value are incorrect. Unknown schema names and invalid expected/unknown
+declarations are rejected. With `unknown_answers: []`, unknown is unreachable;
+an undeclared unknown/refusal object is incorrect if schema-valid, otherwise
+malformed. Timeout takes precedence over answer classification.
+
+Projection and replay derive the schema from the immutable, hash-bound task
+manifest. Journal layout is unchanged; absent opt-in retains string-only
+projection and historical replay compatibility. Typed journals require exact
+projection agreement, including types. Implementation identity warnings still
+identify changed source files when replaying older evidence.
+
+The authorized mapping policy uses bare retries: a recovery user message is
+followed by a probe, without redelivering the question. Recap markers,
+new-content annotations, state descriptions and affiliation disclosures may be
+hashed task/node metadata or hash-bound sidecars; these are stored, not enforced.
+Strict plans and scripts still reject extra metadata fields. Per-field failure
+routing, broader state semantics and experimental design remain deferred.
+
 This is verification infrastructure for the finite byte schema, **not a model runner or the unpublished workload**. Only `purpose=offline-verification` is accepted. There are no network clients, model loaders, credentials or live adapters. A schema adapter for the original workload cannot be verified until those files are supplied.
 
 ## Inputs
