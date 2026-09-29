@@ -296,8 +296,27 @@ def json_default(value):
     raise TypeError(type(value).__name__)
 
 
-def export_bundle(store):
+def export_bundle(store, format="v1"):
     """Lossless input/journal export plus derived observations, not a public release."""
+    require(format in ("v1", "v2"), "unsupported export format")
+    if format == "v2":
+        # One read snapshot binds heads, journals and report even if another
+        # connection appends. A savepoint preserves any caller-owned transaction.
+        store.db.execute("SAVEPOINT export_v2")
+        try:
+            heads = {row["slot"]: {"count": row["count"], "hash": row["hash"], "state": row["state"]}
+                     for row in store.db.execute("SELECT slot,count,hash,state FROM heads")}
+            slot_order = [slot["id"] for slot in store.plan["slots"]]
+            require(set(heads) == set(slot_order), "export head slot integrity failure")
+            exported = export_bundle(store)  # Keep the v1 body and its report unchanged.
+            exported["format"] = "etps-offline-export-v2"
+            exported["envelope"] = {
+                "slot_order": slot_order, "heads": heads,
+                "envelope_sha256": sha(encode([store.plan_hash, slot_order, heads])),
+            }
+            return exported
+        finally:
+            store.db.execute("RELEASE SAVEPOINT export_v2")
     return {"format": "etps-offline-export-v1", "plan_sha256": store.plan_hash,
             "plan_base64": base64.b64encode(store.plan_raw).decode("ascii"),
             "artifacts": {key: base64.b64encode(raw).decode("ascii") for key, raw in store.artifacts.items()},
@@ -315,6 +334,8 @@ def replay_export(bundle, *, validate_authoring=False):
             state = "unattempted"
             entries = bundle["journal"][slot]
             require(isinstance(entries, list), f"export.journal.{slot}: expected list")
+            if bound:
+                require(len(entries) == heads[slot]["count"], "export journal head count integrity failure")
             for i, entry in enumerate(entries):
                 mapping(entry, f"export.journal.{slot}[{i}]", ("kind", "payload", "sha256"))
                 kind = entry["kind"]
@@ -327,12 +348,17 @@ def replay_export(bundle, *, validate_authoring=False):
                         "invalid export lifecycle")
                 state = {"start": "running", "finish": "finished", "abort": "aborted"}.get(kind, state)
                 previous = expected
+            if bound:
+                require(previous == heads[slot]["hash"], "export journal head hash integrity failure")
+                require(state == heads[slot]["state"], "export journal head state integrity failure")
             return entries
 
         def manifest(self, slot):
             return decode(self.artifacts[self.plan["tasks"][self.slots[slot]["task"]]], admission=False)
 
-    require(bundle["format"] == "etps-offline-export-v1", "unsupported export format")
+    require(bundle["format"] in ("etps-offline-export-v1", "etps-offline-export-v2"),
+            "unsupported export format")
+    bound = bundle["format"] == "etps-offline-export-v2"
     view = ExportView()
     view.plan_raw = raw_response(bundle["plan_base64"], "export.plan_base64", admission=False)
     view.plan_hash = sha(view.plan_raw)
@@ -343,6 +369,27 @@ def replay_export(bundle, *, validate_authoring=False):
                                 authoring=validate_authoring)
     view.slots = {s["id"]: s for s in view.plan["slots"]}
     require(set(bundle["journal"]) == set(view.slots), "export omitted planned slots")
+    if bound:
+        envelope = mapping(bundle.get("envelope"), "export.envelope",
+                           ("slot_order", "heads", "envelope_sha256"))
+        require(set(envelope) == {"slot_order", "heads", "envelope_sha256"},
+                "export envelope fields integrity failure")
+        slot_order = envelope["slot_order"]
+        require(isinstance(slot_order, list) and slot_order == list(view.slots),
+                "export slot order integrity failure")
+        heads = mapping(envelope["heads"], "export.envelope.heads")
+        require(set(heads) == set(slot_order), "export head slot integrity failure")
+        for slot, head in heads.items():
+            mapping(head, "export.envelope.heads." + slot, ("count", "hash", "state"))
+            require(set(head) == {"count", "hash", "state"} and
+                    type(head["count"]) is int and head["count"] >= 0 and
+                    isinstance(head["hash"], str) and len(head["hash"]) == 64 and
+                    all(c in "0123456789abcdef" for c in head["hash"]) and
+                    head["state"] in ("unattempted", "running", "finished", "aborted"),
+                    "export head shape integrity failure")
+        require(envelope["envelope_sha256"] == sha(encode([view.plan_hash, slot_order, heads])),
+                "export envelope hash integrity failure")
     result = report(view)
     result["authoring_gate_reasserted"] = validate_authoring
+    result["export_completeness_bound"] = bound
     return result

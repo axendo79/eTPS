@@ -44,6 +44,7 @@ python -m etps_v02 import offline.db --plan plan.json --artifact task.json --art
 python -m etps_v02 run offline.db --slot trial-1-baseline
 python -m etps_v02 report offline.db
 python -m etps_v02 export offline.db --output evidence.json
+python -m etps_v02 export offline.db --output evidence-v2.json --format v2
 python -m etps_v02 replay-export evidence.json
 python -m etps_v02 replay-export evidence.json --validate-authoring
 python -m etps_v02 abort offline.db --slot interrupted-slot --code interrupted --reason "Interrupted offline execution"
@@ -100,6 +101,8 @@ R is counted by sorting and merging half-open intervals, without expanding byte-
 
 Start records include a name-sorted SHA-256 map for every `etps_v02/*.py` module, Python version and `sqlite3.sqlite_version`. Only source CRLF line endings are normalized to LF before hashing; artifact and evidence byte hashes remain exact. The historical scorer/runner keys remain available for old clients. Replay compares recorded keys only. Missing identity fields or missing current module names produce `legacy_implementation_identity: partial`; absent fields are not invented as mismatches. Changed recorded modules are listed by filename in `implementation.changed` and the `implementation_mismatch` warning. Runtime-version changes are also named. Mismatches warn and recompute rather than rejecting otherwise intact old evidence.
 
+Since V09, the legacy keys `scorer_sha256`/`runner_sha256` hold LF-normalized hashes, so older Windows journals may report a mismatch for unchanged source.
+
 ## Slot accounting and diagnostic pairing (V10)
 
 `comparison_incomplete` means **slot accounting only**: at least one planned slot lacks valid, available RR. Its additive inverse is `slot_accounting_complete`. Neither field verifies experimental comparability. A finished measured failure may have available RR and remains counted; an aborted, unfinished or unavailable slot remains visible.
@@ -110,6 +113,14 @@ Start records include a name-sorted SHA-256 map for every `etps_v02/*.py` module
 
 The optional V06 check emits `recovery_failure_not_dominating` when a path from the manifest start can reach a recovery node while bypassing its linked failure probe. It is a finding and replay warning, not a new rejection. Existing ancestry/tested-obligation rejection and actual observed-failure scoring remain unchanged; merely passing through a probe does not prove it failed or that an obligation was active.
 
-V08 was stopped because the unchanged existing tests require rehashed or truncated freshly produced exports to remain replayable for semantic checks. No V08 implementation was retained. Exports remain `etps-offline-export-v1`; completeness is not bound, and an emptied journal can still appear unattempted. A future v2 envelope requires review of those test contracts. Global cross-slot chronology is deferred: the existing schema has per-slot sequence numbers and planned ordinals, not a persisted global event sequence. No database migration was made.
+## Opt-in export completeness (V08)
 
-A coherent rewrite of the whole export defeats editable hash checks. Hash links and any future unsigned envelope provide accident/truncation detection, not attestation or proof of execution. See the [hardening handoff](../V02_HARDENING_2026-09-29.md) for the exact stopped tests and verification record.
+The earlier default-v2 attempt was stopped as recorded in the [historical hardening handoff](../V02_HARDENING_2026-09-29.md). V2 is now opt-in: call `export_bundle(store, format="v2")` or use `export DB --output FILE --format v2`. Omitting the option, or selecting `v1`, retains the existing v1 export layout and serialization. Unsupported API formats raise `InvalidRecord`; invalid CLI choices and replay integrity errors retain concise `error:` output and exit status 2.
+
+`etps-offline-export-v2` includes all v1 fields plus an `envelope` with `slot_order` (planned IDs in plan order), `heads` (each database head's `count`, `hash`, and `state`), and `envelope_sha256`. The digest is SHA-256 of the canonical encoding of `[plan_sha256, slot_order, heads]`. Heads, journals and the report are read in one SQLite snapshot, preserving a caller-owned transaction. There is no schema migration.
+
+V2 replay verifies the envelope digest, exact planned order, exact journal/head slot membership, journal lengths, final hashes (the plan/slot seed for empty journals), and lifecycle end states, alongside the existing chain and semantic checks. An inconsistency raises `InvalidRecord`; it is not downgraded to an unattempted slot or a warning. Thus accidentally emptying a completed journal is rejected in v2, while unchanged v1 behavior still reports that slot as unattempted.
+
+Replay adds `export_completeness_bound: true` for verified v2 and `false` for v1. No new v1 warning is added. This flag means the supplied envelope matches the supplied evidence; it does not mean every slot finished or has available RR. Running, aborted and unattempted slots remain exportable and visible.
+
+A coherent rewrite of the whole export, including journals, heads and envelope, defeats these checks. This is accident/truncation detection, with no signing or attestation and no proof of execution. Global cross-slot chronology remains deferred: the schema has per-slot sequence numbers and planned ordinals, but no global event sequence. See the [V08 opt-in handoff](../V08_EXPORT_V2_2026-09-29.md) for tests and the erased-attempt comparison.
