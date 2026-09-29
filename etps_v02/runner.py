@@ -80,8 +80,8 @@ def run_offline(store, slot):
                          "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
                 store.append(slot, "event", event)
                 messages.append({"role": "assistant", "raw_base64": response["raw_base64"]})
-                current = node["next"][classify(event, node["expected"], node["unknown_answers"],
-                                               manifest.get("answer_schema"))]
+                outcome = classify(event, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
+                current, _ = scorer.route(manifest, node, event, outcome)
         if index != len(responses):
             raise OfflineFailure("script_leftover", "unused scripted responses: authoring count error")
         result = replay_slot(store, slot, allow_running=True)

@@ -91,3 +91,13 @@ arms/budgets/counts and D10 acceptance/reference rules remain deferred.
 Boolean responses follow the explicit out-of-schema rule (malformed), never
 integer equality. Private derived fixtures are not model results. Claude reviews
 before any push; no push or PR was performed by Codex.
+
+## Field-routing authorization (2026-09-29)
+
+The user authorized a separate local field-routing branch and private synthetic
+mapping, with no push or model execution. Codex (Astra) authored the opt-in
+implementation, eight new regressions and documentation. Validation passes
+152 tests, retaining the original 144 unchanged. Field-level recovery remains
+linked to one originating probe; multi-probe failure linkage is not implemented.
+Private artifacts and mapping results stay outside the public repository.
+These checks establish software behavior, not corpus validity or independence.
