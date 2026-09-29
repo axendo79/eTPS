@@ -216,3 +216,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local databases, evidence exports, private corpus/workloads, and environment secrets
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+evidence/
+private/
+corpus-private/
+.env
+.env.*
+!.env.example
