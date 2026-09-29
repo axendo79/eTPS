@@ -9,6 +9,7 @@
 - [PROVENANCE](v0.2/PROVENANCE.md): authorship, authorization and explicit superseding decisions.
 - [Engineering/security audit, 2026-09-29](ENGINEERING_SECURITY_AUDIT_2026-09-29.md): preserved findings at the audited revision, not a claim that all findings remain open.
 - [Correctness repair handoff](V02_CORRECTNESS_REPAIR_2026-09-29.md): scope and evidence for the earlier bounded repairs. Later dated status/provenance sections record subsequent work.
+- [Hardening handoff](V02_HARDENING_2026-09-29.md): resource, identity, reporting and documentation changes, with the stopped V08 conflict and current test/probe output.
 - [Legacy v0.1 status](V0.1_STATUS.md): isolation and non-maintenance policy; not operative v0.2 measurement rules.
 
 ## Historical or superseded in part
