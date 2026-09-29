@@ -133,7 +133,7 @@ None of these has a value in any repo document. They must be frozen before calib
 
 ## 5. Intake procedure when the files arrive
 
-1. Place originals outside the git working tree (for example a sibling private folder). `.gitignore` currently has no corpus rule, and PROVENANCE excludes corpus publication. No commit or push without explicit instruction.
+1. Place originals outside the git working tree (for example a sibling private folder). `private/` and `corpus-private/` are ignored by `.gitignore` but originals should still live outside the working tree, and PROVENANCE excludes corpus publication. No commit or push without explicit instruction.
 2. Record SHA-256 of every original file and the S2–S4 records before opening anything for mapping. Keep originals read-only.
 3. Fill section 1: mark each item present, absent in source, or ambiguous.
 4. Answer section 3 decisions with the user. Any decision that requires a schema change becomes a separately versioned change with tests, before import.
