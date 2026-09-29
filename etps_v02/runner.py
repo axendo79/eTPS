@@ -256,6 +256,20 @@ def report(store):
         metrics = summarize([t["score"] for t in grouped if t["score"] is not None], planned=len(grouped))
         summaries.append({"task": task, "arm": arm,
                           "task_artifact_sha256": store.plan["tasks"][task], **metrics})
+    arms = sorted({slot["arm"] for slot in store.plan["slots"]})
+    arm_pairing = {}
+    for task in store.plan["tasks"]:
+        by_arm = {}
+        for arm in arms:
+            grouped = groups.get((task, arm), [])
+            by_arm[arm] = {
+                "planned": len(grouped),
+                "finished": sum(t["state"] == "finished" for t in grouped),
+                "rr_available": sum(t["state"] == "finished" and t["score"]["measurement_valid"]
+                                    and t["score"]["RR"] is not None for t in grouped),
+            }
+        arm_pairing[task] = {"arms": by_arm,
+                             "equal_planned_counts": len({v["planned"] for v in by_arm.values()}) == 1}
     return {"purpose": "offline-verification", "plan_sha256": store.plan_hash,
             "summaries": summaries,
             "planned": len(trials), "attempted": attempted, **counts,
@@ -267,6 +281,12 @@ def report(store):
                                set(safety_warnings(store.plan_raw, store.artifacts))),
             "rr_unavailable_attempted": attempted - rr_available,
             "comparison_incomplete": rr_available != len(trials),
+            # This describes accounting availability, not experimental comparability.
+            "slot_accounting_complete": rr_available == len(trials),
+            "arm_pairing": arm_pairing,
+            "unverified_dimensions": ["schedule exposure equality across arms",
+                                      "mandatory assertions beyond terminal Boolean",
+                                      "budgets", "action constraints"],
             "trials": trials}
 
 

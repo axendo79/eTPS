@@ -179,3 +179,47 @@ class HardeningTests(unittest.TestCase):
                          ["persistence.py", "python_version", "workload.py"])
         self.assertTrue(result["score"]["measurement_valid"])
         self.assertTrue(any("workload.py" in w and "persistence.py" in w for w in result["warnings"]))
+
+    def test_v10_single_arm_slot_accounting_is_not_comparability(self):
+        store = self.create(slots=1, responses=[response()])
+        before = report(store)
+        self.assertFalse(before["slot_accounting_complete"])
+        run_offline(store, "slot-0")
+        checked = report(store)
+        self.assertTrue(checked["slot_accounting_complete"])
+        self.assertFalse(checked["comparison_incomplete"])
+        self.assertEqual(checked["arm_pairing"]["synthetic"], {
+            "arms": {"baseline": {"planned": 1, "finished": 1, "rr_available": 1}},
+            "equal_planned_counts": True})
+        self.assertEqual(checked["unverified_dimensions"], [
+            "schedule exposure equality across arms", "mandatory assertions beyond terminal Boolean",
+            "budgets", "action constraints"])
+
+    def test_v10_unbalanced_arms_and_failed_unavailable_trials_remain(self):
+        store = self.create(slots=3, responses=[response(b'{}'), response(b'{}')])
+        run_offline(store, "slot-0")
+        store.append("slot-1", "start", implementation())
+        store.abort("slot-1", "operator_abort")
+        checked = report(store)
+        self.assertEqual(checked["failed"], 1)
+        self.assertEqual(checked["aborted"], 1)
+        self.assertEqual(checked["unattempted"], 1)
+        self.assertEqual(len(checked["trials"]), 3)
+        self.assertFalse(checked["slot_accounting_complete"])
+        self.assertEqual(checked["arm_pairing"]["synthetic"], {
+            "arms": {"baseline": {"planned": 2, "finished": 1, "rr_available": 1},
+                     "memory": {"planned": 1, "finished": 0, "rr_available": 0}},
+            "equal_planned_counts": False})
+
+    def test_v10_missing_arm_for_task_is_explicit_zero(self):
+        plan_raw, artifacts = bundle(slots=2)
+        plan = decode(plan_raw)
+        plan["tasks"]["other"] = plan["tasks"]["synthetic"]
+        plan["slots"][1]["task"] = "other"
+        store = Store.create(Path(self.temp.name) / "pairing.db", encode(plan), artifacts)
+        self.addCleanup(store.close)
+        checked = report(store)
+        for task, missing in (("synthetic", "memory"), ("other", "baseline")):
+            pairing = checked["arm_pairing"][task]
+            self.assertFalse(pairing["equal_planned_counts"])
+            self.assertEqual(pairing["arms"][missing], {"planned": 0, "finished": 0, "rr_available": 0})
