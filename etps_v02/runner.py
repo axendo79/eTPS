@@ -1,5 +1,6 @@
 """Offline finite-branch runner. Executes supplied response fixtures, never models."""
 import base64
+import platform
 import sqlite3
 from fractions import Fraction
 from pathlib import Path
@@ -11,8 +12,14 @@ from .workload import safety_warnings
 
 
 def implementation():
-    return {"scorer_sha256": sha(Path(scorer.__file__).read_bytes()),
-            "runner_sha256": sha(Path(__file__).read_bytes())}
+    # Normalize source CRLF to LF, so identical source has the same identity on
+    # Windows and Unix. Evidence/artifact bytes are never normalized.
+    files = {path.name: sha(path.read_bytes().replace(b"\r\n", b"\n"))
+             for path in sorted(Path(__file__).parent.glob("*.py"), key=lambda p: p.name)}
+    return {"files_sha256": files, "python_version": platform.python_version(),
+            "sqlite_version": sqlite3.sqlite_version,
+            # Retain the old keys for partial start records and existing clients.
+            "scorer_sha256": files["scorer.py"], "runner_sha256": files["runner.py"]}
 
 
 def answer_from_raw(raw):
@@ -106,11 +113,25 @@ def replay_slot(store, slot, allow_running=False):
         return {"slot": slot, "state": "unattempted", "score": None, "reason": "unattempted",
                 "warnings": warnings, "authoring_findings": findings, "evidence_verified": None}
     mapping(entries[0]["payload"], "journal.start")
-    recorded = {k: entries[0]["payload"].get(k) for k in implementation()}
     current_implementation = implementation()
-    mismatches = [k for k, value in current_implementation.items() if recorded[k] != value]
+    start = entries[0]["payload"]
+    recorded = {k: start[k] for k in current_implementation if k in start}
+    mismatches = set()
+    partial = set(recorded) != set(current_implementation)
+    for key, value in recorded.items():
+        if key == "files_sha256":
+            mapping(value, "journal.start.files_sha256")
+            current_files = current_implementation[key]
+            partial |= bool(current_files.keys() - value.keys())
+            mismatches.update(name for name, digest in value.items() if current_files.get(name) != digest)
+        elif value != current_implementation[key]:
+            mismatches.add({"scorer_sha256": "scorer.py", "runner_sha256": "runner.py"}.get(key, key))
+    mismatches = sorted(mismatches)
+    if partial:
+        warnings.append("legacy_implementation_identity: partial")
     if mismatches:
-        warnings.append("implementation_mismatch: values recomputed with current code")
+        warnings.append("implementation_mismatch: " + ", ".join(mismatches) +
+                        "; values recomputed with current code")
     if store.plan["schema"] == "etps-offline-plan-v1":
         warnings.append("legacy_plan: positional boundaries/unit/policy may be unpinned")
     state = {"finish": "finished", "abort": "aborted"}.get(entries[-1]["kind"], "running")

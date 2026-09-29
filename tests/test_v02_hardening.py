@@ -10,6 +10,7 @@ from unittest.mock import patch
 from etps_v02 import limits
 from etps_v02.persistence import Store
 from etps_v02.runner import export_bundle, replay_export, report, run_offline
+from etps_v02.runner import implementation, replay_slot
 from etps_v02.scorer import InvalidRecord, union_length, validate
 from etps_v02.workload import decode, encode, raw_response, script_responses, validate_bundle
 from test_v02_runner import bundle, response
@@ -141,3 +142,40 @@ class HardeningTests(unittest.TestCase):
             self.assertEqual(len(reopened.entries("slot-0")), 2001)
         finally:
             reopened.close()
+
+    def test_v09_identity_covers_all_modules_and_normalizes_lf(self):
+        actual = implementation()
+        expected = sorted(p.name for p in Path("etps_v02").glob("*.py"))
+        self.assertEqual(list(actual["files_sha256"]), expected)
+        self.assertTrue(actual["python_version"])
+        self.assertTrue(actual["sqlite_version"])
+        original = Path.read_bytes
+        def crlf(path):
+            return original(path).replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        with patch.object(Path, "read_bytes", crlf):
+            self.assertEqual(implementation(), actual)
+
+    def test_v09_partial_identity_compares_only_present_keys(self):
+        store = self.create(slots=1)
+        old = {"scorer_sha256": implementation()["scorer_sha256"]}
+        with patch("etps_v02.runner.implementation", return_value=old):
+            run_offline(store, "slot-0")
+        result = replay_slot(store, "slot-0")
+        self.assertFalse(result["implementation_mismatch"])
+        self.assertEqual(result["implementation"]["recorded"], old)
+        self.assertIn("legacy_implementation_identity: partial", result["warnings"])
+        self.assertTrue(result["score"]["measurement_valid"])
+
+    def test_v09_changed_modules_and_runtime_are_named(self):
+        store = self.create(slots=1)
+        old = implementation()
+        old["files_sha256"]["workload.py"] = "changed"
+        old["files_sha256"]["persistence.py"] = "changed"
+        old["python_version"] = "old"
+        with patch("etps_v02.runner.implementation", return_value=old):
+            run_offline(store, "slot-0")
+        result = replay_slot(store, "slot-0")
+        self.assertEqual(result["implementation"]["changed"],
+                         ["persistence.py", "python_version", "workload.py"])
+        self.assertTrue(result["score"]["measurement_valid"])
+        self.assertTrue(any("workload.py" in w and "persistence.py" in w for w in result["warnings"]))
