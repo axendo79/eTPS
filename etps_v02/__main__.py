@@ -1,11 +1,13 @@
 """Offline-only CLI. No endpoint, API key, network client, or model loader."""
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from .persistence import Store
 from .runner import export_bundle, json_default, replay_export, report, run_offline
 from .workload import decode, sha
+from .scorer import InvalidRecord
 
 
 def main():
@@ -61,4 +63,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except InvalidRecord as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        sys.exit(2)

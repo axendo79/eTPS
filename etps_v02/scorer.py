@@ -21,8 +21,12 @@ class InvalidRecord(ValueError):
 
 def digest(manifest):
     """Identity for this prototype's canonical JSON manifest representation."""
-    return hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":"),
-                                    ensure_ascii=False, allow_nan=False).encode()).hexdigest()
+    try:
+        raw = json.dumps(manifest, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=False, allow_nan=False).encode()
+    except (TypeError, ValueError, UnicodeError, RecursionError, OverflowError) as exc:
+        raise InvalidRecord("manifest: invalid JSON value") from exc
+    return hashlib.sha256(raw).hexdigest()
 
 
 def require(condition, reason):
@@ -30,12 +34,32 @@ def require(condition, reason):
         raise InvalidRecord(reason)
 
 
+def mapping(value, path, required=()):
+    require(isinstance(value, dict), f"{path}: expected object")
+    require(all(isinstance(k, str) for k in value), f"{path}: keys must be strings")
+    missing = set(required) - value.keys()
+    require(not missing, f"{path}: missing fields {', '.join(sorted(missing))}")
+    return value
+
+
+def identity(value, path):
+    require(isinstance(value, str) and bool(value), f"{path}: expected nonempty string")
+    return value
+
+
+def telemetry(value, path):
+    mapping(value, path, ("tokens", "seconds"))
+    require(set(value) == {"tokens", "seconds"} and integer(value["tokens"])
+            and finite(value["seconds"], positive=True), f"{path}: invalid generation telemetry")
+
+
 def integer(value):
     return type(value) is int and value >= 0
 
 
 def finite(value, positive=False):
-    return (type(value) in (int, float) and math.isfinite(value)
+    # Python integers are finite without a conversion to bounded C doubles.
+    return (type(value) in (int, float) and (type(value) is int or math.isfinite(value))
             and (value > 0 if positive else value >= 0))
 
 
@@ -53,14 +77,42 @@ def boundaries(text):
     return raw, offsets
 
 
+def declared_fields(value, allowed, path, authoring, findings):
+    unknown = sorted(value.keys() - allowed - {"metadata"})
+    if unknown:
+        require(not authoring, f"{path}: unrecognized fields {', '.join(unknown)}")
+        findings.append({"code": "legacy_unrecognized_fields", "path": path, "fields": unknown})
+    if "metadata" in value and not isinstance(value["metadata"], dict):
+        require(not authoring, path + ".metadata: expected object")
+        findings.append({"code": "legacy_metadata_shape", "path": path + ".metadata"})
+
+
 def validate(manifest, *, authoring=True):
-    require(manifest.get("unit") in {UNIT, LEGACY_UNIT}, "unsupported accounting unit")
-    nodes = manifest["nodes"]
-    obligations = manifest["obligations"]
+    mapping(manifest, "manifest", ("unit", "nodes", "obligations", "start"))
+    findings = []
+    declared_fields(manifest, {"unit", "nodes", "obligations", "start"},
+                    "manifest", authoring, findings)
+    require(isinstance(manifest["unit"], str) and manifest["unit"] in {UNIT, LEGACY_UNIT},
+            "manifest.unit: unsupported accounting unit")
+    nodes = mapping(manifest["nodes"], "manifest.nodes")
+    obligations = mapping(manifest["obligations"], "manifest.obligations")
+    identity(manifest["start"], "manifest.start")
     require(manifest["start"] in nodes, "missing start")
+    for key, node in nodes.items():
+        identity(key, "manifest.nodes key")
+        mapping(node, f"manifest.nodes.{key}", ("kind",))
+        require(isinstance(node["kind"], str) and
+                node["kind"] in {"user", "probe", "internal", "replay", "terminal"},
+                f"manifest.nodes.{key}.kind: unknown node kind")
     for oid, obligation in obligations.items():
+        identity(oid, "manifest.obligations key")
+        path = f"manifest.obligations.{oid}"
+        mapping(obligation, path, ("source",))
+        identity(obligation["source"], path + ".source")
         if "begin_after" in obligation:
             require(set(obligation) == {"source", "begin_after", "end_before"}, "invalid event interval fields")
+            identity(obligation["begin_after"], path + ".begin_after")
+            identity(obligation["end_before"], path + ".end_before")
             # Pilot restriction, not the general contract: checkpoint-delayed
             # starts need a separately reviewed applicability/controller model.
             require(obligation["begin_after"] == obligation["source"], "pilot begin must follow establishment")
@@ -69,19 +121,31 @@ def validate(manifest, *, authoring=True):
             require(obligation["end_before"] != obligation["source"], "expiration equals establishment")
         else:
             # Compatibility for old exports only; new offline plans reject positions.
+            mapping(obligation, path, ("begin", "end"))
             require(integer(obligation["begin"]) and integer(obligation["end"])
                     and obligation["begin"] < obligation["end"], "invalid obligation interval")
         require(obligation["source"] in nodes and
                 nodes[obligation["source"]]["kind"] == "user", "invalid source")
-    for node in nodes.values():
+    for key, node in nodes.items():
+        path = f"manifest.nodes.{key}"
         kind = node["kind"]
-        require(kind in {"user", "probe", "internal", "replay", "terminal"}, "unknown node kind")
+        allowed = {
+            "user": {"kind", "text", "sha256", "spans", "failure", "next"},
+            "probe": {"kind", "expected", "unknown_answers", "obligations", "next"},
+            "terminal": {"kind", "accepted"},
+            "internal": {"kind", "next"}, "replay": {"kind", "next"},
+        }[kind]
+        declared_fields(node, allowed, path, authoring, findings)
         if kind == "terminal":
+            mapping(node, path, ("accepted",))
             require(type(node["accepted"]) is bool, "terminal acceptance must be Boolean")
             continue
+        mapping(node, path, ("next",))
         if kind == "probe":
+            mapping(node, path, ("expected",))
             if authoring:
                 require("unknown_answers" in node, "probe must declare unknown_answers (possibly empty)")
+            mapping(node["next"], path + ".next")
             require(set(node["next"]) == OUTCOMES, "incomplete outcome policy")
             require(isinstance(node["expected"], dict) and
                     all(isinstance(k, str) and isinstance(v, str)
@@ -93,46 +157,69 @@ def validate(manifest, *, authoring=True):
                         for a in answers), "unknown_answers must declare exact string-field objects")
                 require(node["expected"] not in answers, "correct/unknown declarations overlap")
                 require(len({digest(a) for a in answers}) == len(answers), "duplicate unknown answer")
-            require(set(node.get("obligations", [])) <= obligations.keys(), "unknown probe obligation")
+            tested = node.get("obligations", [])
+            require(isinstance(tested, list) and all(isinstance(o, str) for o in tested),
+                    path + ".obligations: expected string list")
+            require(set(tested) <= obligations.keys(), "unknown probe obligation")
             targets = node["next"].values()
         else:
             targets = [node["next"]]
-        require(all(target in nodes for target in targets), "missing transition")
+        require(all(isinstance(target, str) and target in nodes for target in targets),
+                path + ".next: missing transition")
         if kind == "user":
+            mapping(node, path, ("text", "sha256"))
             raw, offsets = boundaries(node["text"])
             require(node["sha256"] == hashlib.sha256(raw).hexdigest(), "payload hash mismatch")
             require("spans" in node, "missing span annotation")
+            require(isinstance(node["spans"], list), path + ".spans: expected list")
             for span in node["spans"]:
+                require(isinstance(span, list) and len(span) == 3,
+                        path + ".spans: expected [begin, end, obligation]")
                 a, b, oid = span
                 require(integer(a) and integer(b) and a < b and a in offsets and b in offsets,
                         "span must use UTF-8 character boundaries")
-                require(oid in obligations, "unknown span obligation")
+                require(isinstance(oid, str) and oid in obligations, "unknown span obligation")
+            if "failure" in node:
+                identity(node["failure"], path + ".failure")
             if node["spans"]:
                 require(node.get("failure") in nodes and
                         nodes[node["failure"]]["kind"] == "probe", "missing recovery failure")
     # Finite unrolled branches bound retries. Reject cycles even in unused branches.
     done, visiting, descendants = set(), set(), {}
-    def visit(key):
-        require(key not in visiting, "cyclic policy; unroll bounded retries")
-        if key in done:
-            return
-        visiting.add(key)
-        descendants[key] = set()
-        node = nodes[key]
-        if node["kind"] != "terminal":
-            targets = node["next"].values() if node["kind"] == "probe" else [node["next"]]
-            for target in targets:
-                visit(target)
-                descendants[key].update({target} | descendants[target])
-        visiting.remove(key)
-        done.add(key)
     for key in nodes:
-        visit(key)
-    grants, findings = {}, []
+        stack = [(key, False)]
+        while stack:
+            current, expanded = stack.pop()
+            if current in done:
+                continue
+            node = nodes[current]
+            targets = (() if node["kind"] == "terminal" else
+                       tuple(node["next"].values()) if node["kind"] == "probe" else (node["next"],))
+            if expanded:
+                descendants[current] = set(targets)
+                for target in targets:
+                    descendants[current].update(descendants[target])
+                visiting.remove(current)
+                done.add(current)
+            else:
+                require(current not in visiting, "cyclic policy; unroll bounded retries")
+                visiting.add(current)
+                stack.append((current, True))
+                stack.extend((target, False) for target in targets)
+    grants = {}
     for key, node in nodes.items():
         if node["kind"] == "user":
             for oid in {span[2] for span in node["spans"]}:
-                grants.setdefault((node["failure"], oid), []).append(key)
+                failure = node["failure"]
+                if key not in descendants[failure]:
+                    require(not authoring, f"manifest.nodes.{key}.failure: probe is not a path-ancestor")
+                    findings.append({"code": "recovery_failure_not_ancestor", "node": key,
+                                     "failure": failure, "obligation": oid})
+                if oid not in nodes[failure].get("obligations", []):
+                    require(not authoring, f"manifest.nodes.{key}.spans: failure probe does not test {oid}")
+                    findings.append({"code": "recovery_obligation_not_tested", "node": key,
+                                     "failure": failure, "obligation": oid})
+                grants.setdefault((failure, oid), []).append(key)
     for (failure, oid), users in grants.items():
         for i, left in enumerate(users):
             for right in users[i + 1:]:
@@ -140,7 +227,9 @@ def validate(manifest, *, authoring=True):
                     findings.append({"code": "duplicate_recovery_authorization", "failure": failure,
                                      "obligation": oid, "nodes": [left, right]})
     if authoring:
-        require(not findings, "duplicate recovery authorization on a common path")
+        require(not any(f["code"] == "duplicate_recovery_authorization" for f in findings),
+                "duplicate recovery authorization on a common path")
+    digest(manifest)  # Reject unserializable/nonfinite/invalid-Unicode declarations.
     return findings
 
 
@@ -165,7 +254,9 @@ def is_active(obligation, seen, index):
 
 
 def classify(event, expected, unknown_answers=()):
-    require(event.get("status") in {"ok", "timeout"}, "unknown transport status")
+    mapping(event, "event", ("status",))
+    require(isinstance(event["status"], str) and event["status"] in {"ok", "timeout"},
+            "event.status: unknown transport status")
     if event["status"] == "timeout":
         return "timeout"
     answer = event.get("answer")
@@ -190,9 +281,19 @@ def score(manifest, record):
     # Replay old evidence even if its authoring pattern is now rejected. Runtime
     # consumption still prevents duplicate credit; findings remain visible.
     findings = validate(manifest, authoring=False)
+    mapping(record, "record", ("manifest_sha256", "events"))
     require(record.get("manifest_sha256") == digest(manifest), "manifest identity mismatch")
     events = record["events"]
     require(isinstance(events, list), "events must be a list")
+    for index, event in enumerate(events):
+        path = f"record.events[{index}]"
+        mapping(event, path, ("node", "kind"))
+        identity(event["node"], path + ".node")
+        identity(event["kind"], path + ".kind")
+        if event["kind"] == "user":
+            mapping(event, path, ("text",))
+        if event.get("generation") is not None:
+            telemetry(event["generation"], path + ".generation")
     raw_i = sum(len(boundaries(e["text"])[0]) for e in events if e.get("kind") == "user")
     wall = record.get("wall_seconds")
     require(wall is None or finite(wall), "invalid task wall time")
@@ -265,8 +366,7 @@ def score(manifest, record):
             if usage is None:
                 generation_available = False
             else:
-                require(integer(usage["tokens"]) and finite(usage["seconds"], positive=True),
-                        "invalid backend generation telemetry")
+                telemetry(usage, f"record.events[{index}].generation")
                 generation_tokens += usage["tokens"]
                 generation_seconds += Fraction(str(usage["seconds"]))
             current = node["next"][outcome]
@@ -293,6 +393,7 @@ def score(manifest, record):
             "resolved_obligations": resolved,
             "throughput_unavailable_reason": "offline_verification" if offline else None,
             "measurement_valid": valid, "reason": reason,
+            "terminal": current if valid else None,
             "I": raw_i, "R": r if valid else None, "RR": rr,
             "rr_unavailable_reason": reason or ("zero_input" if not raw_i else None),
             "accepted": accepted, "first_attempt": first,

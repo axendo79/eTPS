@@ -33,3 +33,13 @@ New offline plans use schema v2, pin `unit: utf8_bytes`, require stable event-ID
 The follow-up review found that failure grants persisted after recovery/correction. They are now discharged once per obligation; repeated grants on a common path fail authoring validation. Old evidence remains replayable with findings and corrected R counts. Reports now call the summary helper per task/arm, expose cost per accepted completion and pooled RR including failures, and retain unavailable reasons. New probes explicitly declare unknown-answer shapes; delayed obligation starts remain an explicit pilot limitation. The revised archive includes 77 passing synthetic tests.
 
 The final synthetic-infrastructure follow-up pins stale citations after a fresh failure and separates schema compatibility from replay context. A v2 export can reassert authoring checks with `replay-export --validate-authoring`. Further work is the absent corpus adapter, not expansion of synthetic infrastructure.
+
+## Corpus intake preparation (2026-09-29)
+
+The original workload is still absent, and its import remains blocked. [Corpus intake and gap review](v0.2/CORPUS_INTAKE.md) lists required source material, maps contract requirements to the executable schema, names decisions that need the original files, and registers unset budgets, calibration counts and acceptance values without assigning them. Documentation only; no code, fixtures, model runs, commits or pushes.
+
+## Authorized correctness repairs (2026-09-29)
+
+Codex (Astra) implemented the user-authorized local repairs for audit findings V01 through V06, with focused synthetic regression tests. Model bytes now journal safely before malformed branching; validation fails closed for malformed shapes; unknown manifest/node fields require a hashed, non-executable metadata namespace; recovery links require ancestor probes testing the referenced obligations; replay binds response sequences to pinned scripts and checks finish/abort claims. Invalid evidence stays visible with unavailable primary RR/acceptance and explicit warnings. See [runner behavior](v0.2/OFFLINE_RUNNER.md) and [repair handoff](V02_CORRECTNESS_REPAIR_2026-09-29.md).
+
+V07 is partially addressed by iterative graph traversal; resource bounds and descendant-set complexity remain open. V06 is fixed to the authorized path-ancestor and tested-obligation scope; all-path dominance is not claimed. V08-V10, legacy issues, and corpus integration remain deferred. The historical audit report is unchanged. The original corpus remains absent, and no budgets, calibration counts or acceptance criteria were invented. Local repairs only; no commits, pushes, network calls, dependency installs or model runs. Ready for Claude's review after the recorded checks.

@@ -1,0 +1,18 @@
+{"files": 18, "probe": "syntax", "result": "all parsed"}
+{"huge_integer_finite_check": "accepted", "overflow_is_infinite": true, "probe": "strict_decode"}
+{"missing_nodes": "InvalidRecord", "null_plan": "InvalidRecord", "probe": "schema_errors"}
+{"exception": "accepted", "probe": "deep_response"}
+{"probe": "ignored_manifest_policy", "validation": "InvalidRecord"}
+{"probe": "future_failure_reference", "replay_reason": "unlinked_recovery", "validation": "InvalidRecord"}
+{"probe": "finite_long_graph", "validation": "accepted"}
+{"accepted": 0, "comparison_incomplete": true, "evidence_verified": false, "execution": "InvalidRecord", "probe": "script_mismatch", "warnings": ["unverified_evidence: script_response_mismatch"]}
+{"accepted": 0, "probe": "finish_mismatch", "reason_code": "invented", "warnings": ["unverified_evidence: finish_reason_mismatch", "unverified_evidence: finish_terminal_mismatch"]}
+{"attempted": 0, "probe": "export_erased_attempt", "warnings": []}
+{"exception": "accepted", "final_kind": "finish", "probe": "exponent_overflow_runner", "probe_events": 2, "reason_code": null}
+{"exception": "accepted", "final_kind": "finish", "probe": "escaped_surrogate_runner", "probe_events": 2, "reason_code": null}
+{"exception": "accepted", "final_kind": "finish", "probe": "deep_response_runner", "probe_events": 2, "reason_code": null}
+{"duplicate_links": 2, "fabricated_score": 999.0, "other_user_hardware": "other user's CPU", "probe": "legacy_links"}
+{"exposed": true, "probe": "private_run_on_leaderboard"}
+{"continuity_factor": 0.5, "expected_context_items": 0, "is_single_turn": 1, "probe": "legacy_continuity_storage", "retained_context_items": 0}
+{"efficiency": 1.4, "etps": 70.0, "probe": "legacy_negative_waste", "raw": 50}
+{"cv": 0.0, "probe": "seit_invalid_window_and_variance", "stable": true, "window": -1}
