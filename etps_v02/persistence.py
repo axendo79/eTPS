@@ -2,7 +2,7 @@
 from pathlib import Path
 import sqlite3
 
-from .scorer import require
+from .scorer import identity, mapping, require
 from .workload import decode, encode, sha, validate_bundle
 
 APP_ID = 0x45545032
@@ -82,6 +82,7 @@ class Store:
         self.db.close()
 
     def entries(self, slot):
+        identity(slot, "slot")
         require(slot in self.slots, "unknown planned slot")
         previous = sha(encode([self.plan_hash, slot]))
         state = "unattempted"
@@ -104,7 +105,11 @@ class Store:
         return result
 
     def append(self, slot, kind, payload):
+        identity(slot, "slot")
+        identity(kind, "journal.kind")
+        mapping(payload, "journal.payload")
         if kind == "abort" and self.plan["schema"] == "etps-offline-plan-v2":
+            identity(payload.get("reason_code"), "journal.abort.reason_code")
             require(self.plan["invalidation_policy"].get(payload.get("reason_code")) == "invalidate",
                     "abort code must be predeclared invalidation")
         raw = encode(payload)  # Serialize before acquiring write lock or mutating.
@@ -128,12 +133,14 @@ class Store:
             self.db.execute("UPDATE heads SET count=?,hash=?,state=? WHERE slot=?", (seq + 1, value, state, slot))
 
     def abort(self, slot, code, detail=""):
-        from .workload import INVALIDATION_POLICY
-        policy = self.plan.get("invalidation_policy", INVALIDATION_POLICY)
+        from .workload import LEGACY_INVALIDATION_POLICY
+        policy = self.plan.get("invalidation_policy", LEGACY_INVALIDATION_POLICY)
+        identity(code, "journal.abort.reason_code")
         require(policy.get(code) == "invalidate", "abort code must be predeclared invalidation")
         self.append(slot, "abort", {"reason_code": code, "reason": detail})
 
     def manifest(self, slot):
+        identity(slot, "slot")
         require(slot in self.slots, "unknown planned slot")
         key = self.plan["tasks"][self.slots[slot]["task"]]
         return decode(self.artifacts[key])

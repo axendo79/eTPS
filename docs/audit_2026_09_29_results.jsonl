@@ -1,0 +1,18 @@
+{"files": 17, "probe": "syntax", "result": "all parsed"}
+{"huge_integer_finite_check": "OverflowError", "overflow_is_infinite": true, "probe": "strict_decode"}
+{"missing_nodes": "KeyError", "null_plan": "TypeError", "probe": "schema_errors"}
+{"exception": "accepted", "probe": "deep_response"}
+{"probe": "ignored_manifest_policy", "validation": "accepted"}
+{"probe": "future_failure_reference", "replay_reason": "unlinked_recovery", "validation": "accepted"}
+{"probe": "finite_long_graph", "validation": "RecursionError"}
+{"accepted": 1, "comparison_incomplete": false, "probe": "script_mismatch", "warnings": []}
+{"accepted": 1, "probe": "finish_mismatch", "reason_code": "invented", "warnings": []}
+{"attempted": 0, "probe": "export_erased_attempt", "warnings": []}
+{"exception": "ValueError", "final_kind": "abort", "probe": "exponent_overflow_runner", "probe_events": 0, "reason_code": "execution_error"}
+{"exception": "UnicodeEncodeError", "final_kind": "abort", "probe": "escaped_surrogate_runner", "probe_events": 0, "reason_code": "execution_error"}
+{"exception": "accepted", "final_kind": "finish", "probe": "deep_response_runner", "probe_events": 2, "reason_code": null}
+{"duplicate_links": 2, "fabricated_score": 999.0, "other_user_hardware": "other user's CPU", "probe": "legacy_links"}
+{"exposed": true, "probe": "private_run_on_leaderboard"}
+{"continuity_factor": 0.5, "expected_context_items": 0, "is_single_turn": 1, "probe": "legacy_continuity_storage", "retained_context_items": 0}
+{"efficiency": 1.4, "etps": 70.0, "probe": "legacy_negative_waste", "raw": 50}
+{"cv": 0.0, "probe": "seit_invalid_window_and_variance", "stable": true, "window": -1}
