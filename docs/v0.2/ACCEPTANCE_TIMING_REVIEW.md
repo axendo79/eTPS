@@ -1,3 +1,5 @@
+Superseded in part; see [INDEX](../INDEX.md).
+
 # eTPS v0.2 — acceptance and timing review
 
 Authorship/provenance: Codex authored this review and its 23 paper cases using the supplied feedback and cited documentation. Recommendations are model proposals except where an explicit user requirement or endorsement is recorded in [PROVENANCE](PROVENANCE.md). Source citations do not validate this contract or its case outcomes.
