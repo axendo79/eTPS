@@ -1,5 +1,6 @@
 """Offline finite-branch runner. Executes supplied response fixtures, never models."""
 import base64
+import platform
 import sqlite3
 from fractions import Fraction
 from pathlib import Path
@@ -7,11 +8,18 @@ from pathlib import Path
 from . import scorer
 from .scorer import InvalidRecord, classify, identity, mapping, require, score, summarize, validate
 from .workload import LEGACY_INVALIDATION_POLICY, decode, encode, raw_response, script_responses, sha, validate_bundle
+from .workload import safety_warnings
 
 
 def implementation():
-    return {"scorer_sha256": sha(Path(scorer.__file__).read_bytes()),
-            "runner_sha256": sha(Path(__file__).read_bytes())}
+    # Normalize source CRLF to LF, so identical source has the same identity on
+    # Windows and Unix. Evidence/artifact bytes are never normalized.
+    files = {path.name: sha(path.read_bytes().replace(b"\r\n", b"\n"))
+             for path in sorted(Path(__file__).parent.glob("*.py"), key=lambda p: p.name)}
+    return {"files_sha256": files, "python_version": platform.python_version(),
+            "sqlite_version": sqlite3.sqlite_version,
+            # Retain the old keys for partial start records and existing clients.
+            "scorer_sha256": files["scorer.py"], "runner_sha256": files["runner.py"]}
 
 
 def answer_from_raw(raw):
@@ -105,16 +113,30 @@ def replay_slot(store, slot, allow_running=False):
         return {"slot": slot, "state": "unattempted", "score": None, "reason": "unattempted",
                 "warnings": warnings, "authoring_findings": findings, "evidence_verified": None}
     mapping(entries[0]["payload"], "journal.start")
-    recorded = {k: entries[0]["payload"].get(k) for k in implementation()}
     current_implementation = implementation()
-    mismatches = [k for k, value in current_implementation.items() if recorded[k] != value]
+    start = entries[0]["payload"]
+    recorded = {k: start[k] for k in current_implementation if k in start}
+    mismatches = set()
+    partial = set(recorded) != set(current_implementation)
+    for key, value in recorded.items():
+        if key == "files_sha256":
+            mapping(value, "journal.start.files_sha256")
+            current_files = current_implementation[key]
+            partial |= bool(current_files.keys() - value.keys())
+            mismatches.update(name for name, digest in value.items() if current_files.get(name) != digest)
+        elif value != current_implementation[key]:
+            mismatches.add({"scorer_sha256": "scorer.py", "runner_sha256": "runner.py"}.get(key, key))
+    mismatches = sorted(mismatches)
+    if partial:
+        warnings.append("legacy_implementation_identity: partial")
     if mismatches:
-        warnings.append("implementation_mismatch: values recomputed with current code")
+        warnings.append("implementation_mismatch: " + ", ".join(mismatches) +
+                        "; values recomputed with current code")
     if store.plan["schema"] == "etps-offline-plan-v1":
         warnings.append("legacy_plan: positional boundaries/unit/policy may be unpinned")
     state = {"finish": "finished", "abort": "aborted"}.get(entries[-1]["kind"], "running")
     script_hash = store.slots[slot]["script_sha256"]
-    responses = script_responses(store.artifacts[script_hash])
+    responses = script_responses(store.artifacts[script_hash], admission=False)
     response_index, evidence_issues = 0, []
     events, messages, pending = [], [], None
     for entry in entries[1:]:
@@ -136,12 +158,12 @@ def replay_slot(store, slot, allow_running=False):
             elif event["kind"] == "probe":
                 mapping(event, "journal.event.probe", ("raw_base64", "answer", "status"))
                 require(pending == event["node"], "probe lacks matching request intent")
-                raw = raw_response(event["raw_base64"])
+                raw = raw_response(event["raw_base64"], admission=False)
                 projected = answer_from_raw(raw)
                 if event["answer"] != projected:
                     # Old journals stored arbitrary JSON shapes before malformed
                     # classification. Accept only an exact, serializable decode.
-                    legacy = decode(raw)
+                    legacy = decode(raw, admission=False)
                     require(projected is None and encode(event["answer"]) == encode(legacy),
                             "raw answer projection mismatch")
                     warnings.append("legacy_answer_projection: malformed JSON shape retained")
@@ -152,7 +174,7 @@ def replay_slot(store, slot, allow_running=False):
                     changed = []
                     if event["status"] != expected["status"]:
                         changed.append("status")
-                    if raw != raw_response(expected["raw_base64"]):
+                    if raw != raw_response(expected["raw_base64"], admission=False):
                         changed.append("raw_bytes")
                     if encode(event.get("generation")) != encode(expected.get("generation")):
                         changed.append("generation")
@@ -234,6 +256,20 @@ def report(store):
         metrics = summarize([t["score"] for t in grouped if t["score"] is not None], planned=len(grouped))
         summaries.append({"task": task, "arm": arm,
                           "task_artifact_sha256": store.plan["tasks"][task], **metrics})
+    arms = sorted({slot["arm"] for slot in store.plan["slots"]})
+    arm_pairing = {}
+    for task in store.plan["tasks"]:
+        by_arm = {}
+        for arm in arms:
+            grouped = groups.get((task, arm), [])
+            by_arm[arm] = {
+                "planned": len(grouped),
+                "finished": sum(t["state"] == "finished" for t in grouped),
+                "rr_available": sum(t["state"] == "finished" and t["score"]["measurement_valid"]
+                                    and t["score"]["RR"] is not None for t in grouped),
+            }
+        arm_pairing[task] = {"arms": by_arm,
+                             "equal_planned_counts": len({v["planned"] for v in by_arm.values()}) == 1}
     return {"purpose": "offline-verification", "plan_sha256": store.plan_hash,
             "summaries": summaries,
             "planned": len(trials), "attempted": attempted, **counts,
@@ -241,9 +277,16 @@ def report(store):
             "measurement_valid": sum(r["measurement_valid"] for r in finished), "rr_available": rr_available,
             "implementation_mismatch": any(t.get("implementation_mismatch") for t in trials),
             "evidence_unverified": sum(t.get("evidence_verified") is False for t in trials),
-            "warnings": sorted({w for t in trials for w in t.get("warnings", [])}),
+            "warnings": sorted({w for t in trials for w in t.get("warnings", [])} |
+                               set(safety_warnings(store.plan_raw, store.artifacts))),
             "rr_unavailable_attempted": attempted - rr_available,
             "comparison_incomplete": rr_available != len(trials),
+            # This describes accounting availability, not experimental comparability.
+            "slot_accounting_complete": rr_available == len(trials),
+            "arm_pairing": arm_pairing,
+            "unverified_dimensions": ["schedule exposure equality across arms",
+                                      "mandatory assertions beyond terminal Boolean",
+                                      "budgets", "action constraints"],
             "trials": trials}
 
 
@@ -287,14 +330,15 @@ def replay_export(bundle, *, validate_authoring=False):
             return entries
 
         def manifest(self, slot):
-            return decode(self.artifacts[self.plan["tasks"][self.slots[slot]["task"]]])
+            return decode(self.artifacts[self.plan["tasks"][self.slots[slot]["task"]]], admission=False)
 
     require(bundle["format"] == "etps-offline-export-v1", "unsupported export format")
     view = ExportView()
-    view.plan_raw = raw_response(bundle["plan_base64"], "export.plan_base64")
+    view.plan_raw = raw_response(bundle["plan_base64"], "export.plan_base64", admission=False)
     view.plan_hash = sha(view.plan_raw)
     require(view.plan_hash == bundle["plan_sha256"], "export plan hash mismatch")
-    view.artifacts = {k: raw_response(v, "export.artifacts." + k) for k, v in bundle["artifacts"].items()}
+    view.artifacts = {k: raw_response(v, "export.artifacts." + k, admission=False)
+                      for k, v in bundle["artifacts"].items()}
     view.plan = validate_bundle(view.plan_raw, view.artifacts, allow_legacy=True,
                                 authoring=validate_authoring)
     view.slots = {s["id"]: s for s in view.plan["slots"]}

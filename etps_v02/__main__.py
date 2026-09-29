@@ -8,6 +8,7 @@ from .persistence import Store
 from .runner import export_bundle, json_default, replay_export, report, run_offline
 from .workload import decode, sha
 from .scorer import InvalidRecord
+from .limits import read_file
 
 
 def main():
@@ -33,15 +34,16 @@ def main():
             command.add_argument("--output", required=True)
     args = parser.parse_args()
     if args.command == "replay-export":
-        result = replay_export(decode(Path(args.file).read_bytes()), validate_authoring=args.validate_authoring)
+        result = replay_export(decode(read_file(args.file, "MAX_EXPORT_BYTES")),
+                               validate_authoring=args.validate_authoring)
         print(json.dumps(result, default=json_default, ensure_ascii=False, indent=2))
         return
     if args.command == "import":
         artifacts = {}
         for name in args.artifact:
-            raw = Path(name).read_bytes()
+            raw = read_file(name, "MAX_ARTIFACT_BYTES")
             artifacts[sha(raw)] = raw
-        store = Store.create(args.database, Path(args.plan).read_bytes(), artifacts)
+        store = Store.create(args.database, read_file(args.plan, "MAX_PLAN_BYTES"), artifacts)
     else:
         store = Store(args.database)
     try:

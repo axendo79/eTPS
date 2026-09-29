@@ -67,10 +67,49 @@ Codex (Astra) authored these local repairs under explicit user authorization. Ar
 
 Storage failures use `storage_error`, while controller failures use `execution_error`. Existing plans with the old exact invalidation policy remain readable and executable; because their policy did not declare `storage_error`, they retain the historical `execution_error` fallback. If persistence cannot record an abort, the durable prefix remains available for explicit operator handling.
 
-Malformed manifest, plan, script, record and export shapes fail with `InvalidRecord`, with field paths where practical. Expected CLI validation errors print a concise `error:` message, exit nonzero and do not create a database during rejected import. Large finite Python integers no longer overflow the finiteness predicate. Graph validation uses an explicit stack instead of Python recursion; descendant sets still have potentially quadratic size.
+Malformed manifest, plan, script, record and export shapes fail with `InvalidRecord`, with field paths where practical. Expected CLI validation errors print a concise `error:` message, exit nonzero and do not create a database during rejected import. Large finite Python integers no longer overflow the finiteness predicate. Graph validation uses an explicit stack instead of Python recursion; the hardening below removes the all-node descendant sets.
 
 Newly authored manifests and nodes reject unknown fields. Both may include an object named `metadata` for arbitrary JSON annotations: it participates in the manifest hash but has no executable meaning. In particular, putting a budget in metadata does not enforce a budget. Replay with `authoring=False` retains old unknown fields with `legacy_unrecognized_fields` findings and warnings; explicit authoring revalidation rejects them. Recovery spans require a failure probe that can precede the recovery node along a graph path and tests each referenced obligation. Mutually exclusive legitimate recovery branches remain allowed. This ancestry check does not prove dominance on every path; runtime scoring still checks an actually observed, active failure.
 
 Replay compares each probe event against the slot's pinned response script in order, including transport status, decoded raw bytes and generation telemetry. Finished slots must consume the script exactly; unfinished or aborted slots may contain a valid prefix. Excess responses and completed leftovers are discrepancies. Finish metadata must name the terminal actually reached and use `reason_code: null` for acceptance or `system_terminal_failure` for rejection. Abort reasons must be declared invalidations. Legacy v1 finishes without a reason receive an explicit compatibility warning; contradictory reasons are never accepted.
 
 Discrepancies produce `unverified_evidence` warnings, `evidence_verified: false` and structured `evidence_issues`. The primary score is invalid with unavailable RR and acceptance; diagnostic `recomputed_score` is separate and does not enter accepted counts or complete-group metrics. Reports retain every slot and count `evidence_unverified`. Unattempted slots have `evidence_verified: null`. A true value means these local script and finish/abort consistency checks passed, not independent attestation, completed execution, or proof against wholesale evidence replacement. Source mismatches retain their separate warnings.
+
+## Resource safeguards (V07, 2026-09-29)
+
+The named constants in `etps_v02/limits.py` are **software safety limits, not benchmark budgets**. They do not set trial counts, timeouts, acceptance thresholds or calibration policy. They are generous relative to the valid admitted baseline fixtures (at least 100 times their corresponding maxima); deliberately malformed, deeply nested model-answer probes are not admitted manifest/plan structure.
+
+| Constant | Limit |
+| --- | --- |
+| `MAX_ARTIFACT_BYTES` | 256 MiB per artifact |
+| `MAX_PLAN_BYTES` | 64 MiB per plan |
+| `MAX_EXPORT_BYTES` | 1 GiB per export file read by the CLI |
+| `MAX_MANIFEST_NODES` | 250,000 nodes |
+| `MAX_PLAN_SLOTS` | 100,000 slots |
+| `MAX_SCRIPT_RESPONSES` | 100,000 responses per script |
+| `MAX_RESPONSE_BYTES` | 16 MiB per decoded response |
+| `MAX_JSON_NESTING_DEPTH` | 1,024 nested containers |
+
+New admission exceeding a limit raises `InvalidRecord` naming the constant. CLI input files are sized before reading, then read with a bound to catch growth after the size check. Structural JSON depth is scanned before full parsing, respecting quoted text and escapes. Base64 response size is checked before and after decoding. Node/slot/response counts are checked before semantic traversal. These ceilings do not guarantee that every combination fitting them is cheap; Python's JSON parser can also reject input at its own recursion boundary.
+
+Historical database and in-memory export replay bypasses new bundle admission ceilings and reports `legacy_safety_limit` warnings for exceeded limits; explicit authoring revalidation enforces them. The CLI's export-file read ceiling and outer JSON depth check remain safety boundaries even for old files. Old journal hashes and evidence bytes are never rewritten to fit new limits. Integrity failures still reject evidence. Deep or otherwise malformed raw response JSON remains a model-answer outcome, distinct from an unmatched user payload protocol deviation.
+
+R is counted by sorting and merging half-open intervals, without expanding byte-position sets. Validation retains the cycle check and computes reachability only for referenced recovery checks; it no longer stores every node's full descendants. Recovery-heavy graphs can still require repeated traversals. Append uses the database head and indexed tail within the same `BEGIN IMMEDIATE` transaction as the insert/head update. It no longer rereads the prefix. Full-chain verification remains on database open, replay and export, including detection of corrupted middle entries. Request records still duplicate conversation history; aggregate artifact/journal memory and dense-graph work are not universally bounded. The synthetic scaling regression uses 5,000 nodes and 2,000 appended events without a machine-dependent timing assertion.
+
+## Implementation identity (V09)
+
+Start records include a name-sorted SHA-256 map for every `etps_v02/*.py` module, Python version and `sqlite3.sqlite_version`. Only source CRLF line endings are normalized to LF before hashing; artifact and evidence byte hashes remain exact. The historical scorer/runner keys remain available for old clients. Replay compares recorded keys only. Missing identity fields or missing current module names produce `legacy_implementation_identity: partial`; absent fields are not invented as mismatches. Changed recorded modules are listed by filename in `implementation.changed` and the `implementation_mismatch` warning. Runtime-version changes are also named. Mismatches warn and recompute rather than rejecting otherwise intact old evidence.
+
+## Slot accounting and diagnostic pairing (V10)
+
+`comparison_incomplete` means **slot accounting only**: at least one planned slot lacks valid, available RR. Its additive inverse is `slot_accounting_complete`. Neither field verifies experimental comparability. A finished measured failure may have available RR and remains counted; an aborted, unfinished or unavailable slot remains visible.
+
+`arm_pairing` maps each declared task to every arm present anywhere in the plan, with `planned`, `finished` and `rr_available` counts, including zeros for an arm absent from that task. `equal_planned_counts` reports equality across those declared arms; a one-arm plan can satisfy it. It does not invent required arms, sample counts or thresholds. `unverified_dimensions` always lists schedule exposure equality across arms, mandatory assertions beyond terminal Boolean, budgets, and action constraints. There is no winner logic.
+
+## Recovery-path diagnostic and export boundary
+
+The optional V06 check emits `recovery_failure_not_dominating` when a path from the manifest start can reach a recovery node while bypassing its linked failure probe. It is a finding and replay warning, not a new rejection. Existing ancestry/tested-obligation rejection and actual observed-failure scoring remain unchanged; merely passing through a probe does not prove it failed or that an obligation was active.
+
+V08 was stopped because the unchanged existing tests require rehashed or truncated freshly produced exports to remain replayable for semantic checks. No V08 implementation was retained. Exports remain `etps-offline-export-v1`; completeness is not bound, and an emptied journal can still appear unattempted. A future v2 envelope requires review of those test contracts. Global cross-slot chronology is deferred: the existing schema has per-slot sequence numbers and planned ordinals, not a persisted global event sequence. No database migration was made.
+
+A coherent rewrite of the whole export defeats editable hash checks. Hash links and any future unsigned envelope provide accident/truncation detection, not attestation or proof of execution. See the [hardening handoff](../V02_HARDENING_2026-09-29.md) for the exact stopped tests and verification record.

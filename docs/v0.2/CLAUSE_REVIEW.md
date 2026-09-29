@@ -1,3 +1,5 @@
+Superseded in part; see [INDEX](../INDEX.md).
+
 # Closure review — draft 2 history and draft 3 boundary revision
 
 Draft 3 supersedes intersection-based attribution below: a recovery endpoint inside a token is invalid. Earlier case S09 must now reject such a designation rather than expand to the intersecting token. This is an explicit policy revision before tokenizer execution, not a claimed correction to prior measured scores.
