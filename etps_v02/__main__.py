@@ -32,6 +32,7 @@ def main():
             command.add_argument("--reason", default="")
         if name == "export":
             command.add_argument("--output", required=True)
+            command.add_argument("--format", choices=("v1", "v2"), default="v1")
     args = parser.parse_args()
     if args.command == "replay-export":
         result = replay_export(decode(read_file(args.file, "MAX_EXPORT_BYTES")),
@@ -53,7 +54,7 @@ def main():
             store.abort(args.slot, args.code, args.reason)
             result = report(store)
         elif args.command == "export":
-            result = export_bundle(store)
+            result = export_bundle(store, format=args.format)
             with Path(args.output).open("x", encoding="utf-8") as output:
                 json.dump(result, output, default=json_default, ensure_ascii=False, indent=2)
             result = {"output": args.output, "purpose": "offline-verification"}
