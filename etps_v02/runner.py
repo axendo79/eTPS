@@ -22,18 +22,19 @@ def implementation():
             "scorer_sha256": files["scorer.py"], "runner_sha256": files["runner.py"]}
 
 
-def answer_from_raw(raw):
+def answer_from_raw(raw, answer_schema=None):
     try:
         answer = decode(raw)
-        # The finite answer language is a flat string-field object. Do not let
+        # Default: string fields; typed-v1 also admits exact int/null values.
+        # Do not let
         # arbitrary decoded JSON (infinities, surrogates, deep containers) reach
         # journal serialization. Raw bytes remain on the response event.
-        if not isinstance(answer, dict) or not all(
-                isinstance(k, str) and isinstance(v, str) for k, v in answer.items()):
+        if not scorer.answer_object(answer, answer_schema):
             return None
         for key, value in answer.items():
             key.encode("utf-8")
-            value.encode("utf-8")
+            if isinstance(value, str):
+                value.encode("utf-8")
         return answer
     except (InvalidRecord, UnicodeError, RecursionError, OverflowError):
         return None  # Preserve bytes; malformed is a system outcome, not a protocol fix.
@@ -76,10 +77,11 @@ def run_offline(store, slot):
                 index += 1
                 raw = raw_response(response["raw_base64"])
                 event = {"node": current, "kind": "probe", **response,
-                         "answer": answer_from_raw(raw)}
+                         "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
                 store.append(slot, "event", event)
                 messages.append({"role": "assistant", "raw_base64": response["raw_base64"]})
-                current = node["next"][classify(event, node["expected"], node["unknown_answers"])]
+                current = node["next"][classify(event, node["expected"], node["unknown_answers"],
+                                               manifest.get("answer_schema"))]
         if index != len(responses):
             raise OfflineFailure("script_leftover", "unused scripted responses: authoring count error")
         result = replay_slot(store, slot, allow_running=True)
@@ -159,12 +161,17 @@ def replay_slot(store, slot, allow_running=False):
                 mapping(event, "journal.event.probe", ("raw_base64", "answer", "status"))
                 require(pending == event["node"], "probe lacks matching request intent")
                 raw = raw_response(event["raw_base64"], admission=False)
-                projected = answer_from_raw(raw)
-                if event["answer"] != projected:
+                # The immutable manifest artifact binds projection schema; no
+                # journal layout change or implicit upgrade of old answers.
+                projected = answer_from_raw(raw, manifest.get("answer_schema"))
+                same = (encode(event["answer"]) == encode(projected)
+                        if "answer_schema" in manifest else event["answer"] == projected)
+                if not same:
                     # Old journals stored arbitrary JSON shapes before malformed
                     # classification. Accept only an exact, serializable decode.
                     legacy = decode(raw, admission=False)
-                    require(projected is None and encode(event["answer"]) == encode(legacy),
+                    require("answer_schema" not in manifest and projected is None
+                            and encode(event["answer"]) == encode(legacy),
                             "raw answer projection mismatch")
                     warnings.append("legacy_answer_projection: malformed JSON shape retained")
                 if response_index >= len(responses):

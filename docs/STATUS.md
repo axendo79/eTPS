@@ -63,3 +63,24 @@ No model runs, corpus work, dependency installs, live adapters, legacy v0.1 repa
 The user authorized local branch `v02-export-v2` from `b1831ea`, with code/tests and documentation commits followed by a stop for Claude's check before any push. Codex (Astra) authored opt-in V08 completeness binding: v2 envelopes retain planned slot order and database head count/hash/state, captured with the journals in one read snapshot. Replay verifies the envelope, membership, lengths, hashes and lifecycle states. Default export remains v1 with unchanged serialization and warning behavior; replay adds `export_completeness_bound` for both formats. An erased completed journal remains unattempted in v1 but raises an integrity error in v2.
 
 All 118 existing tests remain unchanged and pass; 16 new tests in `tests/test_v02_export_v2.py` bring the local suite to 134 passing tests on Windows Python 3.14.2. The default-v1 audit's behavioral rows are unchanged; only its syntax inventory rises from 20 to 21 files. Coherent full rewrites still defeat editable hashes. Signing, attestation and global cross-slot chronology remain deferred; no schema migration, model run, dependency install, legacy repair or corpus work occurred. See the [V08 handoff](V08_EXPORT_V2_2026-09-29.md). No push or PR was performed; Claude's review is pending.
+
+## Authorized typed answers and private mapping policy (2026-09-29)
+
+The user authorized local branch `v02-typed-answers` and a local commit before
+Claude's review, plus separate private offline mapping. Codex (Astra) authored
+opt-in `typed-v1` flat string/integer/null answers, type-strict comparison and
+manifest-bound projection/replay. Default string-only behavior remains intact.
+All 134 existing tests pass unchanged; 10 new synthetic regressions bring the
+suite to 144 passing tests on Windows Python 3.14. No private payloads or answer
+keys are included in this repository change.
+
+User decisions D1-D3 select empty unknown/refusal declarations (unknown
+unreachable), bare retries, current incorrect/malformed classification and
+transport timeout paths distinct from storage/controller invalidations.
+D5-D7 permit hashed metadata or hash-bound sidecars for recap identification,
+new-content offsets and affiliation disclosure, stored but not enforced.
+Boolean values are malformed under the declared typed language, never equal to
+integers. Per-field routing is deferred, as are broader state semantics (D4),
+review/exposure declarations (D8), arms/budgets/counts (D9) and acceptance/reference
+rules (D10). No model run, dependency installation, legacy change or push is
+authorized by this delivery. Private mapping results remain outside the repo.

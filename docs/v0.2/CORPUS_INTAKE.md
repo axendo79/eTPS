@@ -62,7 +62,7 @@ Status key: **Supported** = expressible and checked by current code. **Restricte
 
 | Requirement | Executable form | Status | Note |
 |---|---|---|---|
-| Expected answer | `expected`: flat `{string: string}` | Restricted | One correct answer. No lists, nested values, sets, numbers or alternative correct answers. |
+| Expected answer | `expected`: flat object; string-only by default, or string/int/null values with manifest `answer_schema: "typed-v1"` | Restricted | Opt-in typed-v1 uses type-strict equality. One correct answer; no bools, floats, lists, nested values, sets or alternative correct answers. |
 | Response format | raw bytes parsed as strict JSON object | Restricted | Prose and fenced code blocks parse as **malformed**. Surrounding whitespace is tolerated. The original answer format must be a JSON object, or a response contract must be decided. |
 | Normalization (§5) | none | Missing | Exact equality only. Case, spacing and field-set differences fail. |
 | Extra claims | exact equality | Supported (strict) | Any extra field makes the answer `incorrect`, including compatible extras. |
