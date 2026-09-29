@@ -97,7 +97,7 @@ class Store:
                     (state == "running" and kind in {"request", "event", "finish", "abort"}),
                     "invalid journal lifecycle")
             state = {"start": "running", "finish": "finished", "abort": "aborted"}.get(kind, state)
-            result.append({"kind": kind, "payload": decode(payload), "sha256": expected})
+            result.append({"kind": kind, "payload": decode(payload, admission=False), "sha256": expected})
             previous = expected
         head = self.db.execute("SELECT * FROM heads WHERE slot=?", (slot,)).fetchone()
         require(head is not None and (head["count"], head["hash"], head["state"]) ==
@@ -106,6 +106,7 @@ class Store:
 
     def append(self, slot, kind, payload):
         identity(slot, "slot")
+        require(slot in self.slots, "unknown planned slot")
         identity(kind, "journal.kind")
         mapping(payload, "journal.payload")
         if kind == "abort" and self.plan["schema"] == "etps-offline-plan-v2":
@@ -115,10 +116,18 @@ class Store:
         raw = encode(payload)  # Serialize before acquiring write lock or mutating.
         with self.db:
             self.db.execute("BEGIN IMMEDIATE")
-            entries = self.entries(slot)
             head = self.db.execute("SELECT * FROM heads WHERE slot=?", (slot,)).fetchone()
+            require(head is not None, "missing slot head")
+            # The write lock binds this append to the stored count/hash. Check
+            # the indexed tail; full-prefix verification stays on open/replay/export.
+            tail = self.db.execute("SELECT seq,hash FROM journal WHERE slot=? ORDER BY seq DESC LIMIT 1",
+                                   (slot,)).fetchone()
+            require((tail is None and head["count"] == 0 and
+                     head["hash"] == sha(encode([self.plan_hash, slot])) and head["state"] == "unattempted") or
+                    (tail is not None and tail["seq"] + 1 == head["count"] and tail["hash"] == head["hash"]),
+                    "journal head mismatch")
             if kind == "start":
-                require(not entries, "slot already attempted; no implicit rerun")
+                require(head["count"] == 0, "slot already attempted; no implicit rerun")
                 ordinal = self.db.execute("SELECT ordinal FROM slots WHERE id=?", (slot,)).fetchone()[0]
                 prior = self.db.execute("SELECT h.state FROM heads h JOIN slots s ON h.slot=s.id WHERE s.ordinal<?",
                                         (ordinal,)).fetchall()
@@ -143,4 +152,4 @@ class Store:
         identity(slot, "slot")
         require(slot in self.slots, "unknown planned slot")
         key = self.plan["tasks"][self.slots[slot]["task"]]
-        return decode(self.artifacts[key])
+        return decode(self.artifacts[key], admission=False)

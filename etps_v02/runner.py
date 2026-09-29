@@ -7,6 +7,7 @@ from pathlib import Path
 from . import scorer
 from .scorer import InvalidRecord, classify, identity, mapping, require, score, summarize, validate
 from .workload import LEGACY_INVALIDATION_POLICY, decode, encode, raw_response, script_responses, sha, validate_bundle
+from .workload import safety_warnings
 
 
 def implementation():
@@ -114,7 +115,7 @@ def replay_slot(store, slot, allow_running=False):
         warnings.append("legacy_plan: positional boundaries/unit/policy may be unpinned")
     state = {"finish": "finished", "abort": "aborted"}.get(entries[-1]["kind"], "running")
     script_hash = store.slots[slot]["script_sha256"]
-    responses = script_responses(store.artifacts[script_hash])
+    responses = script_responses(store.artifacts[script_hash], admission=False)
     response_index, evidence_issues = 0, []
     events, messages, pending = [], [], None
     for entry in entries[1:]:
@@ -136,12 +137,12 @@ def replay_slot(store, slot, allow_running=False):
             elif event["kind"] == "probe":
                 mapping(event, "journal.event.probe", ("raw_base64", "answer", "status"))
                 require(pending == event["node"], "probe lacks matching request intent")
-                raw = raw_response(event["raw_base64"])
+                raw = raw_response(event["raw_base64"], admission=False)
                 projected = answer_from_raw(raw)
                 if event["answer"] != projected:
                     # Old journals stored arbitrary JSON shapes before malformed
                     # classification. Accept only an exact, serializable decode.
-                    legacy = decode(raw)
+                    legacy = decode(raw, admission=False)
                     require(projected is None and encode(event["answer"]) == encode(legacy),
                             "raw answer projection mismatch")
                     warnings.append("legacy_answer_projection: malformed JSON shape retained")
@@ -152,7 +153,7 @@ def replay_slot(store, slot, allow_running=False):
                     changed = []
                     if event["status"] != expected["status"]:
                         changed.append("status")
-                    if raw != raw_response(expected["raw_base64"]):
+                    if raw != raw_response(expected["raw_base64"], admission=False):
                         changed.append("raw_bytes")
                     if encode(event.get("generation")) != encode(expected.get("generation")):
                         changed.append("generation")
@@ -241,7 +242,8 @@ def report(store):
             "measurement_valid": sum(r["measurement_valid"] for r in finished), "rr_available": rr_available,
             "implementation_mismatch": any(t.get("implementation_mismatch") for t in trials),
             "evidence_unverified": sum(t.get("evidence_verified") is False for t in trials),
-            "warnings": sorted({w for t in trials for w in t.get("warnings", [])}),
+            "warnings": sorted({w for t in trials for w in t.get("warnings", [])} |
+                               set(safety_warnings(store.plan_raw, store.artifacts))),
             "rr_unavailable_attempted": attempted - rr_available,
             "comparison_incomplete": rr_available != len(trials),
             "trials": trials}
@@ -287,14 +289,15 @@ def replay_export(bundle, *, validate_authoring=False):
             return entries
 
         def manifest(self, slot):
-            return decode(self.artifacts[self.plan["tasks"][self.slots[slot]["task"]]])
+            return decode(self.artifacts[self.plan["tasks"][self.slots[slot]["task"]]], admission=False)
 
     require(bundle["format"] == "etps-offline-export-v1", "unsupported export format")
     view = ExportView()
-    view.plan_raw = raw_response(bundle["plan_base64"], "export.plan_base64")
+    view.plan_raw = raw_response(bundle["plan_base64"], "export.plan_base64", admission=False)
     view.plan_hash = sha(view.plan_raw)
     require(view.plan_hash == bundle["plan_sha256"], "export plan hash mismatch")
-    view.artifacts = {k: raw_response(v, "export.artifacts." + k) for k, v in bundle["artifacts"].items()}
+    view.artifacts = {k: raw_response(v, "export.artifacts." + k, admission=False)
+                      for k, v in bundle["artifacts"].items()}
     view.plan = validate_bundle(view.plan_raw, view.artifacts, allow_legacy=True,
                                 authoring=validate_authoring)
     view.slots = {s["id"]: s for s in view.plan["slots"]}

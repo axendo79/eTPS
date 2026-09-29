@@ -8,6 +8,8 @@ import hashlib
 import json
 import math
 
+from . import limits
+
 UNIT = "utf8_bytes"
 LEGACY_UNIT = "utf8-bytes-v1"
 OUTCOMES = {"correct", "incorrect", "unknown", "malformed", "timeout"}
@@ -90,11 +92,17 @@ def declared_fields(value, allowed, path, authoring, findings):
 def validate(manifest, *, authoring=True):
     mapping(manifest, "manifest", ("unit", "nodes", "obligations", "start"))
     findings = []
+    if authoring:
+        limits.check_value_depth(manifest)
     declared_fields(manifest, {"unit", "nodes", "obligations", "start"},
                     "manifest", authoring, findings)
     require(isinstance(manifest["unit"], str) and manifest["unit"] in {UNIT, LEGACY_UNIT},
             "manifest.unit: unsupported accounting unit")
     nodes = mapping(manifest["nodes"], "manifest.nodes")
+    if authoring:
+        limits.check(len(nodes), "MAX_MANIFEST_NODES")
+    elif len(nodes) > limits.MAX_MANIFEST_NODES:
+        findings.append({"code": "legacy_safety_limit", "limit": "MAX_MANIFEST_NODES"})
     obligations = mapping(manifest["obligations"], "manifest.obligations")
     identity(manifest["start"], "manifest.start")
     require(manifest["start"] in nodes, "missing start")
@@ -185,20 +193,18 @@ def validate(manifest, *, authoring=True):
                 require(node.get("failure") in nodes and
                         nodes[node["failure"]]["kind"] == "probe", "missing recovery failure")
     # Finite unrolled branches bound retries. Reject cycles even in unused branches.
-    done, visiting, descendants = set(), set(), {}
+    done, visiting = set(), set()
+    edges = {key: (() if node["kind"] == "terminal" else
+                   tuple(set(node["next"].values())) if node["kind"] == "probe" else (node["next"],))
+             for key, node in nodes.items()}
     for key in nodes:
         stack = [(key, False)]
         while stack:
             current, expanded = stack.pop()
             if current in done:
                 continue
-            node = nodes[current]
-            targets = (() if node["kind"] == "terminal" else
-                       tuple(node["next"].values()) if node["kind"] == "probe" else (node["next"],))
+            targets = edges[current]
             if expanded:
-                descendants[current] = set(targets)
-                for target in targets:
-                    descendants[current].update(descendants[target])
                 visiting.remove(current)
                 done.add(current)
             else:
@@ -206,12 +212,32 @@ def validate(manifest, *, authoring=True):
                 visiting.add(current)
                 stack.append((current, True))
                 stack.extend((target, False) for target in targets)
+    # Compute only reachability that recovery checks actually need. Do not keep
+    # an all-pairs descendant matrix (quadratic even for a recovery-free chain).
+    def reachable(source, targets):
+        found, seen, pending = set(), set(), list(edges[source])
+        while pending and found != targets:
+            current = pending.pop()
+            if current in seen:
+                continue
+            seen.add(current)
+            if current in targets:
+                found.add(current)
+            pending.extend(edges[current])
+        return found
+
     grants = {}
+    recovery_targets = {}
+    for key, node in nodes.items():
+        if node["kind"] == "user" and node["spans"]:
+            recovery_targets.setdefault(node["failure"], set()).add(key)
+    reachable_recoveries = {failure: reachable(failure, targets)
+                            for failure, targets in recovery_targets.items()}
     for key, node in nodes.items():
         if node["kind"] == "user":
             for oid in {span[2] for span in node["spans"]}:
                 failure = node["failure"]
-                if key not in descendants[failure]:
+                if key not in reachable_recoveries[failure]:
                     require(not authoring, f"manifest.nodes.{key}.failure: probe is not a path-ancestor")
                     findings.append({"code": "recovery_failure_not_ancestor", "node": key,
                                      "failure": failure, "obligation": oid})
@@ -221,9 +247,10 @@ def validate(manifest, *, authoring=True):
                                      "failure": failure, "obligation": oid})
                 grants.setdefault((failure, oid), []).append(key)
     for (failure, oid), users in grants.items():
+        linked = {left: reachable(left, set(users) - {left}) for left in users}
         for i, left in enumerate(users):
             for right in users[i + 1:]:
-                if right in descendants[left] or left in descendants[right]:
+                if right in linked[left] or left in linked[right]:
                     findings.append({"code": "duplicate_recovery_authorization", "failure": failure,
                                      "obligation": oid, "nodes": [left, right]})
     if authoring:
@@ -231,6 +258,15 @@ def validate(manifest, *, authoring=True):
                 "duplicate recovery authorization on a common path")
     digest(manifest)  # Reject unserializable/nonfinite/invalid-Unicode declarations.
     return findings
+
+
+def union_length(spans):
+    """Count a union of half-open byte intervals without expanding positions."""
+    total, end = 0, 0
+    for a, b in sorted(spans):
+        total += max(0, b - max(a, end))
+        end = max(end, b)
+    return total
 
 
 def interval(obligation, seen, length=None, terminal=None):
@@ -315,7 +351,7 @@ def score(manifest, record):
             if event["text"] != node["text"]:
                 reason = "unmatched_user_payload"
                 break
-            covered, consumed, stale = set(), set(), set()
+            covered, consumed, stale = [], set(), set()
             for a, b, oid in node["spans"]:
                 obligation = manifest["obligations"][oid]
                 source = seen.get(obligation["source"])
@@ -331,17 +367,18 @@ def score(manifest, record):
                     else:
                         reason = "unlinked_recovery"
                         break
-                covered.update(range(a, b))
+                covered.append((a, b))
                 consumed.add(oid)
             if reason:
                 break
-            r += len(covered)
+            recovered = union_length(covered)
+            r += recovered
             # Consume after the whole event, so multiple spans for one obligation
             # all count once as a union. Re-supply discharges older grants too.
             for standing in failures.values():
                 standing.difference_update(consumed)
             labels.append({"node": current, "class": "recovery" if covered else "scheduled",
-                           "I": len(event["text"].encode()), "R": len(covered),
+                           "I": len(event["text"].encode()), "R": recovered,
                            "consumed_obligations": sorted(consumed), "stale_failure_obligations": sorted(stale)})
             current = node["next"]
         elif kind == "probe":
