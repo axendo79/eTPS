@@ -61,6 +61,7 @@ def run_offline(store, slot):
     responses = script_responses(store.artifacts[script_hash])
     store.append(slot, "start", {"evidence": "synthetic-offline", **implementation()})
     current, index, messages = manifest["start"], 0, []
+    policy = store.plan.get("arms", {}).get(store.slots[slot]["arm"], {}).get("context_policy", "full")
     try:
         while manifest["nodes"][current]["kind"] != "terminal":
             node = manifest["nodes"][current]
@@ -68,6 +69,11 @@ def run_offline(store, slot):
                 event = {"node": current, "kind": "user", "text": node["text"]}
                 store.append(slot, "event", event)
                 messages.append({"role": "user", "text": node["text"]})
+                current = node["next"]
+            elif node["kind"] == "session_boundary":
+                store.append(slot, "event", {"node": current, "kind": "session_boundary"})
+                if policy == "reset-v1":
+                    messages.clear()
                 current = node["next"]
             else:
                 # Intent is durable before the adapter is called. A crash never
@@ -147,6 +153,7 @@ def replay_slot(store, slot, allow_running=False):
     responses = script_responses(store.artifacts[script_hash], admission=False)
     response_index, evidence_issues = 0, []
     events, messages, pending = [], [], None
+    policy = store.plan.get("arms", {}).get(store.slots[slot]["arm"], {}).get("context_policy", "full")
     for entry in entries[1:]:
         kind, payload = entry["kind"], entry["payload"]
         mapping(payload, "journal." + kind)
@@ -163,6 +170,10 @@ def replay_slot(store, slot, allow_running=False):
                 mapping(event, "journal.event.user", ("text",))
                 require(pending is None, "user event before pending response")
                 messages.append({"role": "user", "text": event["text"]})
+            elif event["kind"] == "session_boundary":
+                require(pending is None and set(event) == {"node", "kind"}, "invalid session boundary event")
+                if policy == "reset-v1":
+                    messages.clear()
             elif event["kind"] == "probe":
                 mapping(event, "journal.event.probe", ("raw_base64", "answer", "status"))
                 require(pending == event["node"], "probe lacks matching request intent")
@@ -191,6 +202,8 @@ def replay_slot(store, slot, allow_running=False):
                         changed.append("raw_bytes")
                     if encode(event.get("generation")) != encode(expected.get("generation")):
                         changed.append("generation")
+                    if encode(event.get("usage")) != encode(expected.get("usage")):
+                        changed.append("usage")
                     if changed:
                         evidence_issues.append({"code": "script_response_mismatch",
                                                 "response_index": response_index, "fields": changed})
@@ -255,6 +268,8 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    from .session_profile import add_diagnostics
+    add_diagnostics(store, result)
     if store.plan.get("response_extraction") == "fence-v1":
         rates = {arm: {"numerator": 0, "denominator": 0} for arm in store.plan["arms"]}
         for slot, trial in zip(store.plan["slots"], result["trials"]):

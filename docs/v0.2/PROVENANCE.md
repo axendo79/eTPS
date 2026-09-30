@@ -192,3 +192,49 @@ tokens counting against it. Codex (Astra) authored the opt-in implementation,
 new synthetic regressions and private-kit update under local-commit-only
 authorization. Existing evidence, budgets and parsing results remain unchanged.
 Codex made no real model calls. Claude reviews the local commit before pushing.
+
+## Reset/session authorization, exposure and two-day plan (2026-09-30)
+
+The user authorized Day 1 on `v02-reset-profile` from main `a23a4f5` or later:
+session_boundary nodes, per-arm full versus reset-v1 context, processed prompt
+token telemetry, paired descriptive reporting, and a private mapping-v2-reset
+derivation. Codex (Astra) authored the implementation, eight new synthetic
+tests, documentation and private derivation. The existing 207 tests remain
+unchanged; all 215 pass with full-path Windows Python 3.14. Only fake servers
+were used for live adapter checks. The requested Claude Opus 5.5 co-author
+trailer does not change this implementation-authorship record.
+
+The private 11-task derivation is explicitly "UNREVIEWED DERIVED DRAFT; boundary
+placement is a proposal for user review". It adds one boundary immediately
+before each first-question user node, plus the necessary incoming-edge change.
+All other byte spelling is preserved and inverse edits reproduce each source
+exactly. All 264 existing-script slots under full/reset-v1 validate and replay;
+these are synthetic checks, not model results or semantic validation. The seven
+original SHA256SUMS entries verify identically before/after and 1,078 source
+mapping files remain unchanged. Known retained_fact/clarification/expired/
+mixed_recovery wording issues are deliberately retained for corpus vNext, a
+separate user decision. No corpus payloads, keys or private hashes are published.
+
+The user's two-day plan is recorded without authorizing or starting Day 2:
+
+- Day 1: eTPS reset/session profile and private reset derivation, allowing
+  context loss and meaningful recovery burden so RR and experimental eTPS can
+  differ from a zero-recovery baseline and raw TPS respectively.
+- Day 2 (separate, not started): nyx-bridge in its own repo/folder, NOT inside
+  ProjectNyx. An OpenAI-compatible proxy extracts facts from chat, records them
+  through Nyx's existing public APIs, injects retrieved beliefs, and forwards
+  to the local model. Test it as a third arm against full/reset baselines;
+  label results "Nyx-backed prototype memory", allow Nyx to lose, and disclose
+  the author conflict.
+
+Exposure register: Codex/Astra authored the corpus/mapping/harness and has seen
+the private material; the user states reviewer Claude has seen corpus content
+during review. This supplements the previously reported local exposure to
+google/gemma-4-e4b. Claude's review is not evidence of unexposed or independent
+corpus authorship. The profile author/system affiliation remains a conflict;
+delegation to a proxy, another repository, or model assistance does not remove
+it. No claim about other undisclosed exposure is made.
+
+Authorization is local commits only, followed by a stop for Claude's check.
+Claude will push and open the PR. Codex made no live model calls, pushes or PRs
+and did not begin nyx-bridge or modify ProjectNyx.

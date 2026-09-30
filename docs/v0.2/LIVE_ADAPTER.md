@@ -34,7 +34,7 @@ request does not support a seed. No model/settings/budget values are selected
 by this document. Provider-specific compatibility beyond this finite request
 surface is not claimed; a server rejection remains a recorded transport outcome.
 
-Task manifests still use the existing user/probe/terminal schema and may opt
+Task manifests use user/probe/terminal and optional session_boundary nodes and may opt
 into typed-v1 answers and field-v1 routing. Live execution and replay use the
 same scorer routing function as offline execution, including partial-field
 failure attribution. State, budget or action metadata is not enforcement.
@@ -248,3 +248,53 @@ against that output budget. The private smoke plan uses this explicit value;
 it is not a new adapter default or a retroactive change to evidence. Backend
 token-budget enforcement remains provider-dependent and is not independently
 measured by this client.
+
+## Session boundaries and processing costs (2026-09-30)
+
+An arm may declare `context_policy: "full"` or `"reset-v1"`. Absence means
+`full`; request bodies retain the existing full-history behavior byte for byte.
+No policy name is sent to the provider. Both arms reference the same exact task
+artifact. A task opts in by including a node such as
+`"boundary": {"kind": "session_boundary", "next": "question"}`. It has no
+text, contributes nothing to I or R, and does not end retention obligations.
+The event marks a possible context reset, not new user input.
+
+Full ignores boundaries when building public history. Reset-v1 clears all
+prior public user and assistant messages at every boundary. The next request
+contains only public messages delivered afterward, plus the arm's persistent
+system_prompt if declared. Subsequent messages accumulate until another
+boundary. This controls submitted context; it cannot independently prove that
+a provider has forgotten hidden server-side state or cleared a cache.
+
+Authoring rejects any boundary-to-probe path without an intervening user node,
+under either policy. A boundary belongs before the question's user node, not
+between that question and its probe. The existing dispatch prefill guard still
+applies. Replay rebuilds history from the pinned arm policy and boundary events
+and checks the complete request body; rehashing a tampered history does not make
+it valid. Scoring obligations and recovery grants persist across a reset.
+
+Response events already retain exact `usage` (or null) and available raw HTTP
+bytes. Reports now expose each request's exact `usage.prompt_tokens` value or
+null in `context_policy_pairing[task][policy][trial].requests`. No input_tokens
+alias, tokenizer estimate, cache adjustment, or client-time inference is used.
+Only nonnegative integer counts enter processing sums; unusual reported values
+remain visible but do not count toward coverage. Missing/unsupported usage stays
+unavailable, including unanswered request intents.
+
+`processed_prompt_tokens[arm]` reports the observed sum as `numerator`, the
+number of requests with usable counts as `coverage_count`, and all recorded
+request intents as `request_count`. `total` is available only for nonempty,
+complete request coverage. Failed/unfinished attempts remain in these diagnostic
+counts; zero observed tokens with missing usage is not a zero total. Future
+memory-layer injected context belongs in the backend's processed prompt count,
+never I, R, RR, TPS or experimental eTPS. Counts remain provider-reported and
+their native scope is not independently verified.
+
+`context_policy_pairing` presents `full` and `reset-v1` lists side by side for
+each task, preserving slot/arm identities, absent arms, repetitions and unfinished
+slots. Each entry includes acceptance, first-attempt obligation results and
+retention, I, R, RR, TPS, experimental eTPS, and processing costs. The shared
+task artifact hash binds the comparison. These are trial vectors, with no
+cross-task score pooling, automatic repetition matching, deltas or winner logic.
+Live reports receive these additive diagnostics even for old full-history plans;
+their stored evidence and request bodies are unchanged.

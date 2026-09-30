@@ -68,7 +68,7 @@ def script_responses(raw, *, admission=True):
         limits.check(len(script["responses"]), "MAX_SCRIPT_RESPONSES")
     for index, response in enumerate(script["responses"]):
         path = f"script.responses[{index}]"
-        require(isinstance(response, dict) and set(response) <= {"status", "raw_base64", "generation"},
+        require(isinstance(response, dict) and set(response) <= {"status", "raw_base64", "generation", "usage"},
                 "unsupported response field")
         mapping(response, path, ("status", "raw_base64"))
         require(isinstance(response["status"], str) and response["status"] in {"ok", "timeout"},
@@ -104,6 +104,9 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
             fields.add("response_extraction")
     if manual:
         fields |= {"arms"}
+    offline_arms = not live and not manual and not legacy and "arms" in plan
+    if offline_arms:
+        fields.add("arms")
     require(set(plan) == fields, "invalid plan fields")
     require((manual and plan["purpose"] == "dev-manual") or (live and plan["purpose"] == "live-exploratory") or
             (legacy or plan["schema"] == "etps-offline-plan-v2") and
@@ -112,6 +115,14 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         from .live_plan import validate_live
         validate_live(plan, allow_remote=allow_remote, execution=authoring)
         require(plan["invalidation_policy"] == INVALIDATION_POLICY, "live policy must include storage_error")
+    if offline_arms:
+        arms = mapping(plan["arms"], "arms")
+        require(bool(arms), "missing offline arms")
+        for name, arm in arms.items():
+            require(isinstance(name, str) and bool(name), "invalid arm name")
+            mapping(arm, "arm")
+            require(set(arm) <= {"context_policy"} and arm.get("context_policy", "full") in
+                    ("full", "reset-v1"), "invalid offline context_policy")
     rubric_hashes = set()
     if manual:
         from .manual_runner import validate_manual
@@ -139,8 +150,9 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
             require(all("begin_after" in o for o in manifest["obligations"].values()),
                     "new plans require event-ID obligation boundaries")
         # No silent no-op for memory/reset/replay actions not yet implemented.
-        require(all(n["kind"] in {"user", "probe", "terminal"} for n in manifest["nodes"].values()),
-                "offline runner supports only user/probe/terminal nodes")
+        supported = {"user", "probe", "terminal"} | ({"session_boundary"} if not manual else set())
+        require(all(n["kind"] in supported for n in manifest["nodes"].values()),
+                "runner supports only user/probe/terminal and offline/live session_boundary nodes")
         referenced.add(key)
     for index, slot in enumerate(plan["slots"]):
         mapping(slot, f"plan.slots[{index}]")
@@ -151,6 +163,8 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         if live or manual:
             require(slot["arm"] in plan["arms"], "missing live arm configuration")
         else:
+            if offline_arms:
+                require(slot["arm"] in plan["arms"], "missing offline arm configuration")
             require(slot["script_sha256"] in artifacts, "missing response script")
             script_responses(artifacts[slot["script_sha256"]], admission=authoring)
             referenced.add(slot["script_sha256"])
