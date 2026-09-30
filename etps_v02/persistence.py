@@ -40,8 +40,8 @@ class Store:
             raise
 
     @classmethod
-    def create(cls, path, plan_raw, artifacts):
-        plan = validate_bundle(plan_raw, artifacts)
+    def create(cls, path, plan_raw, artifacts, *, allow_remote=False):
+        plan = validate_bundle(plan_raw, artifacts, allow_remote=allow_remote)
         path = Path(path)
         # Refuse any existing path, including a legacy or empty database.
         with path.open("xb"):
@@ -94,7 +94,7 @@ class Store:
                     "journal integrity failure")
             kind = row["kind"]
             require((i == 0 and kind == "start") or
-                    (state == "running" and kind in {"request", "event", "finish", "abort"}),
+                    (state == "running" and kind in self.journal_kinds()),
                     "invalid journal lifecycle")
             state = {"start": "running", "finish": "finished", "abort": "aborted"}.get(kind, state)
             result.append({"kind": kind, "payload": decode(payload, admission=False), "sha256": expected})
@@ -109,7 +109,7 @@ class Store:
         require(slot in self.slots, "unknown planned slot")
         identity(kind, "journal.kind")
         mapping(payload, "journal.payload")
-        if kind == "abort" and self.plan["schema"] == "etps-offline-plan-v2":
+        if kind == "abort" and self.plan["schema"] in {"etps-offline-plan-v2", "etps-live-plan-v1"}:
             identity(payload.get("reason_code"), "journal.abort.reason_code")
             require(self.plan["invalidation_policy"].get(payload.get("reason_code")) == "invalidate",
                     "abort code must be predeclared invalidation")
@@ -133,13 +133,17 @@ class Store:
                                         (ordinal,)).fetchall()
                 require(all(r[0] in {"finished", "aborted"} for r in prior), "planned run order violated")
             else:
-                require(head["state"] == "running" and kind in {"request", "event", "finish", "abort"},
+                require(head["state"] == "running" and kind in self.journal_kinds(),
                         "slot is not running or journal kind is invalid")
             seq, previous = head["count"], head["hash"]
             value = sha(encode([slot, seq, kind, previous]) + raw)
             self.db.execute("INSERT INTO journal VALUES (?,?,?,?,?,?)", (slot, seq, kind, raw, previous, value))
             state = {"start": "running", "finish": "finished", "abort": "aborted"}.get(kind, "running")
             self.db.execute("UPDATE heads SET count=?,hash=?,state=? WHERE slot=?", (seq + 1, value, state, slot))
+
+    def journal_kinds(self):
+        return {"request", "event", "finish", "abort"} | (
+            {"exposure"} if self.plan["schema"] == "etps-live-plan-v1" else set())
 
     def abort(self, slot, code, detail=""):
         from .workload import LEGACY_INVALIDATION_POLICY

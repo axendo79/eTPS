@@ -85,6 +85,21 @@ review/exposure declarations (D8), arms/budgets/counts (D9) and acceptance/refer
 rules (D10). No model run, dependency installation, legacy change or push is
 authorized by this delivery. Private mapping results remain outside the repo.
 
+## Authorized live exploratory adapter (2026-09-29)
+
+The user authorized an independent local branch from merged typed-answer main,
+amended to support OpenAI-compatible and Anthropic endpoints. Codex (Astra)
+implemented opt-in live plans, explicit model/budget settings, dual remote
+authorization, environment-reference credentials, exposure journaling and
+replay, and monotonic response/trial timing. Client latency never substitutes
+for generation timing. Offline plans and existing tests remain unchanged.
+Validation uses fake loopback servers and mocked remote transport only; no
+real model endpoint or port 1234 was contacted. All 159 tests pass on Windows
+Python 3.14 (144 existing unchanged and 15 new). See [live adapter](v0.2/LIVE_ADAPTER.md)
+for the exact schema, safety gates and measurement limits. No dependency
+installs, legacy repairs, corpus publication or pushes. Claude reviews before
+opening a PR; real smoke testing remains separately unauthorized.
+
 ## Authorized field routing (2026-09-29)
 
 Codex (Astra) implemented the user-authorized opt-in field-v1 routing on a local
@@ -95,3 +110,14 @@ manifests, journals and tests remain unchanged. All 152 tests pass on Windows
 Python 3.14 (144 existing plus 8 new). Private mapping is separately authorized;
 no private text or answer keys are included here. No model calls, installs,
 legacy repairs or pushes. Claude reviews before publication.
+
+## Authorized review fixes (2026-09-29)
+
+Codex (Astra) added field-obligation coverage validation and merged field routing
+into the live branch with a merge commit. Live dispatch now shares scorer routing,
+checks credentials and TCP reachability before start, treats in-trial credential
+loss as execution_error, and rejects empty/assistant-ended public histories
+before dispatch. The user authorized narrow updates to the unmerged live test
+fixtures while retaining D3 connection-refusal coverage. All 177 tests pass;
+main's existing tests and the original field-routing tests remain unchanged.
+Only ephemeral loopback fake endpoints were used. No real model call or push.
