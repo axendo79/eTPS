@@ -272,3 +272,41 @@ it. No claim about other undisclosed exposure is made.
 Authorization is local commits only, followed by a stop for Claude's check.
 Claude will push and open the PR. Codex made no live model calls, pushes or PRs
 and did not begin nyx-bridge or modify ProjectNyx.
+
+## Authorized run reports and memory-arm support (2026-09-30)
+
+The user attributes the following authorized local runs to Claude on 2026-09-30:
+mapping-v2-reset with fence-v1 and 2048 output tokens accepted 7/11 full and
+3/11 reset. Initial observations of experimental eTPS below TPS included
+scheduled_recap, 44.59 to 35.95, and supersession_current, 42.83 to 36.88.
+With mapping-v3 under d10-v1 and decode-v1, full accepted 8/11 (7 exact and
+1 deviation), while reset accepted 6/11 (4 exact and 2 deviations); four
+recovered reset trials had eTPS below TPS. These are user-reported calibration
+results, not independently verified Codex runs, and no previous run is rescored.
+
+The user reports LM Studio prompt caching reducing TTFT to approximately
+0.1 seconds across runs. Server cache state affects TTFT/prefill diagnostics;
+under warm-declared, those measurements must not be compared across arms.
+The user selected warm-declared as the default cache condition for future plan
+authoring. It remains an explicit optional plan declaration, with no implicit
+upgrade of old plans or cache flushing/warming performed by the harness.
+
+D10 remains as merged. The user approved code <- project_code and
+word <- access_word aliases, with code/word values case-sensitive. The alias
+lists are calibration-informed from the previously disclosed model failures,
+not independent prospective evidence. Decode-v1 remains primary timing.
+
+The planned three arms are Gemma full, Gemma reset, and Gemma reset plus the
+nyx-bridge prototype. Results must be labeled "Nyx-backed prototype memory";
+Nyx is allowed to lose. The profile author also develops the evaluated system,
+so the author/system conflict remains. Separate sessions or repositories do not
+remove that conflict or constitute independent corpus authorship.
+
+Codex authored the eTPS arm-comparison, optional memory-telemetry and cache
+declaration support, new synthetic tests, and documentation on
+`v02-memory-arms` from main `8827759`. Main's existing test files are unchanged.
+Only fake servers were used; no corpus text was added, no live model calls were
+made, and the separate nyx-bridge workspace was not accessed or modified. The
+Co-Authored-By trailer follows the existing contribution convention and does not
+establish completed independent review. Authorization is local commits only,
+then a stop for Claude's check; Claude pushes and opens the PR.

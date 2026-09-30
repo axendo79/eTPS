@@ -49,3 +49,43 @@ def add_diagnostics(store, result):
         pair[policy].append(entry)
     result["processed_prompt_tokens"] = {arm: total(requests) for arm, requests in by_arm.items()}
     result["context_policy_pairing"] = pairs
+    add_arm_comparison(store, result, arms)
+
+
+def add_arm_comparison(store, result, arms):
+    """Preserve arm identities and repetitions without pooling trial scores."""
+    from .memory_telemetry import requests as memory_requests, summarize as memory_summary
+
+    names = sorted(set(arms) | {s["arm"] for s in store.plan["slots"]})
+    comparisons, memory_by_arm = {}, {name: [] for name in names if "memory_telemetry_field" in arms.get(name, {})}
+    grouped = {}
+    for slot, trial in zip(store.plan["slots"], result["trials"]):
+        grouped.setdefault((slot["task"], slot["arm"]), []).append((slot, trial))
+    for task, artifact in store.plan["tasks"].items():
+        entries = {}
+        for name in names:
+            arm = arms.get(name, {})
+            trials, prompts, observations = [], [], []
+            memory_enabled = name in memory_by_arm
+            for slot, trial in grouped.get((task, name), []):
+                rows = store.entries(slot["id"])
+                prompt = processing_requests(rows)
+                prompts.extend(prompt)
+                memory = memory_requests(rows) if memory_enabled else []
+                observations.extend(memory)
+                score = trial.get("score") or {}
+                trials.append({"slot": slot["id"], "state": trial["state"],
+                    **{key: score.get(key) for key in ("result_state", "accepted", "first_attempt", "I", "R", "RR", "TPS")},
+                    "eTPS": score.get("experimental_eTPS"),
+                    "processed_prompt_tokens": total(prompt),
+                    "memory_telemetry": memory_summary(memory) if memory_enabled else None})
+            entries[name] = {"arm": name, "context_policy": arm.get("context_policy", "full"),
+                             "provider": arm.get("provider"), "trials": trials,
+                             "processed_prompt_tokens": total(prompts),
+                             "memory_telemetry": memory_summary(observations) if memory_enabled else None}
+            if memory_enabled:
+                memory_by_arm[name].extend(observations)
+        comparisons[task] = {"task_artifact_sha256": artifact, "arms": entries}
+    result["arm_comparison"] = comparisons
+    if memory_by_arm:
+        result["memory_telemetry"] = {name: memory_summary(observations) for name, observations in memory_by_arm.items()}

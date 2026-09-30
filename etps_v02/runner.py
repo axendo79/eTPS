@@ -270,6 +270,8 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    if "cache_policy" in store.plan:
+        result["cache_policy"] = store.plan["cache_policy"]
     tolerance_tasks = {task for task, key in store.plan["tasks"].items()
                        if decode(store.artifacts[key], admission=False).get("answer_tolerance") == "d10-v1"}
     if tolerance_tasks:

@@ -239,3 +239,49 @@ Codex/Astra's corpus/mapping work, and reviewer Claude having seen corpus conten
 during review (user-disclosed). Review is not independent corpus authorship.
 No live model calls, pushes or PRs were performed in this task. Local commit
 only; stop for Claude's check, with Claude responsible for pushing/opening a PR.
+
+## Three-arm memory experiment support and reported runs (2026-09-30)
+
+The user reports these runs executed by Claude with user authorization on
+2026-09-30. They are calibration observations, not independently verified
+Codex executions or controlled superiority claims:
+
+- Full versus reset with mapping-v2-reset, fence-v1 and a 2048-token budget:
+  full accepted 7/11, reset 3/11. The first observed experimental eTPS below TPS
+  included scheduled_recap (44.59 TPS to 35.95 eTPS) and supersession_current
+  (42.83 TPS to 36.88 eTPS).
+- With mapping-v3, d10-v1 and decode-v1: full accepted 8/11 (7 exact, 1 format
+  deviation); reset accepted 6/11 (4 exact, 2 deviations). Four recovered reset
+  trials had eTPS below TPS. These use the new frozen conventions, not a
+  retroactive rescore of the preceding run.
+- LM Studio prompt caching reportedly reduced TTFT to approximately 0.1 seconds
+  across runs. This motivates the declared warm-cache condition; TTFT/prefill
+  remain diagnostics and must not be compared across arms under warm-declared.
+
+User decisions: retain D10 as merged; approve the calibration-informed aliases
+code <- project_code and word <- access_word. Code and word values remain
+case-sensitive (do not declare them as fixed_value_fields). Decode-v1 is primary
+timing. Warm-declared is the default condition for authoring future experiment
+plans, explicitly recorded as `cache_policy: "warm-declared"`; an omitted field
+does not silently acquire this declaration.
+
+The planned experiment has three arms: Gemma full, Gemma reset, and Gemma reset
+plus the nyx-bridge prototype. Label the third arm's results "Nyx-backed
+prototype memory". Nyx is allowed to lose. The profile author/system-development
+conflict remains disclosed; prototype results do not establish an independent
+memory-system comparison.
+
+On local branch `v02-memory-arms` from main `8827759`, Codex added descriptive
+arm_comparison entries that preserve distinct arm identities even when policies
+match, while retaining context_policy_pairing unchanged. Optional response-body
+memory telemetry is copied and verified on replay, with per-key sums and request
+coverage. It never enters I, R, RR or TPS. Optional cache_policy is reported for
+all arms without changing scoring or server state. Validation uses new synthetic
+tests and fake servers; existing tests remain unchanged. No corpus material,
+live model calls, pushes or PRs are part of this implementation. The separate
+nyx-bridge work is untouched. Local commits only, then stop for Claude's check;
+Claude pushes and opens the PR.
+
+Validation: 237 tests pass, including eight new synthetic tests and all 229
+existing tests unchanged. New live-test request deadlines are 10 seconds and
+trial limits are 30 seconds; all servers are ephemeral test servers.

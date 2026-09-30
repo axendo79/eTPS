@@ -31,6 +31,8 @@ def arm_endpoint(plan, arm):
 
 
 def validate_live(plan, *, allow_remote=False, execution=True):
+    if "cache_policy" in plan:
+        require(plan["cache_policy"] == "warm-declared", "unsupported cache_policy")
     if "timing_convention" in plan:
         require(plan["timing_convention"] == "decode-v1", "unsupported timing_convention")
     if "response_extraction" in plan:
@@ -66,7 +68,10 @@ def validate_live(plan, *, allow_remote=False, execution=True):
             require(arm["seed"] is None, "anthropic seed must be explicit null (unsupported)")
             identity(arm.get("anthropic_version"), "anthropic_version")
             require(re.fullmatch(r"\d{4}-\d{2}-\d{2}", arm["anthropic_version"]), "invalid anthropic_version")
-        require(required <= arm.keys() and arm.keys() <= required | {"system_prompt", "endpoint", "context_policy"}, "invalid arm fields")
+        require(required <= arm.keys() and arm.keys() <= required | {
+            "system_prompt", "endpoint", "context_policy", "memory_telemetry_field"}, "invalid arm fields")
+        if "memory_telemetry_field" in arm:
+            identity(arm["memory_telemetry_field"], "memory_telemetry_field")
         require(arm.get("context_policy", "full") in ("full", "reset-v1"), "unsupported context_policy")
         identity(arm["model"], "model")
         require(finite(arm["temperature"]) and arm["temperature"] >= 0, "invalid temperature")

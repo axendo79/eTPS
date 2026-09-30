@@ -64,6 +64,9 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
                          "elapsed_seconds": elapsed, "deadline_seconds": deadline})
             # Intent is durable before credentials are read or transport dispatch.
             response = adapter.send(base, arm, body, deadline)
+            if "memory_telemetry_field" in arm:
+                from .memory_telemetry import project as project_memory
+                response.update(project_memory(response, arm["memory_telemetry_field"]))
             if store.plan.get("timing_convention") == "decode-v1":
                 from .timing import project
                 response["timing"] = project(arm["provider"], response)
@@ -174,6 +177,11 @@ def replay_live_slot(store, slot, allow_running=False):
                                 "credential_echo", "response_size_limit"}), "invalid transport failure evidence")
                 if p["status"] == "ok":
                     conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
+                if "memory_telemetry_field" in arm:
+                    from .memory_telemetry import project as project_memory
+                    expected_memory = project_memory(p, arm["memory_telemetry_field"])
+                    require(all(k in p and encode(p[k]) == encode(v) for k, v in expected_memory.items()),
+                            "memory telemetry projection mismatch")
                 if store.plan.get("timing_convention") == "decode-v1":
                     from .timing import project
                     require(encode(p.get("timing")) == encode(project(arm["provider"], p)),
