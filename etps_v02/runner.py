@@ -86,7 +86,7 @@ def run_offline(store, slot):
                          "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
                 store.append(slot, "event", event)
                 messages.append({"role": "assistant", "raw_base64": response["raw_base64"]})
-                outcome = classify(event, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
+                outcome = scorer.classify_probe(manifest, node, event)
                 current, _ = scorer.route(manifest, node, event, outcome)
         if index != len(responses):
             raise OfflineFailure("script_leftover", "unused scripted responses: authoring count error")
@@ -254,6 +254,8 @@ def replay_slot(store, slot, allow_running=False):
         result.update(measurement_valid=False, reason="unverified_evidence", R=None, RR=None,
                       rr_unavailable_reason="unverified_evidence", accepted=None, TPS=None,
                       experimental_eTPS=None)
+    if "result_state" in result and result["accepted"] is not True:
+        result["result_state"] = "failed"
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],
             "state": state, "evidence": "synthetic-offline", "record": record,
             "reason": entries[-1]["payload"].get("reason"),
@@ -268,6 +270,17 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    tolerance_tasks = {task for task, key in store.plan["tasks"].items()
+                       if decode(store.artifacts[key], admission=False).get("answer_tolerance") == "d10-v1"}
+    if tolerance_tasks:
+        from .answer_tolerance import summary
+        result["answer_tolerance"] = {}
+        for arm in sorted({s["arm"] for s in store.plan["slots"]}):
+            slots = [s for s in store.plan["slots"] if s["arm"] == arm and s["task"] in tolerance_tasks]
+            ids = {s["id"] for s in slots}
+            scores = [t["score"] for t in result["trials"] if t["slot"] in ids and t.get("score") is not None]
+            result["answer_tolerance"][arm] = {"tasks": sorted({s["task"] for s in slots}),
+                                              **summary(scores, len(slots))}
     from .session_profile import add_diagnostics
     add_diagnostics(store, result)
     if store.plan.get("response_extraction") == "fence-v1":

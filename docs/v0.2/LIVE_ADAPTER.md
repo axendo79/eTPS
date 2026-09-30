@@ -249,6 +249,49 @@ it is not a new adapter default or a retroactive change to evidence. Backend
 token-budget enforcement remains provider-dependent and is not independently
 measured by this client.
 
+## Frozen opt-in timing: decode-v1 (2026-09-30)
+
+Live plans may freeze `"timing_convention": "decode-v1"`, identically for every
+arm. Absent this field, full-generation scoring and event layout are unchanged.
+Unknown convention names and this field on offline/manual plans are rejected.
+Under decode-v1 primary TPS and experimental eTPS use summed decode tokens /
+summed decode intervals. Any probe lacking that pair makes trial TPS unavailable;
+full-generation TPS never substitutes for it.
+
+For `lmstudio-native`, decode tokens are `usage.completion_tokens - 1` and
+decode seconds are `stats.generation_time - stats.time_to_first_token`.
+Completion tokens must exceed one; both times must be present and finite, TTFT
+nonnegative, and their difference positive. Full-generation TPS remains the
+secondary `completion_tokens / generation_time`. The synthetic case of 70
+tokens, 3.217 seconds generation and 1.595 seconds TTFT gives 42.54 decode TPS.
+
+For `openai-compatible`, the frozen explicit allowlist is `timings.decode_n`
+and `timings.decode_ms` (decode token count and milliseconds). Both must be
+usable and positive. `predicted_n`, `predicted_ms`, a reported rate, or client
+latency alone do not establish decode semantics and remain unavailable.
+Secondary full-generation throughput requires explicitly named
+`timings.full_generation_n` and `timings.full_generation_ms`; this does not
+claim that a particular llama.cpp build emits these fields. No ambiguous
+predicted interval is relabeled. Other providers currently have no decode pair.
+
+Each opted-in probe adds `timing`: full_generation_tps, decode_tps,
+ttft_seconds, prompt_tokens, prompt_prefill_seconds, decode_seconds,
+completion_tokens and client_elapsed_seconds, each with value (or null) and
+source_fields. Native prefill uses only `stats.prompt_eval_time` in seconds;
+compatible prefill uses `timings.prompt_ms`, and TTFT uses
+`timings.time_to_first_token_ms`. Prompt tokens use `usage.prompt_tokens`,
+falling back to explicitly reported `timings.prompt_n` for compatible responses.
+Completion counts use `usage.completion_tokens`, including reasoning tokens;
+reasoning counts are never subtracted or estimated. Client elapsed uses the
+recorded `client_latency_seconds`. Unsupported/missing fields stay unavailable.
+
+The original full-generation `generation` pair remains in the event for legacy
+inspection. The selected decode pair and all secondary projections are verified
+against raw HTTP envelope fields on replay, with client elapsed identified as
+client evidence. These are backend-reported observations, not independently
+authenticated clocks. D10 answer tolerance can be used independently or together
+with decode-v1 and fence-v1. Existing recorded runs are not rescored.
+
 ## Session boundaries and processing costs (2026-09-30)
 
 An arm may declare `context_policy: "full"` or `"reset-v1"`. Absence means

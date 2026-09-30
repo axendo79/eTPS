@@ -64,6 +64,9 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
                          "elapsed_seconds": elapsed, "deadline_seconds": deadline})
             # Intent is durable before credentials are read or transport dispatch.
             response = adapter.send(base, arm, body, deadline)
+            if store.plan.get("timing_convention") == "decode-v1":
+                from .timing import project
+                response["timing"] = project(arm["provider"], response)
             raw = raw_response(response["raw_base64"])
             answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
             event = {"kind": "probe", "node": current, **response,
@@ -73,7 +76,7 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             store.append(slot, "event", event)
             if response["status"] == "ok":
                 conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
-            outcome = classify(event, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
+            outcome = scorer.classify_probe(manifest, node, event)
             current, _ = scorer.route(manifest, node, event, outcome)
         wall = time.monotonic() - began
         stopped = wall >= limit
@@ -171,6 +174,10 @@ def replay_live_slot(store, slot, allow_running=False):
                                 "credential_echo", "response_size_limit"}), "invalid transport failure evidence")
                 if p["status"] == "ok":
                     conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
+                if store.plan.get("timing_convention") == "decode-v1":
+                    from .timing import project
+                    require(encode(p.get("timing")) == encode(project(arm["provider"], p)),
+                            "decode timing projection mismatch")
                 pending = None
             events.append(p)
     if remote and len(exposures) != 1:
@@ -183,6 +190,8 @@ def replay_live_slot(store, slot, allow_running=False):
     record = {"manifest_sha256": digest(manifest), "purpose": "live-exploratory", "events": events,
               "wall_seconds": wall, "trial_wall_limit_seconds": store.plan["trial_wall_limit_seconds"],
               "stop_reason": "trial_wall_limit" if stopped else None}
+    if "timing_convention" in store.plan:
+        record["timing_convention"] = store.plan["timing_convention"]
     result = score(manifest, record)
     if state == "finished":
         if pending is not None or not result["measurement_valid"]:
@@ -199,6 +208,8 @@ def replay_live_slot(store, slot, allow_running=False):
         reason = "unverified_evidence" if issues else "unfinished_slot"
         result.update(measurement_valid=False, reason=reason, R=None, RR=None, rr_unavailable_reason=reason,
                       accepted=None, TPS=None, experimental_eTPS=None)
+        if "result_state" in result:
+            result["result_state"] = "failed"
     if issues:
         warnings.extend("unverified_evidence: " + i["code"] for i in issues)
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],

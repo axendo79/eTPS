@@ -94,8 +94,10 @@ def validate(manifest, *, authoring=True):
     findings = []
     if authoring:
         limits.check_value_depth(manifest)
-    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema", "routing"},
+    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema", "routing", "answer_tolerance"},
                     "manifest", authoring, findings)
+    if "answer_tolerance" in manifest:
+        require(manifest["answer_tolerance"] == "d10-v1", "unsupported answer_tolerance")
     if "routing" in manifest:
         require(manifest["routing"] == "field-v1", "unsupported routing")
     field_routing = manifest.get("routing") == "field-v1"
@@ -152,6 +154,8 @@ def validate(manifest, *, authoring=True):
         }[kind]
         if field_routing and kind == "probe":
             allowed |= {"field_obligations", "field_routes"}
+        if manifest.get("answer_tolerance") == "d10-v1" and kind == "probe":
+            allowed |= {"key_aliases", "fixed_value_fields"}
         declared_fields(node, allowed, path, authoring, findings)
         if kind == "terminal":
             mapping(node, path, ("accepted",))
@@ -166,6 +170,9 @@ def validate(manifest, *, authoring=True):
             require(set(node["next"]) == OUTCOMES, "incomplete outcome policy")
             require(answer_object(node["expected"], answer_schema),
                     "answers require typed-v1 fields" if answer_schema else "answers require string fields")
+            if manifest.get("answer_tolerance") == "d10-v1":
+                from .answer_tolerance import validate_probe
+                validate_probe(node)
             if "unknown_answers" in node:
                 answers = node["unknown_answers"]
                 require(isinstance(answers, list) and all(answer_object(a, answer_schema)
@@ -380,12 +387,27 @@ def classify(event, expected, unknown_answers=(), answer_schema=None):
     return "incorrect"
 
 
+def classify_probe(manifest, node, event):
+    if manifest.get("answer_tolerance") == "d10-v1":
+        from .answer_tolerance import evaluate
+        return evaluate(manifest, node, event)[0]
+    return classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS),
+                    manifest.get("answer_schema"))
+
+
 def route(manifest, node, event, outcome):
     """Return successor and optional exact-key failed fields; no reclassification."""
+    answer, expected = event.get("answer"), node["expected"]
+    if manifest.get("answer_tolerance") == "d10-v1" and outcome == "incorrect":
+        from .answer_tolerance import normalize
+        normalized = normalize(node, answer)
+        if normalized is None:
+            return node["next"][outcome], None
+        answer, expected, _ = normalized
     if (manifest.get("routing") == "field-v1" and "field_routes" in node
-            and outcome == "incorrect" and event["answer"].keys() == node["expected"].keys()):
-        fields = sorted(k for k in node["expected"]
-                        if not answer_equal({k: event["answer"][k]}, {k: node["expected"][k]}))
+            and outcome == "incorrect" and answer.keys() == expected.keys()):
+        fields = sorted(k for k in expected
+                        if not answer_equal({k: answer[k]}, {k: expected[k]}))
         for entry in node["field_routes"]:
             if entry["failed_fields"] == fields:
                 return entry["next"], fields
@@ -470,8 +492,7 @@ def score(manifest, record):
             current = node["next"]
         elif kind == "probe":
             attempts += 1
-            outcome = classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS),
-                               manifest.get("answer_schema"))
+            outcome = classify_probe(manifest, node, event)
             target, failed_fields = route(manifest, node, event, outcome)
             field_failures = (None if failed_fields is None else
                               {o for f in failed_fields for o in node["field_obligations"][f]})
@@ -495,7 +516,13 @@ def score(manifest, record):
                 for standing in failures.values():
                     standing.difference_update(node.get("obligations", []))
             labels.append({"node": current, "class": outcome})
+            if manifest.get("answer_tolerance") == "d10-v1":
+                from .answer_tolerance import evaluate
+                _, mode, rules = evaluate(manifest, node, event)
+                labels[-1].update(mode=mode, rules_applied=rules)
             usage = event.get("generation")
+            if record.get("timing_convention") == "decode-v1":
+                usage = event.get("timing", {}).get("decode_generation")
             if usage is None:
                 generation_available = False
             else:
@@ -526,7 +553,7 @@ def score(manifest, record):
         tps = None
     resolved = {oid: interval(o, seen, len(events), current if valid else None)
                 for oid, o in manifest["obligations"].items()}
-    return {"unit": manifest["unit"], "manifest_sha256": record["manifest_sha256"],
+    result = {"unit": manifest["unit"], "manifest_sha256": record["manifest_sha256"],
             "authoring_findings": findings,
             "legacy_unknown_probes": [key for key, node in manifest["nodes"].items()
                                       if node["kind"] == "probe" and "unknown_answers" not in node],
@@ -541,6 +568,14 @@ def score(manifest, record):
             "attempts": attempts, "TPS": tps,
             "experimental_eTPS": tps * (1 - rr) if accepted and rr is not None and tps is not None else None,
             "wall_seconds": wall, "classifications": labels}
+    if manifest.get("answer_tolerance") == "d10-v1":
+        result["result_state"] = ("accepted_with_format_deviation" if
+            any(label.get("mode") == "format_deviation" for label in labels) else "accepted_exact") if accepted else "failed"
+    if record.get("timing_convention") == "decode-v1":
+        result["timing_convention"] = "decode-v1"
+        if not offline and tps is None:
+            result["throughput_unavailable_reason"] = "decode_timing_unavailable"
+    return result
 
 
 def summarize(results, *, planned=None):
