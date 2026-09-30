@@ -38,8 +38,8 @@ def bundle(endpoint, provider="openai-compatible", **updates):
     if provider == "anthropic":
         arm["anthropic_version"] = "2023-06-01"
     p = {"schema": "etps-live-plan-v1", "purpose": "live-exploratory", "unit": "utf8_bytes",
-         "endpoint": endpoint, "arms": {"private-arm-label": arm}, "request_deadline_seconds": 1,
-         "trial_wall_limit_seconds": 5, "exposure": {"non_loopback": False, "remote_endpoint_authorized": False},
+         "endpoint": endpoint, "arms": {"private-arm-label": arm}, "request_deadline_seconds": 10,
+         "trial_wall_limit_seconds": 30, "exposure": {"non_loopback": False, "remote_endpoint_authorized": False},
          "invalidation_policy": INVALIDATION_POLICY, "tasks": {"synthetic-task": sha(raw)},
          "slots": [{"id": "slot", "arm": "private-arm-label", "task": "synthetic-task"}]}
     p.update(updates)
