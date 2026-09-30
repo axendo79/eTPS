@@ -152,3 +152,14 @@ its loopback-only/no-key implementation and native count/time interpretation,
 tested solely with fake servers. No real LM Studio endpoint was contacted by
 Codex. Native field interpretation does not retroactively manufacture timing for
 the earlier compatible-API run.
+
+## Manual development authorization and conflict (2026-09-29)
+
+The user authorized a separate local manual-dev branch and private draft kit.
+Codex (Astra) authored the implementation, scripted-input regressions and draft
+rubric/task scaffolding. No manual service session was performed by Codex.
+The evidence is dev-manual-human-coded, excluded from publication, and cannot
+verify human coding correctness. When the task author also builds the competing
+Skopos product, that author/product conflict must be disclosed; these results
+remain internal-only. Independent second-coder recoding is deferred. Claude
+reviews before any push; no legacy code or CLAUDE.md was edited.

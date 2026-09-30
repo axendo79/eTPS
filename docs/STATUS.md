@@ -141,3 +141,12 @@ google/gemma-4-e4b through LM Studio's OpenAI-compatible API, accepted, RR 0,
 TPS unavailable because stats were empty. No corpus data was used. The private
 run record retains details; this is not an Astra-executed or independently
 verified run. This entry supersedes earlier no-live-run status chronologically.
+
+## Manual development authorization (2026-09-29)
+
+Codex (Astra) implemented the separately authorized opt-in manual development
+adapter, pinned coding rubrics, confirmed human coding, private evidence export
+and publication fences. Results remain dev-only and separate from automated
+summaries. Tests use synthetic scripted stdin; no actual service session or
+external request occurred. Optional independent recoding is deferred. Private
+draft kits require user review; no corpus content is included here.

@@ -94,19 +94,26 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
     mapping(artifacts, "artifacts")
     legacy = allow_legacy and plan.get("schema") == "etps-offline-plan-v1"
     live = plan.get("schema") == "etps-live-plan-v1"
+    manual = plan.get("schema") == "etps-manual-plan-v1"
     fields = {"schema", "purpose", "tasks", "slots"}
     if not legacy:
         fields |= {"unit", "invalidation_policy"}
     if live:
         fields |= {"endpoint", "arms", "request_deadline_seconds", "trial_wall_limit_seconds", "exposure"}
+    if manual:
+        fields |= {"arms"}
     require(set(plan) == fields, "invalid plan fields")
-    require((live and plan["purpose"] == "live-exploratory") or
+    require((manual and plan["purpose"] == "dev-manual") or (live and plan["purpose"] == "live-exploratory") or
             (legacy or plan["schema"] == "etps-offline-plan-v2") and
             plan["purpose"] == "offline-verification", "invalid live purpose" if live else "only offline verification supported")
     if live:
         from .live_plan import validate_live
         validate_live(plan, allow_remote=allow_remote, execution=authoring)
         require(plan["invalidation_policy"] == INVALIDATION_POLICY, "live policy must include storage_error")
+    rubric_hashes = set()
+    if manual:
+        from .manual_runner import validate_manual
+        rubric_hashes = validate_manual(plan, artifacts)
     if not legacy:
         require(plan["unit"] == UNIT, "unsupported plan unit")
         require(plan["invalidation_policy"] in (INVALIDATION_POLICY, LEGACY_INVALIDATION_POLICY),
@@ -119,7 +126,7 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         if authoring and isinstance(raw, bytes):
             limits.check(len(raw), "MAX_ARTIFACT_BYTES")
         require(isinstance(raw, bytes) and sha(raw) == key, "artifact byte hash mismatch")
-    referenced, ids = set(), set()
+    referenced, ids = set(rubric_hashes), set()
     for task, key in plan["tasks"].items():
         require(isinstance(task, str) and bool(task) and isinstance(key, str) and key in artifacts,
                 "plan.tasks: missing task artifact")
@@ -135,11 +142,11 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         referenced.add(key)
     for index, slot in enumerate(plan["slots"]):
         mapping(slot, f"plan.slots[{index}]")
-        require(set(slot) == ({"id", "arm", "task"} if live else
+        require(set(slot) == ({"id", "arm", "task"} if live or manual else
                              {"id", "arm", "task", "script_sha256"}), "invalid slot fields")
         require(all(isinstance(slot[k], str) and slot[k] for k in slot), "invalid slot identity")
         require(slot["id"] not in ids and slot["task"] in plan["tasks"], "duplicate slot or missing task")
-        if live:
+        if live or manual:
             require(slot["arm"] in plan["arms"], "missing live arm configuration")
         else:
             require(slot["script_sha256"] in artifacts, "missing response script")
