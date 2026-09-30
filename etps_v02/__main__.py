@@ -14,6 +14,9 @@ from .limits import read_file
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
+    models = commands.add_parser("check-models")
+    models.add_argument("plan")
+    models.add_argument("--allow-remote", action="store_true")
     exported = commands.add_parser("replay-export")
     exported.add_argument("file")
     exported.add_argument("--validate-authoring", action="store_true",
@@ -38,6 +41,14 @@ def main():
             command.add_argument("--output", required=True)
             command.add_argument("--format", choices=("v1", "v2"), default="v1")
     args = parser.parse_args()
+    if args.command == "check-models":
+        from .model_check import check_models
+        results = check_models(decode(read_file(args.plan, "MAX_PLAN_BYTES")), allow_remote=args.allow_remote)
+        for result in results:
+            print(result["arm"] + ": " + result["status"])
+        if any(result["status"] != "ok" for result in results):
+            raise InvalidRecord("model checks failed; metadata lookup does not prove generation compatibility")
+        return
     if args.command == "replay-export":
         result = replay_export(decode(read_file(args.file, "MAX_EXPORT_BYTES")),
                                validate_authoring=args.validate_authoring)

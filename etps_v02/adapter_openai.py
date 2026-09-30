@@ -62,7 +62,14 @@ def envelope(provider, status, body):
         # Only this explicitly named generation count/time pair is interpreted.
         # tokens_per_second or client latency alone never supplies a duration.
         timings = data.get("timings")
-        if isinstance(timings, dict) and integer(timings.get("predicted_n")) and finite(
+        if provider == "lmstudio-native":
+            stats, usage = data.get("stats"), data.get("usage")
+            if (isinstance(stats, dict) and isinstance(usage, dict)
+                    and integer(usage.get("completion_tokens"))
+                    and finite(stats.get("generation_time"), positive=True)):
+                result["generation"] = {"tokens": usage["completion_tokens"], "seconds": stats["generation_time"]}
+                result["generation_source"] = ["usage.completion_tokens", "stats.generation_time"]
+        elif isinstance(timings, dict) and integer(timings.get("predicted_n")) and finite(
                 timings.get("predicted_ms"), positive=True):
             result["generation"] = {"tokens": timings["predicted_n"], "seconds": timings["predicted_ms"] / 1000}
             result["generation_source"] = ["timings.predicted_n", "timings.predicted_ms"]
@@ -104,6 +111,9 @@ def credential(arm):
 
 def preflight(base, arm, deadline):
     """Validate credentials and TCP reachability without sending application data."""
+    if arm["provider"] == "lmstudio-native":
+        require(not endpoint(base)[2] and arm["api_key_env"] is None,
+                "lmstudio-native requires loopback and no key")
     credential(arm)
     url = urlsplit(endpoint(base)[0])
     port = url.port if url.port is not None else (443 if url.scheme == "https" else 80)
@@ -121,7 +131,11 @@ def send(base, arm, body, deadline):
     is not claimed. It cannot journal or issue another request.
     """
     url, _, _ = endpoint(base)
-    url += "/v1/messages" if arm["provider"] == "anthropic" else "/chat/completions"
+    if arm["provider"] == "lmstudio-native":
+        require(not endpoint(base)[2] and arm["api_key_env"] is None,
+                "lmstudio-native requires loopback and no key")
+    url += {"anthropic": "/v1/messages", "lmstudio-native": "/api/v0/chat/completions"}.get(
+        arm["provider"], "/chat/completions")
     began = time.monotonic()
     key = credential(arm)
     headers = {"Content-Type": "application/json"}
