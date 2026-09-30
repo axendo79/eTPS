@@ -1,5 +1,41 @@
 # eTPS v0.2 status
 
+## D10 answer tolerance and decode-v1 timing (2026-09-30)
+
+User decisions: freeze three answer tolerance rules and three result states;
+report format compliance separately, never as a multiplier. Report both timing
+conventions, with decode-only TPS/eTPS primary and full-generation TPS secondary
+under an explicitly frozen decode-v1 live plan. Absence of either opt-in retains
+the corresponding existing behavior. Previously recorded runs are not rescored.
+
+Codex implemented this on local branch `v02-d10-timing` from main `390827b`.
+D10 validates disjoint aliases and fixed-value declarations, preserves exact
+match precedence, rejects key collisions, and supports digit-string integers
+and declared ASCII-whitespace/casefold tolerance. Field routing uses normalized
+fields. Replay recomputes modes/rules from verified raw answer bytes; acceptance,
+retention and eTPS treat correct deviations as correct. Reports expose headline
+acceptance, exact/deviation counts, compliance numerator/denominator and rule
+counts. Decode-v1 uses the authorized native first-token subtraction, explicit
+compatible decode fields only, and source-labeled secondary telemetry.
+
+Validation: all 229 tests pass (215 existing tests unchanged and 14 new tests),
+using standard-library code and ephemeral fake servers. The 70-token timing
+fixture yields 42.54 decode TPS. Rehashed timing tampering is rejected.
+
+The private mapping-v3 proposal contains 22 full/reset manifests. Only the D10
+opt-in and per-probe alias/fixed-value declarations were inserted; inverse byte
+edits restore each source exactly. All 116 synthetic offline slots and replay
+checks pass; 1,265 source mapping files and seven original SHA256SUMS entries
+remain unchanged. Known wording issues remain for corpus vNext. No corpus text,
+answer keys or private hashes are included in the repository.
+
+Alias lists for the current corpus are **calibration-informed**, derived after
+observing google/gemma-4-e4b failures on 2026-09-29/30. The private
+`ALIAS_PROPOSAL.md` is labeled "calibration-informed proposal; requires user
+approval before any run". Synthetic offline validation does not authorize a
+model run or establish independent semantic validity. Local commits only;
+stop for Claude's check. No live model calls, pushes or PRs.
+
 Updated 2026-09-15. **An experimental byte scorer, offline runner and SQLite replay store now exist. No model benchmark runs, frozen calibration manifest, or timestamp proofs exist in this work.** Synthetic fixtures are not empirical validation or independent review.
 
 ## Implemented and checked

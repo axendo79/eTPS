@@ -1,5 +1,46 @@
 # Offline runner and replay store
 
+## Frozen opt-in answer tolerance: d10-v1 (2026-09-30)
+
+A manifest opts in with top-level `"answer_tolerance": "d10-v1"`. Before any
+run, each probe freezes optional `key_aliases` (canonical field to alias list)
+and `fixed_value_fields` (unique expected string fields). Aliases must be
+disjoint from all canonical keys and other aliases. Missing declarations mean
+empty lists/maps. Invalid declarations are rejected. Without the opt-in,
+classification and result layout retain their existing behavior.
+
+Timeout and malformed schema retain precedence. Otherwise exact type-strict
+equality wins (`mode: exact`). Only three tolerance rules can then apply, in
+this order: `key_aliases`, `digit_string_to_int`, `fixed_value_fields`. An alias
+and canonical key together, or two aliases for one field, reject normalization
+and yield incorrect. ASCII digit-only strings can equal an expected integer;
+signs, whitespace, decimal points and non-ASCII digits cannot. Only declared
+fixed string fields are trimmed of ASCII space/tab/CR/LF/VT/FF and casefolded on
+both sides. Extra/missing keys remain incorrect. No input payload is normalized.
+
+A normalized exact match is correct with `mode: format_deviation` and ordered
+`rules_applied`; unchanged fields do not add rule counts. Other outcomes retain
+their existing classification with null mode and an empty rule list. Field
+routing compares normalized fields, with collisions using the ordinary failure
+branch. Correct deviations count as first-attempt retention. The five routing
+outcomes remain unchanged. Unknown answers are checked after correct tolerance.
+
+Opted-in trial scores add `result_state`: `accepted_exact`,
+`accepted_with_format_deviation` (any correct probe along the accepted path
+used a deviation), or `failed`. Measurement validity and nullable acceptance
+remain separate; an unavailable trial gets no acceptance credit. Both accepted
+states use the normal experimental eTPS formula. Offline TPS/eTPS remain null.
+
+Reports add `answer_tolerance[arm]`, scoped to the explicitly listed opted-in
+tasks: headline accepted count/rate, exact/deviation counts, failed/unavailable
+counts, and `format_compliance_rate` as accepted_exact / accepted with raw
+numerator/denominator (zero denominator means unavailable). `rule_counts` counts
+correct deviating probes per rule, including probes on later-failed paths;
+one probe can count for several rules. Compliance is never a multiplier.
+Replay verifies raw-byte answer projection and recomputes every mode/rule list;
+exported derived reports are not trusted. Previously recorded runs are not
+rescored under new declarations.
+
 ## Opt-in typed answers (2026-09-29)
 
 The descriptions of string-field projection below remain the default. A task

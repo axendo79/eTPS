@@ -102,6 +102,8 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         fields |= {"endpoint", "arms", "request_deadline_seconds", "trial_wall_limit_seconds", "exposure"}
         if "response_extraction" in plan:
             fields.add("response_extraction")
+        if "timing_convention" in plan:
+            fields.add("timing_convention")
     if manual:
         fields |= {"arms"}
     offline_arms = not live and not manual and not legacy and "arms" in plan

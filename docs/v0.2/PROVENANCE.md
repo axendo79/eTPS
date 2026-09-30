@@ -1,5 +1,39 @@
 # eTPS v0.2 provenance
 
+## D10 and timing decisions and calibration exposure (2026-09-30)
+
+The user authorized opt-in d10-v1 answer tolerance and decode-v1 live timing on
+`v02-d10-timing` from main `390827b` or later. The three frozen answer rules are
+declared key aliases, digit-string-to-expected-integer equality, and declared
+fixed-string ASCII-whitespace/casefold tolerance. Exact type-strict matches have
+precedence. Trial states are accepted_exact, accepted_with_format_deviation and
+failed, with measurement validity still separate. Format compliance is a
+separate accepted_exact / accepted rate, never an eTPS multiplier. Decode-only
+TPS/eTPS is primary under decode-v1; full-generation TPS is secondary. Both
+conventions and answer declarations must be frozen before a run.
+
+Codex authored the implementation, new synthetic tests, documentation and
+private mapping-v3 derivation. Existing tests on main remain unchanged. Tests
+use synthetic responses and ephemeral fake servers only. The requested
+Co-Authored-By trailer follows the existing local contribution convention;
+it does not establish independent review or change implementation authorship.
+
+The current corpus alias lists are **calibration-informed**, derived after
+observing google/gemma-4-e4b failures on 2026-09-29/30. They are not prospective
+independent evidence. The private proposal lists each alias and fixed-value
+declaration with a reason and is labeled "calibration-informed proposal;
+requires user approval before any run". Only unambiguous aliases are proposed.
+Existing recorded runs are not rescored; later runs require newly frozen hashes.
+
+The private full mapping-v1/v1.1 and reset mapping-v2-reset sources yielded 22
+new manifests with only D10 declarations added. Inverse edits restore exact
+source bytes, including payload spelling. All 116 newly authored synthetic
+offline slots replay successfully. SHA256SUMS verification matches before/after
+for seven original entries, and all 1,265 source mapping files remain unchanged.
+Wording repairs remain deferred to corpus vNext. No private corpus material or
+hashes are committed. This work authorizes local commits only and stops for
+Claude's check; no live model calls, remote publication or old-run rescoring.
+
 These documents were drafted by Codex from user instructions, supplied critiques, inspected repository code and cited primary sources. User-supplied review text is not automatically independently authored human review. Reddit attribution to u/Mirantisde is supplied by the user, not independently authenticated. No second-model identity or independence is inferred from style.
 
 ## Decisions and evidence
