@@ -255,6 +255,18 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    if store.plan.get("response_extraction") == "fence-v1":
+        rates = {arm: {"numerator": 0, "denominator": 0} for arm in store.plan["arms"]}
+        for slot, trial in zip(store.plan["slots"], result["trials"]):
+            schema = store.manifest(slot["id"]).get("answer_schema")
+            rate = rates[slot["arm"]]
+            for event in trial.get("record", {}).get("events", []):
+                if event["kind"] == "probe" and event["status"] == "ok":
+                    rate["denominator"] += 1
+                    rate["numerator"] += answer_from_raw(raw_response(event["raw_base64"], admission=False), schema) is not None
+        for rate in rates.values():
+            rate["value"] = Fraction(rate["numerator"], rate["denominator"]) if rate["denominator"] else None
+        result["strict_json_rate"] = rates
     if store.plan["purpose"] == "dev-manual":
         from .manual_runner import EVIDENCE
         result.update(evidence=EVIDENCE, publish_excluded=True, coding_correctness_verified=False,

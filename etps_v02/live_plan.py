@@ -31,6 +31,8 @@ def arm_endpoint(plan, arm):
 
 
 def validate_live(plan, *, allow_remote=False, execution=True):
+    if "response_extraction" in plan:
+        require(plan["response_extraction"] == "fence-v1", "unsupported response_extraction")
     endpoint(plan["endpoint"])
     arms = mapping(plan["arms"], "arms")
     require(bool(arms), "missing live arms")

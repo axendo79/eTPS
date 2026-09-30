@@ -163,3 +163,32 @@ verify human coding correctness. When the task author also builds the competing
 Skopos product, that author/product conflict must be disclosed; these results
 remain internal-only. Independent second-coder recoding is deferred. Claude
 reviews before any push; no legacy code or CLAUDE.md was edited.
+
+## Authorized run history and fence-v1 decision (2026-09-29)
+
+The user reports the following runs performed by Claude with user authorization
+on 2026-09-29; details remain in private run records, not this public repository:
+
+- First local smoke: synthetic, LM Studio OpenAI-compatible API, accepted,
+  TPS unavailable because stats were empty.
+- First TPS/eTPS measurement: synthetic, native API, 9 tokens / 0.2515 seconds,
+  approximately 35.79 tokens/second. LM Studio's own decode-only figure was
+  44.88 tokens/second. The first-token timing convention remains an open decision;
+  these figures are not presented as equivalent measurement definitions.
+- FIRST CORPUS RUN: all 11 tasks, local google/gemma-4-e4b, max_tokens 256,
+  strict parsing, 0/11 accepted. The user-reported diagnosis identifies Markdown
+  fences (seven would be correct without them) and reasoning-token exhaustion.
+  The recorded results are not rescored. No task text, payloads or answer keys
+  are included in this account.
+
+Prior exposure (S4): the corpus has now been exposed to google/gemma-4-e4b,
+locally only. This supersedes the earlier unknown/no-recorded-run state; it does
+not assert anything about exposure outside the supplied run history. These are
+user-reported Claude executions, not independently verified Astra executions.
+
+After that first local corpus run, the user adopted the frozen, versioned
+fence-v1 extraction rule and chose max_tokens 2048 for future runs, with reasoning
+tokens counting against it. Codex (Astra) authored the opt-in implementation,
+new synthetic regressions and private-kit update under local-commit-only
+authorization. Existing evidence, budgets and parsing results remain unchanged.
+Codex made no real model calls. Claude reviews the local commit before pushing.
