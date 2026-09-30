@@ -5,14 +5,14 @@ import sqlite3
 import time
 
 from . import adapter_openai as adapter, scorer
-from .live_plan import endpoint, validate_live
+from .live_plan import arm_endpoint, endpoint, validate_live
 from .scorer import classify, digest, finite, require, score, validate
 from .workload import encode, raw_response, sha
 
 
 def exposure(plan, slot):
     arm = plan["arms"][slot["arm"]]
-    return {"endpoint_host": endpoint(plan["endpoint"])[1], "provider": arm["provider"],
+    return {"endpoint_host": endpoint(arm_endpoint(plan, slot["arm"]))[1], "provider": arm["provider"],
             "model": arm["model"], "task_artifact_hashes": [plan["tasks"][slot["task"]]],
             "scope": "dispatch_intent; delivery may be uncertain"}
 
@@ -21,11 +21,13 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
     from .runner import answer_from_raw, implementation
     require(allow_live, "live plan requires --allow-live")
     require(store.plan["schema"] == "etps-live-plan-v1", "not a live plan")
-    remote = validate_live(store.plan, allow_remote=allow_remote)
+    validate_live(store.plan, allow_remote=allow_remote)
+    base = arm_endpoint(store.plan, store.slots[slot]["arm"])
+    remote = endpoint(base)[2]
     manifest = store.manifest(slot)
     validate(manifest)
     arm = store.plan["arms"][store.slots[slot]["arm"]]
-    adapter.preflight(store.plan["endpoint"], arm, store.plan["request_deadline_seconds"])
+    adapter.preflight(base, arm, store.plan["request_deadline_seconds"])
     began = time.monotonic()
     limit = store.plan["trial_wall_limit_seconds"]
     store.append(slot, "start", {"evidence": "live-exploratory", "controller_policy": "guard-v1",
@@ -54,7 +56,7 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             store.append(slot, "request", {"node": current, "body": body,
                          "elapsed_seconds": elapsed, "deadline_seconds": deadline})
             # Intent is durable before credentials are read or transport dispatch.
-            response = adapter.send(store.plan["endpoint"], arm, body, deadline)
+            response = adapter.send(base, arm, body, deadline)
             raw = raw_response(response["raw_base64"])
             event = {"kind": "probe", "node": current, **response,
                      "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
@@ -90,7 +92,8 @@ def replay_live_slot(store, slot, allow_running=False):
         return {"slot": slot, "state": "unattempted", "score": None, "reason": "unattempted",
                 "warnings": warnings, "authoring_findings": findings, "evidence_verified": None}
     arm = store.plan["arms"][store.slots[slot]["arm"]]
-    remote = validate_live(store.plan, execution=False)
+    validate_live(store.plan, execution=False)
+    remote = endpoint(arm_endpoint(store.plan, store.slots[slot]["arm"]))[2]
     now = implementation()
     recorded = {k: rows[0]["payload"][k] for k in now if k in rows[0]["payload"]}
     changed = sorted(k for k in now if k in recorded and recorded[k] != now[k])

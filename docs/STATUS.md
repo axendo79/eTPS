@@ -122,6 +122,26 @@ fixtures while retaining D3 connection-refusal coverage. All 177 tests pass;
 main's existing tests and the original field-routing tests remain unchanged.
 Only ephemeral loopback fake endpoints were used. No real model call or push.
 
+## External kit authorization (2026-09-29)
+
+Codex (Astra) added opt-in per-arm endpoints and model-metadata checking, with
+new loopback-only regression tests. The user authorized user-operated remote
+exploratory SMOKE runs on synthetic input only; corpus runs remain unauthorized.
+Private kits stay outside the repo. No provider API or documentation was queried
+by Codex; Anthropic version currency and model endpoint compatibility are
+unverified. No model run, dependency installation, legacy change or push.
+
+## Native provider amendment and reported first run (2026-09-29)
+
+Codex (Astra) added the user-authorized opt-in lmstudio-native provider with
+loopback-only, no-key dispatch and explicitly named generation timing sources.
+Tests use fake servers only. Separately, the user reports that Claude performed
+the first live run with user authorization: one synthetic slot against local
+google/gemma-4-e4b through LM Studio's OpenAI-compatible API, accepted, RR 0,
+TPS unavailable because stats were empty. No corpus data was used. The private
+run record retains details; this is not an Astra-executed or independently
+verified run. This entry supersedes earlier no-live-run status chronologically.
+
 ## Manual development authorization (2026-09-29)
 
 Codex (Astra) implemented the separately authorized opt-in manual development
