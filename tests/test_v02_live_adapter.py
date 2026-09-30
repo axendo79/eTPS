@@ -137,9 +137,11 @@ class LiveAdapterTests(unittest.TestCase):
             for options, detail in (({"status": 500}, "http_status"),
                                     ({"raw": b"garbage"}, "invalid_envelope"),
                                     ({"raw": b'{}'}, "invalid_envelope"),
-                                    ({"delay": .2}, "deadline_exceeded")):
+                                    ({"delay": 2.0}, "deadline_exceeded")):
                 with self.subTest(provider=provider, detail=detail), FakeServer(provider, **options) as server:
-                    p, artifacts = bundle(server.url, provider, request_deadline_seconds=.05)
+                    p, artifacts = bundle(server.url, provider,
+                                          request_deadline_seconds=.5 if "delay" in options else 5,
+                                          trial_wall_limit_seconds=10)
                     store = self.create(p, artifacts)
                     r = run_live(store, "slot", allow_live=True)
                     event = r["record"]["events"][-1]
@@ -189,8 +191,8 @@ class LiveAdapterTests(unittest.TestCase):
         self.assertEqual(report(store)["rr_unavailable_attempted"], 1)
 
     def test_wall_limit_is_bounded_failure(self):
-        with FakeServer(delay=.2) as server:
-            p, a = bundle(server.url, request_deadline_seconds=1, trial_wall_limit_seconds=.05)
+        with FakeServer(delay=2.0) as server:
+            p, a = bundle(server.url, request_deadline_seconds=1, trial_wall_limit_seconds=.5)
             store = self.create(p, a)
             r = run_live(store, "slot", allow_live=True)
             self.assertEqual(r["reason_code"], "trial_wall_limit")

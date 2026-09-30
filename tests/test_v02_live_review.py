@@ -84,7 +84,7 @@ class LiveReviewTests(unittest.TestCase):
         with socket.socket() as refused:
             refused.bind(("127.0.0.1", 0))
             store = self.create(*bundle("http://127.0.0.1:" + str(refused.getsockname()[1]),
-                                       request_deadline_seconds=.1))
+                                       request_deadline_seconds=5))
             child = self.cli(store)
             self.assertEqual(child.returncode, 2)
             self.assertEqual(child.stderr.strip(), b"error: endpoint TCP preflight failed")
