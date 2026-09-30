@@ -53,7 +53,10 @@ def validate_live(plan, *, allow_remote=False, execution=True):
         identity(name, "arm name")
         required = {"provider", "model", "temperature", "seed", "max_tokens", "api_key_env"}
         mapping(arm, "arm", required)
-        require(arm["provider"] in ("openai-compatible", "anthropic"), "unsupported provider")
+        require(arm["provider"] in ("openai-compatible", "anthropic", "lmstudio-native"), "unsupported provider")
+        if arm["provider"] == "lmstudio-native":
+            require(not endpoint(arm_endpoint(plan, name))[2], "lmstudio-native requires loopback")
+            require(arm["api_key_env"] is None, "lmstudio-native does not support keys")
         if arm["provider"] == "anthropic":
             required.add("anthropic_version")
             require(arm["seed"] is None, "anthropic seed must be explicit null (unsupported)")

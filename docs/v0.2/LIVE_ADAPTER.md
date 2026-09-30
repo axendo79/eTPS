@@ -192,3 +192,21 @@ generation counts AND durations; usage/client latency cannot supply them.
 Only user-operated synthetic smoke runs are authorized here. Corpus runs need
 separate permission. Codex authored the private kits and synthetic task; those
 are model-authored software fixtures, not benchmark evidence.
+
+## Opt-in native LM Studio
+
+`provider: "lmstudio-native"` uses BASE/api/v0/chat/completions, non-streaming,
+and requires a loopback endpoint and `api_key_env: null`. It retains the explicit
+live settings and normal authorization/journaling rules. `check-models` uses
+BASE/api/v0/models/MODEL for this provider. No actual LM Studio instance was
+contacted to implement or test it; all dispatch tests used ephemeral fake servers.
+
+The only native generation pair interpreted is `usage.completion_tokens` (a
+nonnegative integer, not Boolean) and `stats.generation_time` (positive finite
+seconds). Both source field names are recorded in `generation_source`. If either
+field is missing or invalid, generation TPS and eTPS stay unavailable. A lone
+`stats.tokens_per_second`, client latency, or compatible-provider `timings`
+object does not supply that native pair. Raw stats and usage are retained for
+inspection. These are explicit fixture/schema interpretations, not independent
+verification of a currently installed backend's telemetry semantics. The
+OpenAI-compatible provider's existing timing interpretation is unchanged.

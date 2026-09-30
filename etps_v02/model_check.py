@@ -21,7 +21,8 @@ def check_models(plan, *, allow_remote=False):
             results.append({"arm": name, "status": "auth-error"})
             continue
         base = endpoint(arm_endpoint(plan, name))[0]
-        path = "/v1/models/" if arm["provider"] == "anthropic" else "/models/"
+        path = {"anthropic": "/v1/models/", "lmstudio-native": "/api/v0/models/"}.get(
+            arm["provider"], "/models/")
         headers = {}
         if arm["provider"] == "anthropic":
             headers["anthropic-version"] = arm["anthropic_version"]

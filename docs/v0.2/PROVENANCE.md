@@ -137,3 +137,18 @@ arm has an author/system conflict. The reviewer (Claude) is an Anthropic model,
 as is the Fable arm. These affiliations are disclosures, not independence.
 No external provider/docs requests or model calls were made by Codex. The
 supplied Anthropic version and model IDs remain unverified by this work.
+
+## First authorized live run — user-reported (2026-09-29)
+
+The user reports the first live model run, performed by Claude with user
+authorization on 2026-09-29: one synthetic slot against local google/gemma-4-e4b
+via LM Studio's OpenAI-compatible API. It was accepted with RR 0; TPS was
+unavailable because the stats were empty. Details are in the private run record.
+No corpus data was used. This entry records the supplied account without claiming
+independent verification, model-run execution by Codex/Astra, or benchmark validity.
+
+The same user authorized a new lmstudio-native provider. Codex (Astra) authored
+its loopback-only/no-key implementation and native count/time interpretation,
+tested solely with fake servers. No real LM Studio endpoint was contacted by
+Codex. Native field interpretation does not retroactively manufacture timing for
+the earlier compatible-API run.
