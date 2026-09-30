@@ -116,3 +116,13 @@ implementation, eight new regressions and documentation. Validation passes
 linked to one originating probe; multi-probe failure linkage is not implemented.
 Private artifacts and mapping results stay outside the public repository.
 These checks establish software behavior, not corpus validity or independence.
+
+## Review-fix authorization and authorship (2026-09-29)
+
+The user authorized local review fixes to both branches, then explicitly allowed
+narrow preflight-related changes to the unmerged live adapter tests. Codex (Astra)
+authored coverage validation, live routing integration, credential/TCP preflight,
+harness-fault and conversation guards, replay compatibility, and synthetic
+regressions. The field branch passes 154 tests; the integrated live branch passes
+177. No corpus payload is included. No model calls, dependency installs or pushes
+were performed; Claude reviews the local commits before publication.

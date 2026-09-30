@@ -110,3 +110,14 @@ manifests, journals and tests remain unchanged. All 152 tests pass on Windows
 Python 3.14 (144 existing plus 8 new). Private mapping is separately authorized;
 no private text or answer keys are included here. No model calls, installs,
 legacy repairs or pushes. Claude reviews before publication.
+
+## Authorized review fixes (2026-09-29)
+
+Codex (Astra) added field-obligation coverage validation and merged field routing
+into the live branch with a merge commit. Live dispatch now shares scorer routing,
+checks credentials and TCP reachability before start, treats in-trial credential
+loss as execution_error, and rejects empty/assistant-ended public histories
+before dispatch. The user authorized narrow updates to the unmerged live test
+fixtures while retaining D3 connection-refusal coverage. All 177 tests pass;
+main's existing tests and the original field-routing tests remain unchanged.
+Only ephemeral loopback fake endpoints were used. No real model call or push.

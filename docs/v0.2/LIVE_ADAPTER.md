@@ -4,7 +4,7 @@ Codex (Astra), 2026-09-29. This is implementation documentation, not model-run
 authorization or evidence of model performance. Tests use ephemeral loopback
 fake servers and mocked remote transport. No real local/cloud model calls or
 calls to port 1234 were made. Existing offline plans retain their execution and
-replay behavior. This branch is independent of field-routing work.
+replay behavior. Field-routing support is integrated by a merge commit.
 
 ## Explicit plan contract
 
@@ -35,7 +35,9 @@ by this document. Provider-specific compatibility beyond this finite request
 surface is not claimed; a server rejection remains a recorded transport outcome.
 
 Task manifests still use the existing user/probe/terminal schema and may opt
-into typed-v1 answers. State, budget or action metadata is not enforcement.
+into typed-v1 answers and field-v1 routing. Live execution and replay use the
+same scorer routing function as offline execution, including partial-field
+failure attribution. State, budget or action metadata is not enforcement.
 
 ## Authorization and credentials
 
@@ -54,11 +56,23 @@ HTTPS and both authorization gates. URLs containing embedded credentials,
 query strings or fragments are rejected. Proxy environment settings and HTTP
 redirects are disabled, and no HTTP retry is automatic.
 
-Only an environment-variable reference is stored. The key is read at request
-time after durable request intent. OpenAI-compatible requests use Authorization
+Before writing a start entry, preflight checks any configured credential and
+opens and closes a TCP connection to the endpoint host and port. No HTTP,
+TLS handshake or application data is sent by this check. It uses the plan's
+explicit request deadline. A refused preflight leaves the slot unattempted,
+writes no journal entry and produces a concise `error:` with CLI exit 2.
+Preflight proves reachability only; it cannot establish model availability or
+credential acceptance. Trial wall timing begins after preflight.
+
+Only an environment-variable reference is stored. A configured key must exist,
+be non-empty and contain only visible ASCII without whitespace or controls.
+The key is read again at request time after durable request intent.
+OpenAI-compatible requests use Authorization
 Bearer; Anthropic uses x-api-key plus the declared anthropic-version header.
-Headers and exception text are never journaled or printed. A missing/invalid
-configured credential becomes `credential_unavailable`. A literal credential
+Headers and exception text are never journaled or printed. A configured
+credential that disappears or becomes malformed during a trial is a harness
+fault: the trial aborts with the predeclared `execution_error` invalidation,
+retaining its durable prefix. It is not a model timeout. A literal credential
 echo in a response body is withheld as `credential_echo`, retaining its hash
 but not its body. Tests check a sentinel across journals, reports and exports.
 Operators must not place credentials themselves in task text, model names,
@@ -80,6 +94,12 @@ arm labels are excluded. System prompts are recorded but excluded from I.
 Timeouts do not invent prior assistant content. No tools, retrieval, images,
 streaming, or automatic conversation repair are supported.
 
+Before each request intent and dispatch, the public conversation must be
+non-empty and end with a user message. An empty history or assistant prefill
+aborts with `execution_error` before any HTTP request for that probe. This is
+a manifest/controller defect, and applies to both providers; a system prompt
+does not satisfy the public-user requirement.
+
 Intent is committed before transport. Response events retain exact UTF-8
 assistant text as raw_base64, full HTTP body bytes and SHA-256 when available,
 usage exactly as supplied (or null), named backend statistics and client
@@ -90,12 +110,20 @@ Replay verifies body hashes, envelope/projection agreement, public request
 history/settings, exposure binding, timings and terminal claims before scoring.
 Editable hash chains still do not independently prove endpoint execution.
 
-Deadline, refused connection, non-2xx and invalid envelope use status timeout
+Inside a trial, deadline, refused connection, non-2xx, invalid envelope,
+credential echo and response size limit use status timeout
 with a transport_detail code. They follow the manifest's timeout transition,
 not storage/controller invalidation. Unexpected model answers remain measured
 outcomes. Unknown user payload remains a protocol deviation. Process crashes
 can leave a durable unfinished request; there is no implicit resume or reissue.
 An operator may explicitly abort such a prefix under the declared policy.
+
+New start records carry `controller_policy: "guard-v1"`. Replay verifies the
+conversation guard and rejects `credential_unavailable` as a timeout detail
+under that policy. Older journals remain readable; an old credential timeout
+has the explicit warning `legacy_credential_outcome: harness fault recorded as
+timeout`. Harness-aborted trials retain unavailable measurements, rather than
+becoming measured model failures. Replay does not repeat preflight or use keys.
 
 ## Budgets and timing
 

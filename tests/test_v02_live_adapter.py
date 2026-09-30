@@ -152,17 +152,21 @@ class LiveAdapterTests(unittest.TestCase):
                     self.assertLessEqual(len(server.seen), 1)
 
     def test_connection_refused(self):
-        sock = socket.socket()
-        sock.bind(("127.0.0.1", 0))
-        port = sock.getsockname()[1]
-        # Bound but not listening: cannot be stolen by a real service.
-        try:
-            p, a = bundle("http://127.0.0.1:" + str(port), request_deadline_seconds=5,
+        original = adapter.preflight
+        with FakeServer() as server:
+            def close_after_preflight(*args):
+                original(*args)
+                server.server.shutdown()
+                server.server.server_close()
+            p, a = bundle(server.url, request_deadline_seconds=5,
                           trial_wall_limit_seconds=10)
-            r = run_live(self.create(p, a), "slot", allow_live=True)
+            with patch.object(adapter, "preflight", side_effect=close_after_preflight):
+                r = run_live(self.create(p, a), "slot", allow_live=True)
             self.assertEqual(r["record"]["events"][-1]["transport_detail"], "connection_refused")
-        finally:
-            sock.close()
+            self.assertEqual(r["record"]["events"][-1]["status"], "timeout")
+            self.assertEqual(r["state"], "finished")
+            self.assertTrue(r["score"]["measurement_valid"])
+            self.assertTrue(r["evidence_verified"])
 
     def test_intent_persisted_before_http_and_crash_retains_prefix(self):
         path = Path(self.temp.name) / "0.db"
@@ -178,7 +182,7 @@ class LiveAdapterTests(unittest.TestCase):
             run_live(self.create(p, a), "slot", allow_live=True)
         self.assertEqual(checked, ["request"])
         store = self.create(p, a)
-        with patch.object(adapter, "send", side_effect=KeyboardInterrupt), self.assertRaises(KeyboardInterrupt):
+        with patch.object(adapter, "preflight"), patch.object(adapter, "send", side_effect=KeyboardInterrupt), self.assertRaises(KeyboardInterrupt):
             run_live(store, "slot", allow_live=True)
         self.assertEqual(store.entries("slot")[-1]["kind"], "request")
         self.assertEqual(replay_slot(store, "slot")["state"], "running")
@@ -244,7 +248,7 @@ class LiveAdapterTests(unittest.TestCase):
                 def local_only(url, body, headers, deadline):
                     suffix = "/v1/messages" if provider == "anthropic" else "/chat/completions"
                     return original(server.url + suffix, body, headers, deadline)
-                with patch.dict(os.environ, {"ETPS_TEST_KEY": sentinel}), patch.object(adapter, "_http_once", side_effect=local_only):
+                with patch.object(adapter, "preflight"), patch.dict(os.environ, {"ETPS_TEST_KEY": sentinel}), patch.object(adapter, "_http_once", side_effect=local_only):
                     r = run_live(store, "slot", allow_live=True, allow_remote=True)
                 self.assertEqual(len(r["exposure"]), 1)
                 self.assertEqual(r["exposure"][0]["endpoint_host"], "example.invalid")
@@ -270,7 +274,7 @@ class LiveAdapterTests(unittest.TestCase):
             self.assertEqual(r["record"]["events"][-1]["transport_detail"], "credential_echo")
             self.assertNotIn(key, json.dumps(export_bundle(store), default=json_default))
         store = self.create(p, a)
-        with patch.dict(os.environ, {"ETPS_TEST_KEY": key}), patch.object(adapter, "_http_once", side_effect=RuntimeError(key)):
+        with patch.object(adapter, "preflight"), patch.dict(os.environ, {"ETPS_TEST_KEY": key}), patch.object(adapter, "_http_once", side_effect=RuntimeError(key)):
             run_live(store, "slot", allow_live=True)
         self.assertNotIn(key, json.dumps(export_bundle(store), default=json_default))
 

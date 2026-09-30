@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import sqlite3
 import time
 
-from . import adapter_openai as adapter
+from . import adapter_openai as adapter, scorer
 from .live_plan import endpoint, validate_live
 from .scorer import classify, digest, finite, require, score, validate
 from .workload import encode, raw_response, sha
@@ -22,12 +22,14 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
     require(allow_live, "live plan requires --allow-live")
     require(store.plan["schema"] == "etps-live-plan-v1", "not a live plan")
     remote = validate_live(store.plan, allow_remote=allow_remote)
-    began = time.monotonic()
     manifest = store.manifest(slot)
     validate(manifest)
     arm = store.plan["arms"][store.slots[slot]["arm"]]
+    adapter.preflight(store.plan["endpoint"], arm, store.plan["request_deadline_seconds"])
+    began = time.monotonic()
     limit = store.plan["trial_wall_limit_seconds"]
-    store.append(slot, "start", {"evidence": "live-exploratory", **implementation()})
+    store.append(slot, "start", {"evidence": "live-exploratory", "controller_policy": "guard-v1",
+                                **implementation()})
     current, conversation = manifest["start"], []
     try:
         if remote:
@@ -45,6 +47,8 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             elapsed = time.monotonic() - began
             if elapsed >= limit:
                 break
+            require(conversation and conversation[-1]["role"] == "user",
+                    "live dispatch requires a public conversation ending with user")
             body = adapter.public_request(arm, conversation)
             deadline = min(store.plan["request_deadline_seconds"], limit - elapsed)
             store.append(slot, "request", {"node": current, "body": body,
@@ -58,7 +62,7 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             if response["status"] == "ok":
                 conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
             outcome = classify(event, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
-            current = node["next"][outcome]
+            current, _ = scorer.route(manifest, node, event, outcome)
         wall = time.monotonic() - began
         stopped = wall >= limit
         store.append(slot, "finish", {"terminal": "$trial_wall_limit" if stopped else current,
@@ -97,6 +101,7 @@ def replay_live_slot(store, slot, allow_running=False):
     state = {"finish": "finished", "abort": "aborted"}.get(rows[-1]["kind"], "running")
     events, conversation, exposures, issues = [], [], [], []
     pending, elapsed_end = None, 0
+    guarded = rows[0]["payload"].get("controller_policy") == "guard-v1"
     for row in rows[1:]:
         kind, p = row["kind"], row["payload"]
         if kind == "exposure":
@@ -109,6 +114,9 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(False, "invalid exposure timestamp")
             exposures.append(p)
         elif kind == "request":
+            if guarded:
+                require(conversation and conversation[-1]["role"] == "user",
+                        "live request violates public conversation guard")
             require(pending is None and (not remote or len(exposures) == 1), "missing intent/exposure boundary")
             require(encode(p["body"]) == encode(adapter.public_request(arm, conversation)), "request public history/settings mismatch")
             elapsed, deadline = p["elapsed_seconds"], p["deadline_seconds"]
@@ -132,11 +140,14 @@ def replay_live_slot(store, slot, allow_running=False):
                     expected = adapter.envelope(arm["provider"], p["http_status"], body)
                     require(all(encode(p[k]) == encode(v) for k, v in expected.items()), "HTTP envelope projection mismatch")
                 else:
+                    legacy_credential = not guarded and p["transport_detail"] == "credential_unavailable"
+                    if legacy_credential:
+                        warnings.append("legacy_credential_outcome: harness fault recorded as timeout")
                     require(p["status"] == "timeout" and raw == b"" and p["usage"] is None
                             and p["generation"] is None and p["generation_source"] is None
-                            and p["backend_stats"] == {} and p["transport_detail"] in {
-                                "deadline_exceeded", "connection_refused", "transport_error", "credential_unavailable",
-                                "credential_echo", "response_size_limit"}, "invalid transport failure evidence")
+                            and p["backend_stats"] == {} and (legacy_credential or p["transport_detail"] in {
+                                "deadline_exceeded", "connection_refused", "transport_error",
+                                "credential_echo", "response_size_limit"}), "invalid transport failure evidence")
                 if p["status"] == "ok":
                     conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
                 pending = None
