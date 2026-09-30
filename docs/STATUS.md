@@ -84,3 +84,18 @@ integers. Per-field routing is deferred, as are broader state semantics (D4),
 review/exposure declarations (D8), arms/budgets/counts (D9) and acceptance/reference
 rules (D10). No model run, dependency installation, legacy change or push is
 authorized by this delivery. Private mapping results remain outside the repo.
+
+## Authorized live exploratory adapter (2026-09-29)
+
+The user authorized an independent local branch from merged typed-answer main,
+amended to support OpenAI-compatible and Anthropic endpoints. Codex (Astra)
+implemented opt-in live plans, explicit model/budget settings, dual remote
+authorization, environment-reference credentials, exposure journaling and
+replay, and monotonic response/trial timing. Client latency never substitutes
+for generation timing. Offline plans and existing tests remain unchanged.
+Validation uses fake loopback servers and mocked remote transport only; no
+real model endpoint or port 1234 was contacted. All 159 tests pass on Windows
+Python 3.14 (144 existing unchanged and 15 new). See [live adapter](v0.2/LIVE_ADAPTER.md)
+for the exact schema, safety gates and measurement limits. No dependency
+installs, legacy repairs, corpus publication or pushes. Claude reviews before
+opening a PR; real smoke testing remains separately unauthorized.

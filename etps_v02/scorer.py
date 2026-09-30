@@ -434,6 +434,13 @@ def score(manifest, record):
             labels.append({"node": current, "class": "excluded_" + kind})
             current = node["next"]
     terminal = manifest["nodes"][current]
+    if record.get("purpose") == "live-exploratory" and record.get("stop_reason") == "trial_wall_limit":
+        limit = record.get("trial_wall_limit_seconds")
+        require(finite(limit, positive=True) and wall is not None and wall >= limit,
+                "invalid trial wall limit stop")
+        if reason is None:
+            terminal = {"kind": "terminal", "accepted": False}
+            current = "$trial_wall_limit"
     if reason is None and terminal["kind"] != "terminal":
         reason = "truncated_trace"
     valid = reason is None

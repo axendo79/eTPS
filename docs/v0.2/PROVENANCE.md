@@ -91,3 +91,18 @@ arms/budgets/counts and D10 acceptance/reference rules remain deferred.
 Boolean responses follow the explicit out-of-schema rule (malformed), never
 integer equality. Private derived fixtures are not model results. Claude reviews
 before any push; no push or PR was performed by Codex.
+
+## Live-adapter authorization and authorship (2026-09-29)
+
+The user authorized a separate branch for an opt-in local live adapter, then
+expanded that authorization to OpenAI-compatible and Anthropic providers with
+explicit remote gates and environment-referenced keys. Codex (Astra) authored
+the implementation, new fake-server tests and documentation. No actual local
+or cloud model execution, dependency installation, legacy change or push was
+authorized or performed. Exposure records describe recorded dispatch intent,
+not proof of delivery or a complete history outside this runner. Existing
+tests and offline evidence behavior are retained. All private artifacts stay
+outside the repository; no budgets, model settings or counts for real runs
+were selected. The full suite passes 159 tests on Windows Python 3.14, including
+all 144 unchanged existing tests and 15 new fake-server/transport regressions.
+Claude reviews the local commit before remote publication.

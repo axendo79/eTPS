@@ -1,4 +1,4 @@
-"""Offline-only CLI. No endpoint, API key, network client, or model loader."""
+"""Offline by default; live plans require explicit dispatch authorization."""
 import argparse
 import json
 import sys
@@ -22,11 +22,15 @@ def main():
     create.add_argument("database")
     create.add_argument("--plan", required=True)
     create.add_argument("--artifact", action="append", required=True)
+    create.add_argument("--allow-remote", action="store_true")
     for name in ("run", "report", "export", "abort"):
         command = commands.add_parser(name)
         command.add_argument("database")
         if name in {"run", "abort"}:
             command.add_argument("--slot", required=True)
+        if name == "run":
+            command.add_argument("--allow-live", action="store_true")
+            command.add_argument("--allow-remote", action="store_true")
         if name == "abort":
             command.add_argument("--code", required=True)
             command.add_argument("--reason", default="")
@@ -44,12 +48,17 @@ def main():
         for name in args.artifact:
             raw = read_file(name, "MAX_ARTIFACT_BYTES")
             artifacts[sha(raw)] = raw
-        store = Store.create(args.database, read_file(args.plan, "MAX_PLAN_BYTES"), artifacts)
+        store = Store.create(args.database, read_file(args.plan, "MAX_PLAN_BYTES"), artifacts,
+                             allow_remote=args.allow_remote)
     else:
         store = Store(args.database)
     try:
         if args.command == "run":
-            result = run_offline(store, args.slot)
+            if store.plan["schema"] == "etps-live-plan-v1":
+                from .live_runner import run_live
+                result = run_live(store, args.slot, allow_live=args.allow_live, allow_remote=args.allow_remote)
+            else:
+                result = run_offline(store, args.slot)
         elif args.command == "abort":
             store.abort(args.slot, args.code, args.reason)
             result = report(store)
@@ -57,7 +66,7 @@ def main():
             result = export_bundle(store, format=args.format)
             with Path(args.output).open("x", encoding="utf-8") as output:
                 json.dump(result, output, default=json_default, ensure_ascii=False, indent=2)
-            result = {"output": args.output, "purpose": "offline-verification"}
+            result = {"output": args.output, "purpose": store.plan["purpose"]}
         else:
             result = report(store)
         print(json.dumps(result, default=json_default, ensure_ascii=False, indent=2))

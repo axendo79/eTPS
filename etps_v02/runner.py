@@ -107,6 +107,9 @@ def run_offline(store, slot):
 
 
 def replay_slot(store, slot, allow_running=False):
+    if store.plan["schema"] == "etps-live-plan-v1":
+        from .live_runner import replay_live_slot
+        return replay_live_slot(store, slot, allow_running=allow_running)
     entries = store.entries(slot)
     manifest = store.manifest(slot)
     findings = validate(manifest, authoring=False)
@@ -277,7 +280,7 @@ def report(store):
             }
         arm_pairing[task] = {"arms": by_arm,
                              "equal_planned_counts": len({v["planned"] for v in by_arm.values()}) == 1}
-    return {"purpose": "offline-verification", "plan_sha256": store.plan_hash,
+    return {"purpose": store.plan["purpose"], "plan_sha256": store.plan_hash,
             "summaries": summaries,
             "planned": len(trials), "attempted": attempted, **counts,
             "accepted": accepted, "failed": sum(r["accepted"] is False for r in finished),
@@ -351,7 +354,8 @@ def replay_export(bundle, *, validate_authoring=False):
                 expected = sha(encode([slot, i, kind, previous]) + encode(entry["payload"]))
                 require(entry["sha256"] == expected, "export journal integrity failure")
                 require((i == 0 and kind == "start") or
-                        (state == "running" and kind in {"event", "request", "finish", "abort"}),
+                        (state == "running" and kind in ({"event", "request", "finish", "abort"} |
+                         ({"exposure"} if self.plan["schema"] == "etps-live-plan-v1" else set()))),
                         "invalid export lifecycle")
                 state = {"start": "running", "finish": "finished", "abort": "aborted"}.get(kind, state)
                 previous = expected
@@ -373,7 +377,7 @@ def replay_export(bundle, *, validate_authoring=False):
     view.artifacts = {k: raw_response(v, "export.artifacts." + k, admission=False)
                       for k, v in bundle["artifacts"].items()}
     view.plan = validate_bundle(view.plan_raw, view.artifacts, allow_legacy=True,
-                                authoring=validate_authoring)
+                                authoring=validate_authoring, allow_remote=True)  # Read-only replay, never dispatch.
     view.slots = {s["id"]: s for s in view.plan["slots"]}
     require(set(bundle["journal"]) == set(view.slots), "export omitted planned slots")
     if bound:
