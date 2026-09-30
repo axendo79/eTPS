@@ -210,3 +210,41 @@ object does not supply that native pair. Raw stats and usage are retained for
 inspection. These are explicit fixture/schema interpretations, not independent
 verification of a currently installed backend's telemetry semantics. The
 OpenAI-compatible provider's existing timing interpretation is unchanged.
+
+## Frozen opt-in response extraction: fence-v1
+
+Live plans may set `response_extraction: "fence-v1"`. The rule is plan-wide,
+identical for every arm/provider. Absence retains strict projection and the old
+journal/report layout; offline and manual plans do not accept this field.
+
+For fence recognition only, trim leading/trailing ASCII space, tab, CR, LF,
+vertical tab and form feed. The entire remainder must be one block: an opening
+line of three backticks or three backticks followed by lowercase `json`, with
+optional trailing ASCII spaces, then the body, then a closing line of exactly
+three backticks. LF and CRLF line endings are accepted. An additional fence line
+in the body rejects extraction. Other tags, surrounding prose, unclosed fences,
+embedded or multiple blocks take the strict path on the unchanged original
+reply. No Unicode whitespace normalization or partial-match/prose repair occurs.
+The body uses the existing schema projection; extracting malformed JSON does
+not make it a valid answer. Even an empty recognized block records extraction.
+
+Original raw_base64 and public assistant conversation content remain unchanged.
+Every opted-in probe records a Boolean `extracted`, including false for strict
+answers and transport timeouts. Replay recomputes both answer and flag from the
+pinned plan and raw bytes, rejecting disagreement or a missing/non-Boolean flag.
+
+Opted-in reports add `strict_json_rate` keyed by arm: raw counts `numerator`
+and `denominator`, plus exact fractional `value` (null when denominator is zero).
+The denominator includes every recorded status-ok probe across that arm's slots,
+including unfinished/failed trials. The numerator counts replies projected as
+an answer under that task's schema WITHOUT extraction; wrong but valid objects
+count, while malformed objects and fenced replies do not. Transport timeouts
+are excluded. This diagnostic never changes classification or acceptance.
+Reports for old plans do not acquire this field, and old runs are not rescored
+under the new extraction policy.
+
+The user chose max_tokens 2048 for future runs, with reasoning tokens counting
+against that output budget. The private smoke plan uses this explicit value;
+it is not a new adapter default or a retroactive change to evidence. Backend
+token-budget enforcement remains provider-dependent and is not independently
+measured by this client.

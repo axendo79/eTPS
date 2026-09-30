@@ -100,6 +100,8 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         fields |= {"unit", "invalidation_policy"}
     if live:
         fields |= {"endpoint", "arms", "request_deadline_seconds", "trial_wall_limit_seconds", "exposure"}
+        if "response_extraction" in plan:
+            fields.add("response_extraction")
     if manual:
         fields |= {"arms"}
     require(set(plan) == fields, "invalid plan fields")

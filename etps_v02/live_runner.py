@@ -6,6 +6,7 @@ import time
 
 from . import adapter_openai as adapter, scorer
 from .live_plan import arm_endpoint, endpoint, validate_live
+from .response_extraction import project_reply
 from .scorer import classify, digest, finite, require, score, validate
 from .workload import encode, raw_response, sha
 
@@ -58,8 +59,11 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             # Intent is durable before credentials are read or transport dispatch.
             response = adapter.send(base, arm, body, deadline)
             raw = raw_response(response["raw_base64"])
+            answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
             event = {"kind": "probe", "node": current, **response,
-                     "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
+                     "answer": answer}
+            if "response_extraction" in store.plan:
+                event["extracted"] = extracted
             store.append(slot, "event", event)
             if response["status"] == "ok":
                 conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
@@ -134,7 +138,11 @@ def replay_live_slot(store, slot, allow_running=False):
             else:
                 require(p["kind"] == "probe" and pending is not None and p["node"] == pending["node"], "probe lacks intent")
                 raw = raw_response(p["raw_base64"], admission=False)
-                require(encode(p["answer"]) == encode(answer_from_raw(raw, manifest.get("answer_schema"))), "raw answer projection mismatch")
+                answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
+                require(encode(p["answer"]) == encode(answer), "raw answer projection mismatch")
+                if "response_extraction" in store.plan:
+                    require(type(p.get("extracted")) is bool and p["extracted"] is extracted,
+                            "response extraction flag mismatch")
                 require(finite(p["client_latency_seconds"]), "invalid response latency")
                 elapsed_end = pending["elapsed_seconds"] + p["client_latency_seconds"]
                 if p["http_body_base64"] is not None:

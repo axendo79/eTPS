@@ -150,3 +150,18 @@ and publication fences. Results remain dev-only and separate from automated
 summaries. Tests use synthetic scripted stdin; no actual service session or
 external request occurred. Optional independent recoding is deferred. Private
 draft kits require user review; no corpus content is included here.
+
+## Fence extraction and post-run decisions (2026-09-29)
+
+The user authorized Codex (Astra) to implement opt-in live fence-v1 extraction,
+replay-bound flags and per-arm strict-JSON diagnostics, preserving strict old
+plans and all existing test files. Future-run output budget is user-set to
+2048 tokens including reasoning, with the private smoke kit updated separately.
+Only synthetic fake-server tests were run by Codex; no live model calls.
+
+The user reports Claude's authorized first local corpus run on all 11 tasks
+against google/gemma-4-e4b: max_tokens 256, strict parsing, 0/11 accepted.
+The reported diagnosis is Markdown fences (seven answers would be correct
+without them) and reasoning-token exhaustion. Recorded results stay unchanged;
+the counterfactual diagnosis is not a rescore. S4 now records local prior exposure
+of this corpus to google/gemma-4-e4b. Private run records retain the details.
