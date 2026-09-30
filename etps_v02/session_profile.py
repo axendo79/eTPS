@@ -11,7 +11,7 @@ def processing_requests(rows):
         if row["kind"] == "request":
             pending = {"node": payload["node"], "prompt_tokens": None}
             requests.append(pending)
-        elif row["kind"] == "event" and payload["kind"] == "probe" and pending is not None:
+        elif row["kind"] == "event" and payload["kind"] in {"probe", "delivery"} and pending is not None:
             usage = payload.get("usage")
             # Retain the exact reported value, including unusual provider values.
             pending["prompt_tokens"] = usage.get("prompt_tokens") if isinstance(usage, dict) else None
@@ -89,3 +89,11 @@ def add_arm_comparison(store, result, arms):
     result["arm_comparison"] = comparisons
     if memory_by_arm:
         result["memory_telemetry"] = {name: memory_summary(observations) for name, observations in memory_by_arm.items()}
+    if store.plan.get("boundary_delivery") == "deliver-v1":
+        from .boundary_delivery import observations as delivery_observations
+        result["boundary_delivery"] = "deliver-v1"
+        result["delivery_processing"] = {name: [] for name in names}
+        for slot in store.plan["slots"]:
+            name = slot["arm"]
+            result["delivery_processing"][name].append({"slot": slot["id"], "task": slot["task"],
+                "requests": delivery_observations(store.entries(slot["id"]), arms[name]["provider"])})

@@ -106,6 +106,8 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
             fields.add("timing_convention")
         if "cache_policy" in plan:
             fields.add("cache_policy")
+        if "boundary_delivery" in plan:
+            fields.add("boundary_delivery")
     if manual:
         fields |= {"arms"}
     offline_arms = not live and not manual and not legacy and "arms" in plan

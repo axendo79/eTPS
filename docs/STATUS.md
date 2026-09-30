@@ -285,3 +285,29 @@ Claude pushes and opens the PR.
 Validation: 237 tests pass, including eight new synthetic tests and all 229
 existing tests unchanged. New live-test request deadlines are 10 seconds and
 trial limits are 30 seconds; all servers are ephemeral test servers.
+
+## Boundary delivery correction for memory arms (2026-09-30)
+
+The user identified that reset-v1 could clear pre-boundary user messages before
+any request submitted them to the system. This is a harness delivery failure
+for a memory experiment under contract section 3. The 2026-09-30 reset-v1 runs
+stand as a no-memory baseline: for stateless models, undelivered and forgotten
+earlier messages are equivalent at the next request. Those runs are not
+rescored or represented as memory-arm evidence.
+
+Memory arms require the new opt-in live-plan `boundary_delivery: "deliver-v1"`.
+Every arm sends one delivery request at a boundary if user messages are pending
+since the last request, then applies its full/reset policy. Raw responses and
+processing telemetry are journaled and replay-verified. Delivery replies are
+not classified; delivery generation is excluded from primary TPS/eTPS and
+reported separately. I/R accounting and probe retention remain unchanged.
+Transport failures are retained and the trial continues within its wall budget.
+Absent the field, prior behavior is unchanged. Codex implemented and tested the
+addition on v02-memory-arms with synthetic fixtures and fake servers only;
+existing tests and the separate nyx-bridge workspace are untouched. One more
+local commit, then stop for Claude's check; no model calls, push or PR.
+
+Validation: 246 tests pass (237 existing tests unchanged, nine new boundary
+delivery tests). Fake-server coverage includes both histories, first-attempt
+retention, primary TPS exclusion, no-pending/repeated boundaries, failed
+delivery, wall-limit stops, secondary timing and rehashed replay tampering.

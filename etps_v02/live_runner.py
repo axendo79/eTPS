@@ -18,6 +18,34 @@ def exposure(plan, slot):
             "scope": "dispatch_intent; delivery may be uncertain"}
 
 
+def _dispatch(store, slot, current, conversation, arm, base, manifest, elapsed, deadline, kind="probe"):
+    require(conversation and conversation[-1]["role"] == "user",
+            "live dispatch requires a public conversation ending with user")
+    body = adapter.public_request(arm, conversation)
+    intent = {"node": current, "body": body, "elapsed_seconds": elapsed, "deadline_seconds": deadline}
+    if kind == "delivery":
+        intent["kind"] = "delivery"
+    store.append(slot, "request", intent)
+    response = adapter.send(base, arm, body, deadline)
+    if "memory_telemetry_field" in arm:
+        from .memory_telemetry import project as project_memory
+        response.update(project_memory(response, arm["memory_telemetry_field"]))
+    if store.plan.get("timing_convention") == "decode-v1":
+        from .timing import project
+        response["timing"] = project(arm["provider"], response)
+    raw = raw_response(response["raw_base64"])
+    event = {"kind": kind, "node": current, **response}
+    if kind == "probe":
+        answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
+        event["answer"] = answer
+        if "response_extraction" in store.plan:
+            event["extracted"] = extracted
+    store.append(slot, "event", event)
+    if response["status"] == "ok":
+        conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
+    return event
+
+
 def run_live(store, slot, *, allow_live=False, allow_remote=False):
     from .runner import answer_from_raw, implementation
     require(allow_live, "live plan requires --allow-live")
@@ -34,6 +62,7 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
     store.append(slot, "start", {"evidence": "live-exploratory", "controller_policy": "guard-v1",
                                 **implementation()})
     current, conversation = manifest["start"], []
+    dirty = False
     try:
         if remote:
             store.append(slot, "exposure", {**exposure(store.plan, store.slots[slot]),
@@ -43,6 +72,13 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
                 break
             node = manifest["nodes"][current]
             if node["kind"] == "session_boundary":
+                if store.plan.get("boundary_delivery") == "deliver-v1" and dirty:
+                    elapsed = time.monotonic() - began
+                    if elapsed >= limit:
+                        break
+                    _dispatch(store, slot, current, conversation, arm, base, manifest, elapsed,
+                              min(store.plan["request_deadline_seconds"], limit - elapsed), "delivery")
+                    dirty = False
                 store.append(slot, "event", {"kind": "session_boundary", "node": current})
                 if arm.get("context_policy", "full") == "reset-v1":
                     conversation.clear()
@@ -51,34 +87,15 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             if node["kind"] == "user":
                 store.append(slot, "event", {"kind": "user", "node": current, "text": node["text"]})
                 conversation.append({"role": "user", "content": node["text"]})
+                dirty = True
                 current = node["next"]
                 continue
             elapsed = time.monotonic() - began
             if elapsed >= limit:
                 break
-            require(conversation and conversation[-1]["role"] == "user",
-                    "live dispatch requires a public conversation ending with user")
-            body = adapter.public_request(arm, conversation)
             deadline = min(store.plan["request_deadline_seconds"], limit - elapsed)
-            store.append(slot, "request", {"node": current, "body": body,
-                         "elapsed_seconds": elapsed, "deadline_seconds": deadline})
-            # Intent is durable before credentials are read or transport dispatch.
-            response = adapter.send(base, arm, body, deadline)
-            if "memory_telemetry_field" in arm:
-                from .memory_telemetry import project as project_memory
-                response.update(project_memory(response, arm["memory_telemetry_field"]))
-            if store.plan.get("timing_convention") == "decode-v1":
-                from .timing import project
-                response["timing"] = project(arm["provider"], response)
-            raw = raw_response(response["raw_base64"])
-            answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
-            event = {"kind": "probe", "node": current, **response,
-                     "answer": answer}
-            if "response_extraction" in store.plan:
-                event["extracted"] = extracted
-            store.append(slot, "event", event)
-            if response["status"] == "ok":
-                conversation.append({"role": "assistant", "content": raw.decode("utf-8")})
+            event = _dispatch(store, slot, current, conversation, arm, base, manifest, elapsed, deadline)
+            dirty = False
             outcome = scorer.classify_probe(manifest, node, event)
             current, _ = scorer.route(manifest, node, event, outcome)
         wall = time.monotonic() - began
@@ -121,6 +138,10 @@ def replay_live_slot(store, slot, allow_running=False):
     events, conversation, exposures, issues = [], [], [], []
     pending, elapsed_end = None, 0
     guarded = rows[0]["payload"].get("controller_policy") == "guard-v1"
+    delivery_path = None
+    if store.plan.get("boundary_delivery") == "deliver-v1":
+        from .boundary_delivery import Path
+        delivery_path = Path(manifest)
     for row in rows[1:]:
         kind, p = row["kind"], row["payload"]
         if kind == "exposure":
@@ -133,6 +154,10 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(False, "invalid exposure timestamp")
             exposures.append(p)
         elif kind == "request":
+            if delivery_path is not None:
+                delivery_path.request(p)
+            else:
+                require(p.get("kind", "probe") == "probe", "delivery requires deliver-v1")
             if guarded:
                 require(conversation and conversation[-1]["role"] == "user",
                         "live request violates public conversation guard")
@@ -152,13 +177,15 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(pending is None, "user before pending response")
                 conversation.append({"role": "user", "content": p["text"]})
             else:
-                require(p["kind"] == "probe" and pending is not None and p["node"] == pending["node"], "probe lacks intent")
+                require(p["kind"] in {"probe", "delivery"} and pending is not None
+                        and p["node"] == pending["node"] and p["kind"] == pending.get("kind", "probe"), "response lacks matching intent")
                 raw = raw_response(p["raw_base64"], admission=False)
-                answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
-                require(encode(p["answer"]) == encode(answer), "raw answer projection mismatch")
-                if "response_extraction" in store.plan:
-                    require(type(p.get("extracted")) is bool and p["extracted"] is extracted,
-                            "response extraction flag mismatch")
+                if p["kind"] == "probe":
+                    answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
+                    require(encode(p["answer"]) == encode(answer), "raw answer projection mismatch")
+                    if "response_extraction" in store.plan:
+                        require(type(p.get("extracted")) is bool and p["extracted"] is extracted,
+                                "response extraction flag mismatch")
                 require(finite(p["client_latency_seconds"]), "invalid response latency")
                 elapsed_end = pending["elapsed_seconds"] + p["client_latency_seconds"]
                 if p["http_body_base64"] is not None:
@@ -187,6 +214,8 @@ def replay_live_slot(store, slot, allow_running=False):
                     require(encode(p.get("timing")) == encode(project(arm["provider"], p)),
                             "decode timing projection mismatch")
                 pending = None
+            if delivery_path is not None:
+                delivery_path.event(p)
             events.append(p)
     if remote and len(exposures) != 1:
         issues.append({"code": "missing_exposure_record"})
@@ -200,6 +229,8 @@ def replay_live_slot(store, slot, allow_running=False):
               "stop_reason": "trial_wall_limit" if stopped else None}
     if "timing_convention" in store.plan:
         record["timing_convention"] = store.plan["timing_convention"]
+    if delivery_path is not None:
+        record["boundary_delivery"] = "deliver-v1"
     result = score(manifest, record)
     if state == "finished":
         if pending is not None or not result["measurement_valid"]:

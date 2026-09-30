@@ -42,7 +42,7 @@ def requests(rows):
         if row["kind"] == "request":
             pending = {"status": "unavailable", "value": None}
             result.append(pending)
-        elif row["kind"] == "event" and p["kind"] == "probe" and pending is not None:
+        elif row["kind"] == "event" and p["kind"] in {"probe", "delivery"} and pending is not None:
             pending.update(status=p.get("memory_telemetry_status", "unavailable"),
                            value=p.get("memory_telemetry"))
             pending = None

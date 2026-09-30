@@ -310,3 +310,23 @@ made, and the separate nyx-bridge workspace was not accessed or modified. The
 Co-Authored-By trailer follows the existing contribution convention and does not
 establish completed independent review. Authorization is local commits only,
 then a stop for Claude's check; Claude pushes and opens the PR.
+
+## Delivery authorization and interpretation of reset baselines (2026-09-30)
+
+The user identified the pre-boundary delivery gap and authorized one additional
+local commit on v02-memory-arms. Under prior reset-v1 behavior, earlier user
+messages could be cleared before any request was sent. For stateless models,
+undelivered and forgotten earlier messages are equivalent at the next request,
+so the user-reported 2026-09-30 reset-v1 runs stand as a no-memory baseline.
+They are not retrospectively rescored and cannot establish delivered-session
+memory retention. For memory arms, omission is failed harness delivery under
+contract section 3; those arms require opt-in deliver-v1.
+
+Codex implemented the plan-wide delivery request, raw-evidence replay checks,
+separate processing diagnostics and new synthetic tests. All arms use the same
+delivery policy, and delivery output receives no correctness or primary TPS
+credit. Transport failures are disclosed and budget enforcement remains in
+force. Tests use ephemeral fake servers; no live model calls, corpus material,
+or nyx-bridge access were involved. This is local implementation evidence, not
+an executed three-arm experiment or independent review. Stop for Claude's check
+after the local commit; Claude remains responsible for push and PR.

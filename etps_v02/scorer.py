@@ -439,6 +439,10 @@ def score(manifest, record):
             mapping(event, path, ("text",))
         if event.get("generation") is not None:
             telemetry(event["generation"], path + ".generation")
+    if record.get("boundary_delivery") == "deliver-v1":
+        require(record.get("purpose") == "live-exploratory", "delivery requires live record")
+        from .boundary_delivery import scoring_events
+        events = scoring_events(manifest, events)
     raw_i = sum(len(boundaries(e["text"])[0]) for e in events if e.get("kind") == "user")
     wall = record.get("wall_seconds")
     require(wall is None or finite(wall), "invalid task wall time")

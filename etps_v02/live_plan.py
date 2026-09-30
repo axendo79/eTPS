@@ -31,6 +31,8 @@ def arm_endpoint(plan, arm):
 
 
 def validate_live(plan, *, allow_remote=False, execution=True):
+    if "boundary_delivery" in plan:
+        require(plan["boundary_delivery"] == "deliver-v1", "unsupported boundary_delivery")
     if "cache_policy" in plan:
         require(plan["cache_policy"] == "warm-declared", "unsupported cache_policy")
     if "timing_convention" in plan:
