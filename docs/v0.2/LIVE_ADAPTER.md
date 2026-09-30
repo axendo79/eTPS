@@ -341,3 +341,115 @@ task artifact hash binds the comparison. These are trial vectors, with no
 cross-task score pooling, automatic repetition matching, deltas or winner logic.
 Live reports receive these additive diagnostics even for old full-history plans;
 their stored evidence and request bodies are unchanged.
+
+## Arm comparison and optional memory telemetry (2026-09-30)
+
+The existing `context_policy_pairing` field keeps its schema and contents.
+The same diagnostic reporting path now also emits
+`arm_comparison[task].arms[arm_name]`: one entry for each declared arm, even when
+multiple arms share reset-v1. Each entry identifies arm, context_policy and
+provider, with a `trials` list retaining slot identity, lifecycle state,
+result_state (null when not supplied by the scorer), accepted, first_attempt,
+I, R, RR, TPS, eTPS (the existing experimental_eTPS), processed_prompt_tokens
+and memory_telemetry. Repetitions are separate trial records; absent arms have
+empty trial lists. Unattempted/unfinished trials retain unavailable values.
+The task artifact hash binds each comparison. This is descriptive reporting,
+with no score pooling, winner logic or automatic pairing of repetitions.
+
+A live arm may declare `"memory_telemetry_field": "x_nyx_bridge"` (or another
+nonempty literal top-level JSON field name). No dotted-path lookup or guessing
+is performed. The setting is harness configuration and is not sent in requests.
+Each probe then records `memory_telemetry` as the exact decoded object plus a
+separate `memory_telemetry_status`. A valid object has string keys and flat
+string/finite-number values. Boolean, null, nested object/list, nonfinite number
+or invalid Unicode values make the entire object invalid. Unknown keys and
+strings are preserved without interpretation. Raw HTTP bytes retain original
+spelling; the copied object does not promise byte-identical JSON serialization.
+
+Statuses are valid, invalid, missing (the body lacks the declared field), and
+unavailable (no journaled body). Invalid/missing/unavailable observations record
+a null object. An undecodable or non-object HTTP body is invalid. Replay derives
+the object and status again from the hash-checked HTTP body and rejects any
+disagreement, even when journal hashes have been recomputed. The existing HTTP
+envelope and answer checks still apply. With no arm declaration, no telemetry
+fields are added to probe events and that arm has no memory summary.
+
+Reports add `memory_telemetry[arm]` only for opted-in arms; the same summaries
+appear per task/arm and per trial in arm_comparison. They contain request_count,
+valid/invalid/missing/unavailable counts and `metrics` entries for
+extraction_calls, extraction_prompt_tokens, extraction_completion_tokens,
+extraction_seconds, beliefs_injected and injected_chars. Each metric reports
+the observed numeric `sum`, `coverage_count` and `request_count`. Zero is covered;
+numeric-looking strings are not converted. Finite negative values are preserved
+as reported diagnostics, not repaired. Fractional sums are exact fractions in
+JSON exports. A zero sum with zero coverage is not a measured zero cost.
+Every dispatch intent, including pending requests and failed/unfinished trials,
+stays in the request denominator. Unattempted slots create no requests.
+
+Memory telemetry is unauthenticated backend reporting under contract section 7.
+It does not change acceptance, I, R, RR, TPS or experimental eTPS. Injected text
+may affect the backend's processed prompt count, but never becomes new user I/R.
+
+## Declared cache condition
+
+A live plan may declare `"cache_policy": "warm-declared"`, the only supported
+value. The report header copies this field; it applies to every arm. Absence
+preserves prior behavior and adds no cache header. The user's default for
+future experiment authoring is to declare warm-declared explicitly. This is
+not a cache-control API: the harness neither warms nor flushes server caches.
+TTFT and prefill measurements depend on server cache state and are diagnostic
+only. Do not compare TTFT across arms under warm-declared, or use these timings
+to infer a memory-layer speedup. Decode-v1 remains primary generation timing.
+
+## Boundary delivery: deliver-v1
+
+A live plan may opt in with `"boundary_delivery": "deliver-v1"`. At each
+session_boundary, if any user messages were appended since the last request,
+the runner sends exactly one delivery request with the current public
+conversation, ending in a user message. The declaration applies to every arm,
+including full, reset-v1, and memory arms. It does not add a prompt, answer key,
+or new user bytes. With no pending user messages there is no delivery request.
+Absent the field, request/event sequencing retains its previous behavior.
+
+The journal stores a request intent with `kind: "delivery"` and an event with
+`kind: "delivery"`, both naming the boundary node. The event retains raw reply
+and HTTP bytes, usage, generation, transport detail, client latency, and the
+same opted-in timing/memory telemetry as probes. Delivery replies have no answer
+projection, extraction flag or classification. A status-ok reply is appended
+verbatim as an assistant message; a transport failure is recorded without an
+assistant append, and the trial continues. The session_boundary event then
+applies the arm policy: full keeps history, reset-v1 clears it. A failed request
+is still the last request for pending-message tracking; delivery is not retried.
+
+Delivery uses the same request deadline and remaining trial-wall budget as a
+probe. No request begins after the wall limit. A delivery that exhausts the
+wall budget prevents further requests and ends under the existing wall-limit
+policy. Interrupted requests remain durable unfinished intents, never silently
+reissued. Successful HTTP delivery does not independently attest that a memory
+system extracted or stored facts.
+
+Replay checks delivery placement, completeness, exactly-one dispatch per dirty
+boundary, full public request history, deadline, raw envelope, opted-in memory
+and timing projections, and subsequent policy-specific history. Missing,
+duplicated, moved or retyped deliveries are rejected even after journal rehashing.
+Verified delivery events are excluded from the scorer's event indexing and
+generation sums. They never count as probe attempts or affect classification,
+routing, acceptance, retention, I, R or RR. User bytes were already counted in
+their original user events. Primary TPS/eTPS uses probe generation only.
+
+Opted-in reports add `boundary_delivery: "deliver-v1"` and
+`delivery_processing[arm]`, with slot/task identities and a per-request list.
+Each delivery observation carries status, full generation token/time pair and
+source fields when available, raw usage, and source-labeled decode/full timing,
+prompt tokens, completion tokens, TTFT/prefill and client elapsed diagnostics.
+Timing interpretation uses the existing decode-v1 rules for these separate
+diagnostics even when the primary plan retains legacy timing. Pending intents
+remain visible with null telemetry. All-request processed-prompt and memory
+summaries include delivery requests and their coverage; primary throughput does
+not. No delivery processing cost is silently converted into a scoring factor.
+
+The 2026-09-30 reset-v1 runs remain a no-memory baseline: for stateless models,
+undelivered earlier facts and forgotten earlier facts are equivalent at the
+next request. They do not test memory retention across a delivered session.
+Memory arms require deliver-v1 so the harness first submits the facts rather
+than clearing them before any request (contract section 3, harness delivery).
