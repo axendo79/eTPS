@@ -23,8 +23,32 @@ The authorized mapping policy uses bare retries: a recovery user message is
 followed by a probe, without redelivering the question. Recap markers,
 new-content annotations, state descriptions and affiliation disclosures may be
 hashed task/node metadata or hash-bound sidecars; these are stored, not enforced.
-Strict plans and scripts still reject extra metadata fields. Per-field failure
-routing, broader state semantics and experimental design remain deferred.
+Strict plans and scripts still reject extra metadata fields. Broader state
+semantics and experimental design remain deferred.
+
+## Opt-in field routing (2026-09-29)
+
+A manifest may declare `"routing": "field-v1"` with either the default string
+answer language or typed-v1. A probe can then declare both `field_obligations`
+(every expected field mapped to a list of tested obligation IDs) and
+`field_routes` (objects with sorted nonempty `failed_fields` and a `next` node).
+Routes must cover every nonempty subset exactly once. All targets participate
+in cycle, ancestry and grant checks. There is no powerset construction during
+validation; authored route size still grows exponentially with field count.
+
+Classification stays unchanged. Only an incorrect answer with exactly the
+expected key set takes a field route, using type-strict differences. Other
+outcomes and missing/extra keys use the ordinary outcome transition. A field
+route grants failure only for active obligations linked to its failed fields.
+First-attempt retention for each obligation is correct only when all its linked
+fields were correct. Authoring requires the union of field links to equal all
+tested obligations. Old evidence with uncovered obligations remains readable
+with a `field_obligations_incomplete` finding and its historical attribution.
+Correct linked fields clear prior standing grants for their
+obligations. Other outcomes retain whole-probe attribution. Unlinked re-supply
+is a protocol deviation, not extra recovery credit. Consumption and stale
+citations retain their existing rules. Probes without field declarations and
+manifests without opt-in retain their existing behavior and journal layout.
 
 This is verification infrastructure for the finite byte schema, **not a model runner or the unpublished workload**. Only `purpose=offline-verification` is accepted. There are no network clients, model loaders, credentials or live adapters. A schema adapter for the original workload cannot be verified until those files are supplied.
 

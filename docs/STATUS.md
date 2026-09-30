@@ -99,3 +99,14 @@ Python 3.14 (144 existing unchanged and 15 new). See [live adapter](v0.2/LIVE_AD
 for the exact schema, safety gates and measurement limits. No dependency
 installs, legacy repairs, corpus publication or pushes. Claude reviews before
 opening a PR; real smoke testing remains separately unauthorized.
+
+## Authorized field routing (2026-09-29)
+
+Codex (Astra) implemented the user-authorized opt-in field-v1 routing on a local
+branch from merged typed-answer main. Exact-key incorrect responses route by
+type-strict failed-field subsets, attribute failure and first-attempt retention
+per obligation, and preserve recovery provenance and grant checks. Existing
+manifests, journals and tests remain unchanged. All 152 tests pass on Windows
+Python 3.14 (144 existing plus 8 new). Private mapping is separately authorized;
+no private text or answer keys are included here. No model calls, installs,
+legacy repairs or pushes. Claude reviews before publication.

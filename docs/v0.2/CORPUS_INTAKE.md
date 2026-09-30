@@ -51,7 +51,7 @@ Status key: **Supported** = expressible and checked by current code. **Restricte
 |---|---|---|---|
 | Exact payload + hash | `text`, `sha256` | Supported | Identity normalization; hash verified. |
 | Recovery spans | `spans: [[start, end, obligation_id], ...]` | Supported | Half-open, UTF-8 boundaries enforced, union counted. |
-| Linked failure | `failure`: one probe ID | Restricted | One failure per user node. A recovery message addressing failures from two different probes cannot be expressed. Since the repair (V06), authoring requires the failure probe to be a path-ancestor that tests each span's obligation. |
+| Linked failure | `failure`: one probe ID; opt-in manifest `routing: "field-v1"` supports per-field routes and obligation attribution | Restricted | One originating failure probe per user node; multi-probe failure linkage remains unsupported. Exact-key incorrect answers may route by failed fields through `field_obligations`/`field_routes`. V06 ancestry/tested-obligation checks and runtime active-failure/grant checks still apply. |
 | New-content spans (§5.1) | none | Missing | Only recovery spans exist. New content is implicitly "everything else" and is not separately designated or checked. |
 | Variant ID and schedule (§5.1) | node ID | Restricted | Each variant is its own node; one variant per branch works. A predeclared variant schedule across trials is not expressible. |
 | Scheduled recap marker (§4) | none | Missing | A recap is a span-less user node, indistinguishable in schema from any other scheduled message. |

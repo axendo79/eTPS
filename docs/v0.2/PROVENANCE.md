@@ -106,3 +106,13 @@ outside the repository; no budgets, model settings or counts for real runs
 were selected. The full suite passes 159 tests on Windows Python 3.14, including
 all 144 unchanged existing tests and 15 new fake-server/transport regressions.
 Claude reviews the local commit before remote publication.
+
+## Field-routing authorization (2026-09-29)
+
+The user authorized a separate local field-routing branch and private synthetic
+mapping, with no push or model execution. Codex (Astra) authored the opt-in
+implementation, eight new regressions and documentation. Validation passes
+152 tests, retaining the original 144 unchanged. Field-level recovery remains
+linked to one originating probe; multi-probe failure linkage is not implemented.
+Private artifacts and mapping results stay outside the public repository.
+These checks establish software behavior, not corpus validity or independence.

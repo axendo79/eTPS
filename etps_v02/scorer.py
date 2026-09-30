@@ -94,8 +94,11 @@ def validate(manifest, *, authoring=True):
     findings = []
     if authoring:
         limits.check_value_depth(manifest)
-    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema"},
+    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema", "routing"},
                     "manifest", authoring, findings)
+    if "routing" in manifest:
+        require(manifest["routing"] == "field-v1", "unsupported routing")
+    field_routing = manifest.get("routing") == "field-v1"
     if "answer_schema" in manifest:
         require(manifest["answer_schema"] == "typed-v1", "unsupported answer_schema")
     answer_schema = manifest.get("answer_schema")
@@ -146,6 +149,8 @@ def validate(manifest, *, authoring=True):
             "terminal": {"kind", "accepted"},
             "internal": {"kind", "next"}, "replay": {"kind", "next"},
         }[kind]
+        if field_routing and kind == "probe":
+            allowed |= {"field_obligations", "field_routes"}
         declared_fields(node, allowed, path, authoring, findings)
         if kind == "terminal":
             mapping(node, path, ("accepted",))
@@ -172,7 +177,34 @@ def validate(manifest, *, authoring=True):
             require(isinstance(tested, list) and all(isinstance(o, str) for o in tested),
                     path + ".obligations: expected string list")
             require(set(tested) <= obligations.keys(), "unknown probe obligation")
-            targets = node["next"].values()
+            targets = list(node["next"].values())
+            if field_routing and ("field_routes" in node or "field_obligations" in node):
+                links = mapping(node.get("field_obligations"), path + ".field_obligations")
+                require(links.keys() == node["expected"].keys(), "field_obligations must cover expected keys")
+                for linked in links.values():
+                    require(isinstance(linked, list) and all(isinstance(o, str) for o in linked)
+                            and len(linked) == len(set(linked)) and set(linked) <= set(tested),
+                            "field_obligations must reference tested obligations")
+                if {o for linked in links.values() for o in linked} != set(tested):
+                    require(not authoring, "field_obligations must cover all tested obligations")
+                    findings.append({"code": "field_obligations_incomplete", "node": key})
+                routes = node.get("field_routes")
+                require(isinstance(routes, list), "field_routes must be a list")
+                subsets = set()
+                for route in routes:
+                    mapping(route, path + ".field_routes entry", ("failed_fields", "next"))
+                    require(set(route) == {"failed_fields", "next"}, "invalid field route fields")
+                    fields = route["failed_fields"]
+                    require(isinstance(fields, list) and bool(fields)
+                            and all(isinstance(f, str) for f in fields)
+                            and fields == sorted(set(fields)) and set(fields) <= links.keys(),
+                            "failed_fields must be a sorted nonempty subset")
+                    require(tuple(fields) not in subsets, "duplicate field route")
+                    subsets.add(tuple(fields))
+                    targets.append(route["next"])
+                # Count plus unique, valid subsets proves coverage without
+                # constructing an exponential powerset of expected keys.
+                require(len(subsets) == (1 << len(links)) - 1, "incomplete field route coverage")
         else:
             targets = [node["next"]]
         require(all(isinstance(target, str) and target in nodes for target in targets),
@@ -198,7 +230,9 @@ def validate(manifest, *, authoring=True):
     # Finite unrolled branches bound retries. Reject cycles even in unused branches.
     done, visiting = set(), set()
     edges = {key: (() if node["kind"] == "terminal" else
-                   tuple(set(node["next"].values())) if node["kind"] == "probe" else (node["next"],))
+                   tuple(set(node["next"].values()) |
+                         ({r["next"] for r in node.get("field_routes", [])} if field_routing else set()))
+                   if node["kind"] == "probe" else (node["next"],))
              for key, node in nodes.items()}
     for key in nodes:
         stack = [(key, False)]
@@ -328,6 +362,19 @@ def classify(event, expected, unknown_answers=(), answer_schema=None):
     return "incorrect"
 
 
+def route(manifest, node, event, outcome):
+    """Return successor and optional exact-key failed fields; no reclassification."""
+    if (manifest.get("routing") == "field-v1" and "field_routes" in node
+            and outcome == "incorrect" and event["answer"].keys() == node["expected"].keys()):
+        fields = sorted(k for k in node["expected"]
+                        if not answer_equal({k: event["answer"][k]}, {k: node["expected"][k]}))
+        for entry in node["field_routes"]:
+            if entry["failed_fields"] == fields:
+                return entry["next"], fields
+        raise InvalidRecord("missing field route")
+    return node["next"][outcome], None
+
+
 def score(manifest, record):
     """Return exact fractions and observations, or raise InvalidRecord.
 
@@ -407,6 +454,9 @@ def score(manifest, record):
             attempts += 1
             outcome = classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS),
                                manifest.get("answer_schema"))
+            target, failed_fields = route(manifest, node, event, outcome)
+            field_failures = (None if failed_fields is None else
+                              {o for f in failed_fields for o in node["field_obligations"][f]})
             active = set()
             for oid in node.get("obligations", []):
                 obligation = manifest["obligations"][oid]
@@ -414,10 +464,15 @@ def score(manifest, record):
                 if (source is not None and source < index
                         and is_active(obligation, seen, index)):
                     active.add(oid)
-                    first.setdefault(oid, outcome == "correct")
+                    first.setdefault(oid, outcome == "correct" if field_failures is None
+                                     else oid not in field_failures)
             if outcome != "correct":
-                failures[current] = set(active)
-                observed_failures[current] = set(active)
+                failed = active if field_failures is None else active & field_failures
+                failures[current] = set(failed)
+                observed_failures[current] = set(failed)
+                if field_failures is not None:
+                    for standing in failures.values():
+                        standing.difference_update(active - failed)
             else:
                 for standing in failures.values():
                     standing.difference_update(node.get("obligations", []))
@@ -429,7 +484,7 @@ def score(manifest, record):
                 telemetry(usage, f"record.events[{index}].generation")
                 generation_tokens += usage["tokens"]
                 generation_seconds += Fraction(str(usage["seconds"]))
-            current = node["next"][outcome]
+            current = target
         else:
             labels.append({"node": current, "class": "excluded_" + kind})
             current = node["next"]
