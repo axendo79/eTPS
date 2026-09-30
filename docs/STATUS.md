@@ -121,3 +121,12 @@ before dispatch. The user authorized narrow updates to the unmerged live test
 fixtures while retaining D3 connection-refusal coverage. All 177 tests pass;
 main's existing tests and the original field-routing tests remain unchanged.
 Only ephemeral loopback fake endpoints were used. No real model call or push.
+
+## Manual development authorization (2026-09-29)
+
+Codex (Astra) implemented the separately authorized opt-in manual development
+adapter, pinned coding rubrics, confirmed human coding, private evidence export
+and publication fences. Results remain dev-only and separate from automated
+summaries. Tests use synthetic scripted stdin; no actual service session or
+external request occurred. Optional independent recoding is deferred. Private
+draft kits require user review; no corpus content is included here.

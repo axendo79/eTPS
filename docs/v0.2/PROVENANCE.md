@@ -126,3 +126,14 @@ harness-fault and conversation guards, replay compatibility, and synthetic
 regressions. The field branch passes 154 tests; the integrated live branch passes
 177. No corpus payload is included. No model calls, dependency installs or pushes
 were performed; Claude reviews the local commits before publication.
+
+## Manual development authorization and conflict (2026-09-29)
+
+The user authorized a separate local manual-dev branch and private draft kit.
+Codex (Astra) authored the implementation, scripted-input regressions and draft
+rubric/task scaffolding. No manual service session was performed by Codex.
+The evidence is dev-manual-human-coded, excluded from publication, and cannot
+verify human coding correctness. When the task author also builds the competing
+Skopos product, that author/product conflict must be disclosed; these results
+remain internal-only. Independent second-coder recoding is deferred. Claude
+reviews before any push; no legacy code or CLAUDE.md was edited.

@@ -107,6 +107,9 @@ def run_offline(store, slot):
 
 
 def replay_slot(store, slot, allow_running=False):
+    if store.plan["schema"] == "etps-manual-plan-v1":
+        from .manual_runner import replay_manual_slot
+        return replay_manual_slot(store, slot)
     if store.plan["schema"] == "etps-live-plan-v1":
         from .live_runner import replay_live_slot
         return replay_live_slot(store, slot, allow_running=allow_running)
@@ -251,6 +254,19 @@ def replay_slot(store, slot, allow_running=False):
 
 
 def report(store):
+    result = _report(store)
+    if store.plan["purpose"] == "dev-manual":
+        from .manual_runner import EVIDENCE
+        result.update(evidence=EVIDENCE, publish_excluded=True, coding_correctness_verified=False,
+                      wall_time_kind="operator-paced")
+        return {"purpose": "dev-manual", "evidence": EVIDENCE, "publish_excluded": True,
+                "coding_correctness_verified": False, "wall_time_kind": "operator-paced",
+                "plan_sha256": store.plan_hash, "summaries": [], "trials": [],
+                "dev_manual": result}
+    return result
+
+
+def _report(store):
     trials = [replay_slot(store, slot["id"]) for slot in store.plan["slots"]]
     counts = {state: sum(t["state"] == state for t in trials)
               for state in ("unattempted", "running", "aborted", "finished")}
@@ -306,9 +322,12 @@ def json_default(value):
     raise TypeError(type(value).__name__)
 
 
-def export_bundle(store, format="v1"):
+def export_bundle(store, format="v1", *, audience="evidence"):
     """Lossless input/journal export plus derived observations, not a public release."""
     require(format in ("v1", "v2"), "unsupported export format")
+    require(audience in {"evidence", "leaderboard", "website"}, "unsupported export audience")
+    require(audience == "evidence" or store.plan["purpose"] != "dev-manual",
+            "dev-manual evidence is excluded from leaderboard/website publication")
     if format == "v2":
         # One read snapshot binds heads, journals and report even if another
         # connection appends. A savepoint preserves any caller-owned transaction.
@@ -327,10 +346,15 @@ def export_bundle(store, format="v1"):
             return exported
         finally:
             store.db.execute("RELEASE SAVEPOINT export_v2")
-    return {"format": "etps-offline-export-v1", "plan_sha256": store.plan_hash,
+    exported = {"format": "etps-offline-export-v1", "plan_sha256": store.plan_hash,
             "plan_base64": base64.b64encode(store.plan_raw).decode("ascii"),
             "artifacts": {key: base64.b64encode(raw).decode("ascii") for key, raw in store.artifacts.items()},
             "journal": {slot: store.entries(slot) for slot in store.slots}, "report": report(store)}
+    if store.plan["purpose"] == "dev-manual":
+        from .manual_runner import EVIDENCE
+        exported.update(evidence=EVIDENCE, publish_excluded=True, coding_correctness_verified=False,
+                        wall_time_kind="operator-paced")
+    return exported
 
 
 def replay_export(bundle, *, validate_authoring=False):

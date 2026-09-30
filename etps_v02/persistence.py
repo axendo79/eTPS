@@ -109,7 +109,7 @@ class Store:
         require(slot in self.slots, "unknown planned slot")
         identity(kind, "journal.kind")
         mapping(payload, "journal.payload")
-        if kind == "abort" and self.plan["schema"] in {"etps-offline-plan-v2", "etps-live-plan-v1"}:
+        if kind == "abort" and self.plan["schema"] in {"etps-offline-plan-v2", "etps-live-plan-v1", "etps-manual-plan-v1"}:
             identity(payload.get("reason_code"), "journal.abort.reason_code")
             require(self.plan["invalidation_policy"].get(payload.get("reason_code")) == "invalidate",
                     "abort code must be predeclared invalidation")
