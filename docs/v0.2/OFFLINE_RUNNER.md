@@ -41,8 +41,10 @@ expected key set takes a field route, using type-strict differences. Other
 outcomes and missing/extra keys use the ordinary outcome transition. A field
 route grants failure only for active obligations linked to its failed fields.
 First-attempt retention for each obligation is correct only when all its linked
-fields were correct; an obligation with no linked fields is vacuously correct
-on that path. Correct linked fields clear prior standing grants for their
+fields were correct. Authoring requires the union of field links to equal all
+tested obligations. Old evidence with uncovered obligations remains readable
+with a `field_obligations_incomplete` finding and its historical attribution.
+Correct linked fields clear prior standing grants for their
 obligations. Other outcomes retain whole-probe attribution. Unlinked re-supply
 is a protocol deviation, not extra recovery credit. Consumption and stale
 citations retain their existing rules. Probes without field declarations and

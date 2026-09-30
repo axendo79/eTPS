@@ -185,6 +185,9 @@ def validate(manifest, *, authoring=True):
                     require(isinstance(linked, list) and all(isinstance(o, str) for o in linked)
                             and len(linked) == len(set(linked)) and set(linked) <= set(tested),
                             "field_obligations must reference tested obligations")
+                if {o for linked in links.values() for o in linked} != set(tested):
+                    require(not authoring, "field_obligations must cover all tested obligations")
+                    findings.append({"code": "field_obligations_incomplete", "node": key})
                 routes = node.get("field_routes")
                 require(isinstance(routes, list), "field_routes must be a list")
                 subsets = set()
