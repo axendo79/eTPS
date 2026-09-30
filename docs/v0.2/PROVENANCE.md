@@ -126,3 +126,14 @@ harness-fault and conversation guards, replay compatibility, and synthetic
 regressions. The field branch passes 154 tests; the integrated live branch passes
 177. No corpus payload is included. No model calls, dependency installs or pushes
 were performed; Claude reviews the local commits before publication.
+
+## External synthetic smoke authorization (2026-09-29)
+
+The user authorized per-arm endpoints, metadata checks and private synthetic
+smoke kits. Codex (Astra) authored the changes and fake-server tests. Only the
+user may execute the remote exploratory SMOKE runs; this does not authorize
+corpus runs. Codex/Astra authored the corpus, mapping and harness, so the Astra
+arm has an author/system conflict. The reviewer (Claude) is an Anthropic model,
+as is the Fable arm. These affiliations are disclosures, not independence.
+No external provider/docs requests or model calls were made by Codex. The
+supplied Anthropic version and model IDs remain unverified by this work.

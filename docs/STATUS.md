@@ -121,3 +121,12 @@ before dispatch. The user authorized narrow updates to the unmerged live test
 fixtures while retaining D3 connection-refusal coverage. All 177 tests pass;
 main's existing tests and the original field-routing tests remain unchanged.
 Only ephemeral loopback fake endpoints were used. No real model call or push.
+
+## External kit authorization (2026-09-29)
+
+Codex (Astra) added opt-in per-arm endpoints and model-metadata checking, with
+new loopback-only regression tests. The user authorized user-operated remote
+exploratory SMOKE runs on synthetic input only; corpus runs remain unauthorized.
+Private kits stay outside the repo. No provider API or documentation was queried
+by Codex; Anthropic version currency and model endpoint compatibility are
+unverified. No model run, dependency installation, legacy change or push.

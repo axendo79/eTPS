@@ -19,7 +19,7 @@ The additional required top-level fields are:
 
 | Field | Meaning |
 |---|---|
-| `endpoint` | Base URL shared by all arms in this plan; different endpoints require separate plans |
+| `endpoint` | Default base URL; an optional arm `endpoint` overrides it |
 | `arms` | Object mapping each declared arm name to the explicit settings below |
 | `request_deadline_seconds` | Positive finite controller deadline per request |
 | `trial_wall_limit_seconds` | Positive finite limit from trial start to terminal |
@@ -159,3 +159,36 @@ The adapter cannot establish fairness, independent semantic validity, energy,
 hidden reasoning scope, endpoint version stability or absence of prior exposure.
 No calibration count, arm configuration, comparison threshold or winner rule
 is supplied here. Real smoke tests require separate user authorization.
+
+## External providers
+
+An optional per-arm `endpoint` overrides the plan endpoint for preflight,
+dispatch, model checks and exposure records. `exposure.non_loopback` must equal
+whether ANY effective arm endpoint is remote. Such a plan requires both its
+remote authorization flag and `--allow-remote`, even when selecting a local arm.
+Only remote slots record remote exposure; the host belongs to the selected arm.
+All slots remain in one plan's pairing/accounting and per-arm summaries.
+
+The user specified Anthropic at `https://api.anthropic.com` with
+`ANTHROPIC_API_KEY`, OpenAI-compatible at `https://api.openai.com/v1` with
+`OPENAI_API_KEY`, and Gemini's compatible base at
+`https://generativelanguage.googleapis.com/v1beta/openai` with `GEMINI_API_KEY`.
+These are user-supplied settings, not verified endpoint/model availability.
+The supplied Anthropic version is `2023-06-01`; current documentation was NOT
+queried because this authorization forbids external requests by Codex.
+
+The operator can run `python -B -m etps_v02 check-models PLAN --allow-remote`.
+It sends only GET requests for model metadata: BASE/models/MODEL for compatible
+providers and BASE/v1/models/MODEL for Anthropic. It sends no task text, answer
+keys or artifact bytes. Credentials use the same environment references and
+headers as generation, with no proxy, redirects or retries. Output per arm is
+`ok`, `not-found`, or `auth-error`; network, unexpected HTTP and malformed data
+are honestly labeled `unavailable`. Any unsuccessful check exits 2. Metadata
+recognition does not prove Chat Completions compatibility: no actual generation
+was attempted, including for the user-specified Astra model. A Responses adapter
+has not been added. Cloud TPS/eTPS remain unavailable without matching backend
+generation counts AND durations; usage/client latency cannot supply them.
+
+Only user-operated synthetic smoke runs are authorized here. Corpus runs need
+separate permission. Codex authored the private kits and synthetic task; those
+are model-authored software fixtures, not benchmark evidence.

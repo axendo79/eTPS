@@ -26,8 +26,17 @@ def endpoint(value):
     return urlunsplit((u.scheme, authority, u.path.rstrip("/"), "", "")), host, not local
 
 
+def arm_endpoint(plan, arm):
+    return plan["arms"][arm].get("endpoint", plan["endpoint"])
+
+
 def validate_live(plan, *, allow_remote=False, execution=True):
-    _, _, remote = endpoint(plan["endpoint"])
+    endpoint(plan["endpoint"])
+    arms = mapping(plan["arms"], "arms")
+    require(bool(arms), "missing live arms")
+    for arm in arms.values():
+        mapping(arm, "arm")
+    remote = any(endpoint(arm_endpoint(plan, name))[2] for name in arms)
     exposure = mapping(plan["exposure"], "exposure", ("non_loopback", "remote_endpoint_authorized"))
     require(set(exposure) == {"non_loopback", "remote_endpoint_authorized"}
             and type(exposure["non_loopback"]) is bool
@@ -50,7 +59,7 @@ def validate_live(plan, *, allow_remote=False, execution=True):
             require(arm["seed"] is None, "anthropic seed must be explicit null (unsupported)")
             identity(arm.get("anthropic_version"), "anthropic_version")
             require(re.fullmatch(r"\d{4}-\d{2}-\d{2}", arm["anthropic_version"]), "invalid anthropic_version")
-        require(required <= arm.keys() and arm.keys() <= required | {"system_prompt"}, "invalid arm fields")
+        require(required <= arm.keys() and arm.keys() <= required | {"system_prompt", "endpoint"}, "invalid arm fields")
         identity(arm["model"], "model")
         require(finite(arm["temperature"]) and arm["temperature"] >= 0, "invalid temperature")
         require(arm["seed"] is None or type(arm["seed"]) is int, "invalid seed")
