@@ -42,6 +42,12 @@ def run_live(store, slot, *, allow_live=False, allow_remote=False):
             if time.monotonic() - began >= limit:
                 break
             node = manifest["nodes"][current]
+            if node["kind"] == "session_boundary":
+                store.append(slot, "event", {"kind": "session_boundary", "node": current})
+                if arm.get("context_policy", "full") == "reset-v1":
+                    conversation.clear()
+                current = node["next"]
+                continue
             if node["kind"] == "user":
                 store.append(slot, "event", {"kind": "user", "node": current, "text": node["text"]})
                 conversation.append({"role": "user", "content": node["text"]})
@@ -132,7 +138,11 @@ def replay_live_slot(store, slot, allow_running=False):
                                     store.plan["trial_wall_limit_seconds"] - elapsed), "request deadline mismatch")
             pending = p
         elif kind == "event":
-            if p["kind"] == "user":
+            if p["kind"] == "session_boundary":
+                require(pending is None and set(p) == {"node", "kind"}, "invalid session boundary event")
+                if arm.get("context_policy", "full") == "reset-v1":
+                    conversation.clear()
+            elif p["kind"] == "user":
                 require(pending is None, "user before pending response")
                 conversation.append({"role": "user", "content": p["text"]})
             else:

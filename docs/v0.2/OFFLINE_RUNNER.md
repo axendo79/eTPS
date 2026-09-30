@@ -174,3 +174,31 @@ V2 replay verifies the envelope digest, exact planned order, exact journal/head 
 Replay adds `export_completeness_bound: true` for verified v2 and `false` for v1. No new v1 warning is added. This flag means the supplied envelope matches the supplied evidence; it does not mean every slot finished or has available RR. Running, aborted and unattempted slots remain exportable and visible.
 
 A coherent rewrite of the whole export, including journals, heads and envelope, defeats these checks. This is accident/truncation detection, with no signing or attestation and no proof of execution. Global cross-slot chronology remains deferred: the schema has per-slot sequence numbers and planned ordinals, but no global event sequence. See the [V08 opt-in handoff](../V08_EXPORT_V2_2026-09-29.md) for tests and the erased-attempt comparison.
+
+## Opt-in session profile (2026-09-30)
+
+Offline v2 plans may now add an `arms` object, for example
+`{"baseline":{"context_policy":"full"},"reset":{"context_policy":"reset-v1"}}`.
+If present, every slot arm must be declared; each offline arm accepts only the
+optional context_policy field. Omitted arms/policy retain full history. No live
+settings or HTTP dispatch are added to offline execution.
+
+The supported node kinds now also include `session_boundary`, with `kind` and
+`next` and no text (ordinary metadata remains optional). This supersedes the
+earlier user/probe/terminal-only restriction above. Internal/retrieval actions
+remain unsupported. Boundaries are journaled and excluded from I and R; existing
+event-ID obligation intervals and recovery grants continue across them. Full
+ignores the boundary for conversation construction; reset-v1 clears all prior
+public messages. Both policies use the same task artifact bytes. A path from a
+boundary to a probe must contain a new user message, enforced at authoring even
+for full. Replay reconstructs the policy-specific request history and rejects
+disagreement. Manual-dev does not support this profile.
+
+Synthetic script responses may include `usage` with `prompt_tokens`; replay
+checks it against the pinned script. This is synthetic processing telemetry,
+never model performance. Session-profile reports include the same per-request
+values, per-arm numerator/coverage/request counts, and per-task policy vectors
+as described in [LIVE_ADAPTER](LIVE_ADAPTER.md#session-boundaries-and-processing-costs-2026-09-30).
+Missing counts remain unavailable, and offline TPS/eTPS remain unavailable.
+Old offline plans without boundaries or an explicit policy retain their report
+layout. No actual memory retrieval or model execution is implemented here.

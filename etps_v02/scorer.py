@@ -116,7 +116,7 @@ def validate(manifest, *, authoring=True):
         identity(key, "manifest.nodes key")
         mapping(node, f"manifest.nodes.{key}", ("kind",))
         require(isinstance(node["kind"], str) and
-                node["kind"] in {"user", "probe", "internal", "replay", "terminal"},
+                node["kind"] in {"user", "probe", "internal", "replay", "session_boundary", "terminal"},
                 f"manifest.nodes.{key}.kind: unknown node kind")
     for oid, obligation in obligations.items():
         identity(oid, "manifest.obligations key")
@@ -148,6 +148,7 @@ def validate(manifest, *, authoring=True):
             "probe": {"kind", "expected", "unknown_answers", "obligations", "next"},
             "terminal": {"kind", "accepted"},
             "internal": {"kind", "next"}, "replay": {"kind", "next"},
+            "session_boundary": {"kind", "next"},
         }[kind]
         if field_routing and kind == "probe":
             allowed |= {"field_obligations", "field_routes"}
@@ -263,6 +264,23 @@ def validate(manifest, *, authoring=True):
                 found.add(current)
             pending.extend(edges[current])
         return found
+
+    # A boundary opts into the session profile. Every path from it to a probe
+    # must deliver a user message first, even when a full-history arm ignores it.
+    # Walk the union once; stop at users so branching stays linear in the graph.
+    pending = [key for key, node in nodes.items() if node["kind"] == "session_boundary"]
+    checked = set()
+    while pending:
+        key = pending.pop()
+        if key in checked:
+            continue
+        checked.add(key)
+        kind = nodes[key]["kind"]
+        if kind == "probe":
+            require(not authoring, f"manifest.nodes.{key}: probe after session_boundary requires a user message after the boundary")
+            findings.append({"code": "session_boundary_missing_user", "node": key})
+        elif kind != "user":
+            pending.extend(edges[key])
 
     grants = {}
     recovery_targets = {}

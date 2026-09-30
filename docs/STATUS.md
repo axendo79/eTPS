@@ -165,3 +165,41 @@ The reported diagnosis is Markdown fences (seven answers would be correct
 without them) and reasoning-token exhaustion. Recorded results stay unchanged;
 the counterfactual diagnosis is not a rescore. S4 now records local prior exposure
 of this corpus to google/gemma-4-e4b. Private run records retain the details.
+
+## Reset/session profile and two-day plan (2026-09-30)
+
+Day 1 (this task): Codex (Astra) implemented the user-authorized eTPS session
+profile on local branch `v02-reset-profile` from main `a23a4f5`. Optional
+session_boundary nodes leave obligations active and add no input bytes.
+Per-arm full/reset-v1 policies control public history; full remains the default.
+Offline/live replay checks policy-specific histories, and authoring requires a
+user message between each boundary and the next probe. Reports expose processed
+prompt-token counts with coverage and descriptive per-task full/reset vectors.
+This lets a plain model lose prior turns so recovery can produce RR > 0 and
+experimental eTPS can differ from TPS; it does not demonstrate a model result.
+
+Windows full-path Python 3.14 verification passes 215 tests (207 existing tests
+unchanged, eight new synthetic tests). Live tests use fake servers only.
+The private mapping-v2-reset draft contains all 11 tasks with one proposed
+boundary immediately before each first probe question. Validation passes all
+264 synthetic slots under both policies, including replay; seven source
+SHA256SUMS entries verify identically before/after, and 1,078 source mapping
+files remain unchanged. Only the inserted node and necessary incoming edge
+differ in each manifest; inverse edits reproduce the source bytes exactly.
+The draft is labeled "UNREVIEWED DERIVED DRAFT; boundary placement is a proposal
+for user review". Known wording issues in retained_fact, clarification, expired
+and mixed_recovery remain for a separate corpus vNext decision. Private text,
+answer keys and artifact hashes remain outside the repository.
+
+Day 2 (separate, not started): the user's plan is a nyx-bridge prototype in its
+own repository/folder, NOT inside ProjectNyx. An OpenAI-compatible proxy would
+extract facts from chat, record them through Nyx's existing public APIs, inject
+retrieved beliefs and forward to the local model. It would be a third arm
+against the full and reset baselines. Results must be labeled "Nyx-backed
+prototype memory"; Nyx is allowed to lose and the author conflict is disclosed.
+
+Exposure includes the previously reported local google/gemma-4-e4b corpus run,
+Codex/Astra's corpus/mapping work, and reviewer Claude having seen corpus content
+during review (user-disclosed). Review is not independent corpus authorship.
+No live model calls, pushes or PRs were performed in this task. Local commit
+only; stop for Claude's check, with Claude responsible for pushing/opening a PR.
