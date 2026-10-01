@@ -130,9 +130,9 @@ class Store:
             if kind == "start":
                 require(head["count"] == 0, "slot already attempted; no implicit rerun")
                 ordinal = self.db.execute("SELECT ordinal FROM slots WHERE id=?", (slot,)).fetchone()[0]
-                prior = self.db.execute("SELECT h.state FROM heads h JOIN slots s ON h.slot=s.id WHERE s.ordinal<?",
-                                        (ordinal,)).fetchall()
-                require(all(r[0] in {"finished", "aborted"} for r in prior), "planned run order violated")
+                prior = self.db.execute("SELECT h.state FROM heads h JOIN slots s ON h.slot=s.id WHERE s.ordinal=?",
+                                        (ordinal - 1,)).fetchone()
+                require(prior is None or prior[0] in {"finished", "aborted"}, "planned run order violated")
             else:
                 require(head["state"] == "running" and kind in self.journal_kinds(),
                         "slot is not running or journal kind is invalid")
