@@ -181,6 +181,7 @@ def replay_manual_slot(store, slot):
             else:
                 require(p.get("kind") == "probe" and pending == current and p.get("confirmed") is True,
                         "manual probe lacks confirmation/intent")
+                mapping(p, "journal.event.probe", ("raw_base64", "coded_raw_base64", "status", "answer"))
                 raw_response(p["raw_base64"], admission=False)
                 coded = raw_response(p["coded_raw_base64"], admission=False)
                 timeout = coded.strip() == b"timeout"
