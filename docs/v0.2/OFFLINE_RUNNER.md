@@ -243,3 +243,12 @@ as described in [LIVE_ADAPTER](LIVE_ADAPTER.md#session-boundaries-and-processing
 Missing counts remain unavailable, and offline TPS/eTPS remain unavailable.
 Old offline plans without boundaries or an explicit policy retain their report
 layout. No actual memory retrieval or model execution is implemented here.
+
+## Acceptance-rate migration (2026-10-01)
+
+Group `acceptance_rate` now requires every planned slot to have been attempted.
+Incomplete groups return null with `acceptance_rate_unavailable_reason` equal to
+`unattempted_slots`; an empty group with no planned trials uses `no_trials`.
+Complete groups retain accepted/attempted and a null reason. Consumers needing
+the previous attempted-only diagnostic should use `acceptance_rate_attempted`,
+which is null when nothing was attempted. Unattempted slots remain in reports.
