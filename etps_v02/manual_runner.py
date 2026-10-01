@@ -117,7 +117,7 @@ def run_manual(store, slot, *, allow_manual=False, stdin=None, stdout=None,
                      "coded_raw_base64": base64.b64encode(coded).decode("ascii"),
                      "answer": None if timeout else answer_from_raw(coded, manifest.get("answer_schema")),
                      "coder": arm["coder"]}
-            outcome = scorer.classify(event, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
+            outcome = scorer.classify_probe(manifest, node, event)
             target, _ = scorer.route(manifest, node, event, outcome)
             stdout.write("Class: " + outcome + "; next: " + target + ". Confirm with yes:\n")
             stdout.flush()
@@ -188,7 +188,7 @@ def replay_manual_slot(store, slot):
                 answer = None if timeout else answer_from_raw(coded, manifest.get("answer_schema"))
                 require(encode(p["answer"]) == encode(answer), "manual coded answer projection mismatch")
                 require(p.get("generation") is None, "manual generation telemetry prohibited")
-                outcome = scorer.classify(p, node["expected"], node["unknown_answers"], manifest.get("answer_schema"))
+                outcome = scorer.classify_probe(manifest, node, p)
                 target, _ = scorer.route(manifest, node, p, outcome)
                 require(p.get("outcome") == outcome and p.get("next") == target, "manual branch mismatch")
                 current, pending = target, None
