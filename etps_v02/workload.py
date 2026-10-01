@@ -151,6 +151,9 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
                 "plan.tasks: missing task artifact")
         manifest = decode(artifacts[key], admission=authoring)
         validate(manifest, authoring=authoring)
+        if live and authoring:
+            from .live_plan import check_live_successors
+            check_live_successors(manifest)
         if not legacy:
             require(manifest["unit"] == plan["unit"], "task/plan unit mismatch")
             require(all("begin_after" in o for o in manifest["obligations"].values()),
