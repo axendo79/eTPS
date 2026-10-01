@@ -62,12 +62,13 @@ class Store:
                                       kind TEXT NOT NULL, payload BLOB NOT NULL, prev TEXT NOT NULL,
                                       hash TEXT NOT NULL, PRIMARY KEY(slot,seq));
             """)
+            plan_hash = sha(plan_raw)
             with db:
-                db.execute("INSERT INTO plan VALUES (1,?,?)", (plan_raw, sha(plan_raw)))
+                db.execute("INSERT INTO plan VALUES (1,?,?)", (plan_raw, plan_hash))
                 db.executemany("INSERT INTO artifacts VALUES (?,?)", artifacts.items())
                 for i, slot in enumerate(plan["slots"]):
                     db.execute("INSERT INTO slots VALUES (?,?)", (slot["id"], i))
-                    seed = sha(encode([sha(plan_raw), slot["id"]]))
+                    seed = sha(encode([plan_hash, slot["id"]]))
                     db.execute("INSERT INTO heads VALUES (?,0,?,'unattempted')", (slot["id"], seed))
             for table in ("plan", "artifacts", "slots", "journal"):
                 for action in ("UPDATE", "DELETE"):
