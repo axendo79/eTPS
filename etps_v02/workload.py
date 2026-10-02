@@ -113,7 +113,11 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
     offline_arms = not live and not manual and not legacy and "arms" in plan
     if offline_arms:
         fields.add("arms")
+    if "request_journal" in plan and (live or not legacy and not manual and plan.get("schema") == "etps-offline-plan-v2"):
+        fields.add("request_journal")
     require(set(plan) == fields, "invalid plan fields")
+    if "request_journal" in plan:
+        require(plan["request_journal"] == "history-sha256-v1", "unsupported request_journal")
     require((manual and plan["purpose"] == "dev-manual") or (live and plan["purpose"] == "live-exploratory") or
             (legacy or plan["schema"] == "etps-offline-plan-v2") and
             plan["purpose"] == "offline-verification", "invalid live purpose" if live else "only offline verification supported")
