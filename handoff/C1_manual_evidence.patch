@@ -1,0 +1,13 @@
+--- a/etps_v02/manual_runner.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/manual_runner.py	2026-10-02 21:15:43.050288574 +0000
+@@ -213,6 +213,9 @@
+     if state != "finished":
+         result.update(measurement_valid=False, reason="unfinished_slot", R=None, RR=None,
+                       rr_unavailable_reason="unfinished_slot", accepted=None)
++    verified = state != "finished" or result["measurement_valid"]
++    if not verified:
++        warnings += ["recomputed_measurement_invalid", "unverified_evidence: invalid_finished_trace"]
+     return {**common, "state": state, "score": result, "record": record, "warnings": warnings,
+             "operator_wall_seconds": wall, "reason_code": finish.get("reason_code"),
+-            "implementation_mismatch": bool(changed), "evidence_verified": True}
++            "implementation_mismatch": bool(changed), "evidence_verified": verified}

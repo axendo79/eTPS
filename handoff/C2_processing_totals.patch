@@ -1,0 +1,91 @@
+--- a/etps_v02/memory_telemetry.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/memory_telemetry.py	2026-10-02 21:16:37.143220451 +0000
+@@ -6,7 +6,7 @@
+ from .workload import decode, encode, raw_response
+ 
+ KEYS = ("extraction_calls", "extraction_prompt_tokens", "extraction_completion_tokens",
+-        "extraction_seconds", "beliefs_injected", "injected_chars")
++        "extraction_seconds", "beliefs_injected", "injected_chars", "facts_rejected")
+ 
+ 
+ def numeric(value):
+--- a/etps_v02/session_profile.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/session_profile.py	2026-10-02 21:16:37.144634096 +0000
+@@ -19,8 +19,48 @@
+     return requests
+ 
+ 
+-def total(requests):
+-    values = [r["prompt_tokens"] for r in requests if integer(r["prompt_tokens"])]
++def completion_requests(rows):
++    """Completion-token reports per dispatched intent; unanswered intents stay in the denominator."""
++    requests, pending = [], None
++    for row in rows:
++        payload = row["payload"]
++        if row["kind"] == "request":
++            pending = {"completion_tokens": None}
++            requests.append(pending)
++        elif row["kind"] == "event" and payload["kind"] in {"probe", "delivery"} and pending is not None:
++            usage = payload.get("usage")
++            pending["completion_tokens"] = usage.get("completion_tokens") if isinstance(usage, dict) else None
++            pending = None
++    return requests
++
++
++def processing_totals(prompts, completions, memory):
++    """Descriptive per-arm cost sums; a total exists only when every part is fully reported."""
++    answer_completion = total(completions, "completion_tokens")
++    if memory is None:
++        extraction = {key: "not_applicable" for key in ("extraction_prompt_tokens", "extraction_completion_tokens",
++                                                       "extraction_seconds", "facts_rejected")}
++        extra_prompt = extra_completion = 0
++    else:
++        metrics = memory["metrics"]
++        extraction = {key: metrics[key] for key in ("extraction_prompt_tokens", "extraction_completion_tokens",
++                                                    "extraction_seconds", "facts_rejected")}
++        def complete(key):
++            m = metrics[key]
++            return m["sum"] if m["request_count"] and m["coverage_count"] == m["request_count"] else None
++        extra_prompt, extra_completion = complete("extraction_prompt_tokens"), complete("extraction_completion_tokens")
++    prompt = total(prompts)
++    return {"answer_and_delivery_prompt_tokens": prompt, "answer_and_delivery_completion_tokens": answer_completion,
++            **extraction,
++            "all_prompt_tokens": None if prompt["total"] is None or extra_prompt is None else prompt["total"] + extra_prompt,
++            "all_completion_tokens": None if answer_completion["total"] is None or extra_completion is None
++                else answer_completion["total"] + extra_completion,
++            "definition": "backend usage for every answer and delivery request plus self-reported memory "
++                          "extraction telemetry; null unless every part is reported for every request"}
++
++
++def total(requests, key="prompt_tokens"):
++    values = [r[key] for r in requests if integer(r[key])]
+     return {"numerator": sum(values), "coverage_count": len(values),
+             "request_count": len(requests),
+             "total": sum(values) if values and len(values) == len(requests) else None}
+@@ -58,6 +98,7 @@
+ 
+     names = sorted(set(arms) | {s["arm"] for s in store.plan["slots"]})
+     comparisons, memory_by_arm = {}, {name: [] for name in names if "memory_telemetry_field" in arms.get(name, {})}
++    prompts_by_arm, completions_by_arm = {name: [] for name in names}, {name: [] for name in names}
+     grouped = {}
+     for slot, trial in zip(store.plan["slots"], result["trials"]):
+         grouped.setdefault((slot["task"], slot["arm"]), []).append((slot, trial))
+@@ -71,6 +112,8 @@
+                 rows = store.entries(slot["id"])
+                 prompt = processing_requests(rows)
+                 prompts.extend(prompt)
++                prompts_by_arm[name].extend(prompt)
++                completions_by_arm[name].extend(completion_requests(rows))
+                 memory = memory_requests(rows) if memory_enabled else []
+                 observations.extend(memory)
+                 score = trial.get("score") or {}
+@@ -89,6 +132,9 @@
+     result["arm_comparison"] = comparisons
+     if memory_by_arm:
+         result["memory_telemetry"] = {name: memory_summary(observations) for name, observations in memory_by_arm.items()}
++    result["processing_totals"] = {name: processing_totals(prompts_by_arm[name], completions_by_arm[name],
++                                                           result.get("memory_telemetry", {}).get(name))
++                                   for name in names}
+     if store.plan.get("boundary_delivery") == "deliver-v1":
+         from .boundary_delivery import observations as delivery_observations
+         result["boundary_delivery"] = "deliver-v1"
