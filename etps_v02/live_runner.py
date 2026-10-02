@@ -154,6 +154,7 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(False, "invalid exposure timestamp")
             exposures.append(p)
         elif kind == "request":
+            scorer.mapping(p, "journal.request", ("node", "elapsed_seconds", "deadline_seconds", "body"))
             if delivery_path is not None:
                 delivery_path.request(p)
             else:
@@ -169,18 +170,22 @@ def replay_live_slot(store, slot, allow_running=False):
                                     store.plan["trial_wall_limit_seconds"] - elapsed), "request deadline mismatch")
             pending = p
         elif kind == "event":
+            scorer.mapping(p, "journal.event", ("kind",))
             if p["kind"] == "session_boundary":
                 require(pending is None and set(p) == {"node", "kind"}, "invalid session boundary event")
                 if arm.get("context_policy", "full") == "reset-v1":
                     conversation.clear()
             elif p["kind"] == "user":
+                scorer.mapping(p, "journal.event.user", ("node", "text"))
                 require(pending is None, "user before pending response")
                 conversation.append({"role": "user", "content": p["text"]})
             else:
+                scorer.mapping(p, "journal.event.response", ("node", "raw_base64", "client_latency_seconds", "http_body_base64"))
                 require(p["kind"] in {"probe", "delivery"} and pending is not None
                         and p["node"] == pending["node"] and p["kind"] == pending.get("kind", "probe"), "response lacks matching intent")
                 raw = raw_response(p["raw_base64"], admission=False)
                 if p["kind"] == "probe":
+                    scorer.mapping(p, "journal.event.probe", ("answer",))
                     answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
                     require(encode(p["answer"]) == encode(answer), "raw answer projection mismatch")
                     if "response_extraction" in store.plan:
@@ -189,11 +194,15 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(finite(p["client_latency_seconds"]), "invalid response latency")
                 elapsed_end = pending["elapsed_seconds"] + p["client_latency_seconds"]
                 if p["http_body_base64"] is not None:
+                    scorer.mapping(p, "journal.event.response", ("http_body_sha256", "http_status", "status", "usage",
+                                   "generation", "generation_source", "backend_stats", "transport_detail"))
                     body = raw_response(p["http_body_base64"], admission=False)
                     require(sha(body) == p["http_body_sha256"], "HTTP body hash mismatch")
                     expected = adapter.envelope(arm["provider"], p["http_status"], body)
                     require(all(encode(p[k]) == encode(v) for k, v in expected.items()), "HTTP envelope projection mismatch")
                 else:
+                    scorer.mapping(p, "journal.event.response", ("status", "usage", "generation", "generation_source",
+                                   "backend_stats", "transport_detail"))
                     legacy_credential = not guarded and p["transport_detail"] == "credential_unavailable"
                     if legacy_credential:
                         warnings.append("legacy_credential_outcome: harness fault recorded as timeout")

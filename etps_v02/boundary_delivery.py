@@ -1,5 +1,5 @@
 """Deliver-v1 path validation and separate processing observations."""
-from .scorer import classify_probe, require, route
+from .scorer import classify_probe, mapping, require, route
 
 
 class Path:
@@ -10,6 +10,7 @@ class Path:
         self.delivered = False
 
     def request(self, request):
+        mapping(request, "journal.request", ("node",))
         node = self.manifest["nodes"][self.current]
         kind = "delivery" if node["kind"] == "session_boundary" else "probe"
         require(request["node"] == self.current and request.get("kind", "probe") == kind,
@@ -18,6 +19,7 @@ class Path:
                 and not self.delivered), "unexpected delivery request")
 
     def event(self, event):
+        mapping(event, "journal.event", ("node", "kind"))
         node = self.manifest["nodes"][self.current]
         kind = event["kind"]
         require(event["node"] == self.current, "delivery event path mismatch")

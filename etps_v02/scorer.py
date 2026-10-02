@@ -596,7 +596,10 @@ def summarize(results, *, planned=None):
               "no_trials" if not results else "invalid_or_unfinished_trials" if not valid else None)
     return {"planned": planned, "attempted": len(results), "accepted": accepted,
             "invalid": sum(not r["measurement_valid"] for r in results),
-            "acceptance_rate": Fraction(accepted, len(results)) if results else None,
+            "acceptance_rate": Fraction(accepted, len(results)) if complete else None,
+            "acceptance_rate_unavailable_reason": "unattempted_slots" if planned > len(results) else
+                "no_trials" if not results else None,
+            "acceptance_rate_attempted": Fraction(accepted, len(results)) if results else None,
             "input_bytes_per_accepted": Fraction(total_i, accepted)
                 if accepted and valid else None,
             "input_cost_unavailable_reason": reason or ("zero_accepted" if not accepted else None),

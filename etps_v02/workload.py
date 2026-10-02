@@ -151,6 +151,9 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
                 "plan.tasks: missing task artifact")
         manifest = decode(artifacts[key], admission=authoring)
         validate(manifest, authoring=authoring)
+        if live and authoring:
+            from .live_plan import check_live_successors
+            check_live_successors(manifest)
         if not legacy:
             require(manifest["unit"] == plan["unit"], "task/plan unit mismatch")
             require(all("begin_after" in o for o in manifest["obligations"].values()),
@@ -160,6 +163,7 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
         require(all(n["kind"] in supported for n in manifest["nodes"].values()),
                 "runner supports only user/probe/terminal and offline/live session_boundary nodes")
         referenced.add(key)
+    validated_scripts = set()
     for index, slot in enumerate(plan["slots"]):
         mapping(slot, f"plan.slots[{index}]")
         require(set(slot) == ({"id", "arm", "task"} if live or manual else
@@ -172,7 +176,9 @@ def validate_bundle(plan_raw, artifacts, allow_legacy=False, *, authoring=True, 
             if offline_arms:
                 require(slot["arm"] in plan["arms"], "missing offline arm configuration")
             require(slot["script_sha256"] in artifacts, "missing response script")
-            script_responses(artifacts[slot["script_sha256"]], admission=authoring)
+            if slot["script_sha256"] not in validated_scripts:
+                script_responses(artifacts[slot["script_sha256"]], admission=authoring)
+                validated_scripts.add(slot["script_sha256"])
             referenced.add(slot["script_sha256"])
         ids.add(slot["id"])
     require(referenced == set(artifacts), "unreferenced artifacts")

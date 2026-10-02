@@ -30,6 +30,15 @@ def arm_endpoint(plan, arm):
     return plan["arms"][arm].get("endpoint", plan["endpoint"])
 
 
+def check_live_successors(manifest):
+    for node in manifest["nodes"].values():
+        if node["kind"] == "probe":
+            targets = [node["next"][outcome] for outcome in ("correct", "incorrect", "unknown", "malformed")]
+            targets.extend(route["next"] for route in node.get("field_routes", []))
+            require(all(manifest["nodes"][target]["kind"] != "probe" for target in targets),
+                    "live probe successor after a model reply must be a user message")
+
+
 def validate_live(plan, *, allow_remote=False, execution=True):
     if "boundary_delivery" in plan:
         require(plan["boundary_delivery"] == "deliver-v1", "unsupported boundary_delivery")

@@ -178,11 +178,14 @@ class LiveReviewTests(unittest.TestCase):
                 task = manifest()
                 task["nodes"]["p2"] = copy.deepcopy(task["nodes"]["p"])
                 task["nodes"]["p"]["next"]["correct"] = "p2"
-                store = self.create(*bundle(server.url, provider), task=task)
-                with self.assertRaisesRegex(InvalidRecord, "conversation"):
-                    run_live(store, "slot", allow_live=True)
-                result = self.assert_replay(store)
-                self.assertEqual(result["reason_code"], "execution_error")
-                self.assertEqual(result["state"], "aborted")
-                self.assertEqual(len(server.seen), 1)
-                self.assertEqual(sum(r["kind"] == "request" for r in store.entries("slot")), 1)
+                with self.assertRaisesRegex(InvalidRecord, "live probe successor"):
+                    self.create(*bundle(server.url, provider), task=task)
+                with patch("etps_v02.live_plan.check_live_successors"):
+                    store = self.create(*bundle(server.url, provider), task=task)
+                    with self.assertRaisesRegex(InvalidRecord, "conversation"):
+                        run_live(store, "slot", allow_live=True)
+                    result = self.assert_replay(store)
+                    self.assertEqual(result["reason_code"], "execution_error")
+                    self.assertEqual(result["state"], "aborted")
+                    self.assertEqual(len(server.seen), 1)
+                    self.assertEqual(sum(r["kind"] == "request" for r in store.entries("slot")), 1)
