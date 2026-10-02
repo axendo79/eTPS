@@ -311,3 +311,30 @@ Validation: 246 tests pass (237 existing tests unchanged, nine new boundary
 delivery tests). Fake-server coverage includes both histories, first-attempt
 retention, primary TPS exclusion, no-pending/repeated boundaries, failed
 delivery, wall-limit stops, secondary timing and rehashed replay tampering.
+
+## Performance and correctness batch (2026-10-01)
+
+Codex (Astra) completed local W1, W2, W3, W4, W8 and W6 on
+`v02-perf-correctness` from main `0925ae1`, with W7 evidence and handoff.
+Plan hashing and distinct-script validation are reused; planned-order admission
+checks only the immediate predecessor. The synthetic benchmark's start cost is
+128 VM steps at both 100 and 400 predecessors (previously 1,022 and 3,722).
+Incomplete groups now disclose unavailable planned acceptance and a separate
+attempted-only rate. Live authoring rejects reply-to-probe successors, manual
+D10 uses the scorer classifier, and replay checks required fields before access.
+
+W5 hash journaling was stopped and fully reverted after an unchanged malformed-
+plan test failed. Its empty outcome commit preserves the requested commit order;
+the feature and its byte-size targets are not delivered. Full-history journals
+remain the only request format. The [handoff](V02_PERF_CORRECTNESS_2026-10-01.md)
+contains the conflict, decisions including the D4 override, before/after benchmark
+output, per-item suite logs, compatibility evidence and existing-test diff stat.
+
+Validation: 264 tests pass (246 baseline plus 18 new methods). Baseline tests
+remain unchanged except the single authorized W4 runtime-guard test edit.
+Tests used synthetic inputs and ephemeral loopback servers only. Codex did
+create/run disposable D10 manual plans through automated scripted tests, but
+no human manual service session or model run occurred. No private folders,
+corpus or kits, LM Studio or real endpoints were accessed; no dependencies were
+installed. ProjectNotes and CLAUDE.md were not edited. Stop after W7 for Claude's
+review; no push or PR.

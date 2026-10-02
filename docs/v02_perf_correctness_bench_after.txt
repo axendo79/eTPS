@@ -1,0 +1,14 @@
+python	3.14.2
+sqlite	3.50.4
+create_seconds.slots_1000	0.07
+create_seconds.slots_4000	0.14
+start_vm_steps.predecessors_100	128
+start_vm_steps.predecessors_400	128
+start_vm_steps.ratio_400_over_100	1.00
+journal_bytes.full_history.total	15216601
+journal_bytes.full_history.requests	14711785
+journal_bytes.full_history.reply_bytes	202100
+journal_bytes.history_sha256	unsupported (invalid plan fields)
+report_seconds.slots_200	0.34
+report_calls.validate	400
+report_calls.implementation	200

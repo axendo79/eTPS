@@ -1,0 +1,5 @@
+Store.create database bytes: identical to 0925ae1 for the same two-slot synthetic bundle.
+Default v1 export: identical after accounting for W3 acceptance fields, with implementation identity held constant.
+Default journals: byte-identical canonical payloads and chains with implementation identity held constant.
+Comparison uses only tracked baseline source/tests in a disposable temporary directory; no private data.
+Supplied bench LF count: 161 ; CRLF count: 0
