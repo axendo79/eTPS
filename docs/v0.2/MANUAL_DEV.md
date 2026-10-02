@@ -75,6 +75,14 @@ hashes coherently defeats the checks; there is no attestation. Old plans and
 exports do not acquire manual fields. Optional independent second-coder recode
 storage/agreement reporting is deferred; no independence is claimed.
 
+A finished manual slot whose recomputed measurement is invalid reports
+`evidence_verified: false` with warnings `recomputed_measurement_invalid`
+and `unverified_evidence: invalid_finished_trace`, matching offline replay.
+For example, editing user text and recomputing the journal chain still leaves
+an unmatched payload invalid. Valid finished, running and aborted slots retain
+`evidence_verified: true`; unattempted slots retain null. This check does not
+verify human coding correctness or attest that a service was used.
+
 If the task author also builds a competing product (Skopos), disclose that
 conflict and keep the results internal-only. Human coding and this author
 conflict rule out treating these development sessions as publishable evidence.
