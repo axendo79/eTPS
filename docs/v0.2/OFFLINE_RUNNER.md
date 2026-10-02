@@ -252,3 +252,23 @@ Incomplete groups return null with `acceptance_rate_unavailable_reason` equal to
 Complete groups retain accepted/attempted and a null reason. Consumers needing
 the previous attempted-only diagnostic should use `acceptance_rate_attempted`,
 which is null when nothing was attempted. Unattempted slots remain in reports.
+
+## Opt-in hashed request history (2026-10-02)
+
+An offline v2 plan may declare `"request_journal": "history-sha256-v1"`.
+Each request then stores exactly `node`, `message_count`, and `messages_sha256`.
+The hash is SHA256 of the canonical `encode(messages)` bytes. Request histories
+are reconstructed from journal events and verified against their counts and
+hashes rather than stored in each request. User text and response bytes are
+still journaled; this reduces repeated history storage, not evidence retention.
+
+The default is unchanged: omitting the field retains full request histories.
+Unknown values are rejected, and manual and legacy v1 plans reject the field.
+V1 and v2 exports both support replay of the opted-in journal format. Replay
+rejects altered counts, hashes, inconsistent user history, and extra offline
+request fields, even when the journal chain has been recomputed.
+
+Under reset-v1, reconstruction clears pre-boundary messages. The first request
+after a session_boundary includes the user messages delivered afterward; the
+existing authoring rule requires a user message before the next probe. The
+standard fixture therefore has one message, whose hash covers only that message.

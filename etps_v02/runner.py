@@ -62,6 +62,7 @@ def run_offline(store, slot):
     store.append(slot, "start", {"evidence": "synthetic-offline", **implementation()})
     current, index, messages = manifest["start"], 0, []
     policy = store.plan.get("arms", {}).get(store.slots[slot]["arm"], {}).get("context_policy", "full")
+    hashed = store.plan.get("request_journal") == "history-sha256-v1"
     try:
         while manifest["nodes"][current]["kind"] != "terminal":
             node = manifest["nodes"][current]
@@ -78,7 +79,9 @@ def run_offline(store, slot):
             else:
                 # Intent is durable before the adapter is called. A crash never
                 # silently resumes or reissues this request.
-                store.append(slot, "request", {"node": current, "messages": messages})
+                store.append(slot, "request", {"node": current, "message_count": len(messages),
+                                               "messages_sha256": sha(encode(messages))}
+                             if hashed else {"node": current, "messages": messages})
                 response = _next_response(responses, index, decode(encode(messages)))
                 index += 1
                 raw = raw_response(response["raw_base64"])
@@ -158,9 +161,16 @@ def replay_slot(store, slot, allow_running=False):
         kind, payload = entry["kind"], entry["payload"]
         mapping(payload, "journal." + kind)
         if kind == "request":
-            mapping(payload, "journal.request", ("messages", "node"))
-            identity(payload["node"], "journal.request.node")
-            require(pending is None and payload["messages"] == messages, "request history mismatch")
+            if store.plan.get("request_journal") == "history-sha256-v1":
+                mapping(payload, "journal.request", ("node", "message_count", "messages_sha256"))
+                require(set(payload) == {"node", "message_count", "messages_sha256"}, "invalid request fields")
+                identity(payload["node"], "journal.request.node")
+                require(pending is None and payload["message_count"] == len(messages)
+                        and payload["messages_sha256"] == sha(encode(messages)), "request history mismatch")
+            else:
+                mapping(payload, "journal.request", ("messages", "node"))
+                identity(payload["node"], "journal.request.node")
+                require(pending is None and payload["messages"] == messages, "request history mismatch")
             pending = payload["node"]
         elif kind == "event":
             event = payload

@@ -22,7 +22,10 @@ def _dispatch(store, slot, current, conversation, arm, base, manifest, elapsed, 
     require(conversation and conversation[-1]["role"] == "user",
             "live dispatch requires a public conversation ending with user")
     body = adapter.public_request(arm, conversation)
-    intent = {"node": current, "body": body, "elapsed_seconds": elapsed, "deadline_seconds": deadline}
+    intent = ({"node": current, "message_count": len(body["messages"]), "body_sha256": sha(encode(body)),
+               "elapsed_seconds": elapsed, "deadline_seconds": deadline}
+              if store.plan.get("request_journal") == "history-sha256-v1" else
+              {"node": current, "body": body, "elapsed_seconds": elapsed, "deadline_seconds": deadline})
     if kind == "delivery":
         intent["kind"] = "delivery"
     store.append(slot, "request", intent)
@@ -154,7 +157,9 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(False, "invalid exposure timestamp")
             exposures.append(p)
         elif kind == "request":
-            scorer.mapping(p, "journal.request", ("node", "elapsed_seconds", "deadline_seconds", "body"))
+            hashed = store.plan.get("request_journal") == "history-sha256-v1"
+            scorer.mapping(p, "journal.request", ("node", "elapsed_seconds", "deadline_seconds") +
+                           (("message_count", "body_sha256") if hashed else ("body",)))
             if delivery_path is not None:
                 delivery_path.request(p)
             else:
@@ -163,7 +168,9 @@ def replay_live_slot(store, slot, allow_running=False):
                 require(conversation and conversation[-1]["role"] == "user",
                         "live request violates public conversation guard")
             require(pending is None and (not remote or len(exposures) == 1), "missing intent/exposure boundary")
-            require(encode(p["body"]) == encode(adapter.public_request(arm, conversation)), "request public history/settings mismatch")
+            expected_body = adapter.public_request(arm, conversation)
+            require(p["message_count"] == len(expected_body["messages"]) and p["body_sha256"] == sha(encode(expected_body))
+                    if hashed else encode(p["body"]) == encode(expected_body), "request public history/settings mismatch")
             elapsed, deadline = p["elapsed_seconds"], p["deadline_seconds"]
             require(finite(elapsed) and elapsed >= elapsed_end and finite(deadline, positive=True), "invalid dispatch timing")
             require(deadline == min(store.plan["request_deadline_seconds"],
