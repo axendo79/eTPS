@@ -6,7 +6,7 @@ from .scorer import InvalidRecord
 from .workload import decode, encode, raw_response
 
 KEYS = ("extraction_calls", "extraction_prompt_tokens", "extraction_completion_tokens",
-        "extraction_seconds", "beliefs_injected", "injected_chars")
+        "extraction_seconds", "beliefs_injected", "injected_chars", "facts_rejected")
 
 
 def numeric(value):

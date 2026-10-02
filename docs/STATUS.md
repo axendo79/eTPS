@@ -361,3 +361,20 @@ tests using synthetic data and ephemeral loopback fake servers. Hash-mode
 request payloads total 11,835 bytes and the journal totals 516,651 bytes;
 default full-history sizes remain unchanged. No model runs, real endpoints,
 private data, installs, push or PR. Two local commits, then Claude's review.
+
+## Cleanup batch (2026-10-02)
+
+Codex applied Claude's model-authored C1 and C2 patches on
+`v02-cleanup-batch` from main `642ada5` (W5 merged). Finished manual traces
+with invalid recomputed measurements no longer claim verified evidence.
+Per-arm processing totals now combine answer/delivery usage and self-reported
+memory extraction counts with explicit coverage; incomplete token totals are
+null. Memory summaries also include `facts_rejected`. Scoring is unchanged.
+
+Validation: 274 baseline tests, 277 after C1, and 283 after C2; the full suite
+also passes 283 tests before the C3 documentation commit. All 26 existing test
+files remain byte-for-byte unchanged. Nine new tests use synthetic scripted
+input and ephemeral loopback fake servers only. The
+[cleanup handoff](V02_CLEANUP_BATCH_2026-10-02.md) records per-item results and
+the test diff. No model runs, LM Studio or real endpoints, private data,
+installs, push or PR. Three local commits, then stop for Claude's review.

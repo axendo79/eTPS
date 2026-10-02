@@ -475,3 +475,40 @@ counts, body hashes, or prior user text even after the journal chain is
 recomputed. Deliver-v1 placement and kind checks still apply under both full
 and reset-v1; moved or retyped delivery requests remain invalid. Hashes provide
 consistency checks, not independent proof of execution or external attestation.
+
+## Per-arm processing totals (2026-10-02)
+
+Reports with arm comparison include `processing_totals[arm]`, aggregating
+recorded answer and delivery requests across the arm's tasks and repetitions.
+These are descriptive cost diagnostics, never scoring: acceptance, I, R, RR,
+TPS and experimental eTPS do not change.
+
+- `answer_and_delivery_prompt_tokens` sums usable `usage.prompt_tokens`.
+- `answer_and_delivery_completion_tokens` sums usable `usage.completion_tokens`.
+- `extraction_prompt_tokens`, `extraction_completion_tokens`,
+  `extraction_seconds` and `facts_rejected` copy the corresponding memory
+  metric summaries, summing numeric reports across answer and delivery requests.
+  Extraction figures and rejected-fact counts are self-reported by the memory
+  system, not independently measured. `facts_rejected` also appears in the
+  existing `memory_telemetry[arm].metrics` summaries.
+- `all_prompt_tokens` adds answer-and-delivery prompt tokens to extraction
+  prompt tokens; `all_completion_tokens` adds the corresponding completion
+  counts. Arms without a memory telemetry declaration report the four extraction
+  fields as `"not_applicable"`, so their all-totals equal backend usage totals.
+- `definition` labels the backend-usage and self-reported extraction sources
+  and the completeness requirement.
+
+Each answer-and-delivery summary contains the observed `numerator`,
+`coverage_count`, `request_count` and `total`. Only nonnegative integer
+usage values count; `total` is null unless request coverage is nonempty and
+complete. Each extraction summary retains its observed `sum` and coverage
+counts even when incomplete. Each all-total is null unless both its usage
+component and, for memory arms, its extraction token component have complete,
+nonempty coverage. Missing extraction seconds or rejected-fact counts remain
+visible through their own coverage counts. Unanswered intents and failed or
+unfinished requests stay in denominators; missing telemetry is never zero cost.
+
+For two requests each reporting 100 prompt and 7 completion tokens, plus
+40 extraction prompt and 9 extraction completion tokens and 1 rejected fact,
+the all-totals are 280 prompt and 32 completion tokens, with 2 facts rejected.
+Export replay reproduces these diagnostics from the recorded evidence.

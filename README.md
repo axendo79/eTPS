@@ -53,7 +53,8 @@ Website work, leaderboard expansion, account features, eScore and SEIT redesign 
 | `seit.py` | Legacy energy-related companion calculations |
 | `user_profile.py`, `leaderboard.py` | Legacy profile/export/ranking utilities |
 | `etps_v02/` | Experimental byte scorer, offline runner, SQLite store, CLI and synthetic examples |
-| `tests/test_v02_scorer.py`, `tests/test_v02_runner.py`, `tests/test_v02_authorizations.py` | Synthetic adversarial, persistence and controller tests |
+| `tests/` | Synthetic unit, replay, adversarial and fake-server tests (standard library only) |
+| `tools/bench_v02_scaling.py` | Synthetic harness scaling benchmark; not a model benchmark |
 | `docs/v0.2/` | Draft measurement design and reviews |
 | `docs/history/v0.1/` | Preserved baseline documentation, not current guidance |
 
