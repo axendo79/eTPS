@@ -338,3 +338,26 @@ no human manual service session or model run occurred. No private folders,
 corpus or kits, LM Studio or real endpoints were accessed; no dependencies were
 installed. ProjectNotes and CLAUDE.md were not edited. Stop after W7 for Claude's
 review; no push or PR.
+
+## W5 opt-in hashed request history (2026-10-02)
+
+Codex applied Claude's model-authored W5 reference patch on
+`v02-w5-request-journal` from `a2f3896`. Offline v2 and live plans may declare
+`request_journal: "history-sha256-v1"` to store request counts and hashes;
+replay reconstructs and verifies the histories. User text and response bytes
+remain journaled. Omitting the field retains the existing request format.
+This supersedes the earlier stopped W5 outcome above.
+
+The user corrected work-order test 2.4: the first reset-v1 request hashes only
+post-boundary user messages (one in the standard fixture), because authoring
+requires a new user message between a boundary and a probe. The work-order
+file and reference patch remain unchanged. See the
+[W5 handoff](V02_W5_REQUEST_JOURNAL_2026-10-02.md) for validation evidence,
+before/after benchmark output, provenance, and the local-review stop point.
+
+Validation: 264 baseline tests and 274 final tests pass; SHA256 checks confirm
+all 25 existing test files are byte-for-byte unchanged. The new file adds ten
+tests using synthetic data and ephemeral loopback fake servers. Hash-mode
+request payloads total 11,835 bytes and the journal totals 516,651 bytes;
+default full-history sizes remain unchanged. No model runs, real endpoints,
+private data, installs, push or PR. Two local commits, then Claude's review.

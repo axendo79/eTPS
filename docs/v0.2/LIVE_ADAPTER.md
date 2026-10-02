@@ -453,3 +453,25 @@ undelivered earlier facts and forgotten earlier facts are equivalent at the
 next request. They do not test memory retention across a delivered session.
 Memory arms require deliver-v1 so the harness first submits the facts rather
 than clearing them before any request (contract section 3, harness delivery).
+
+## Opt-in hashed request history (2026-10-02)
+
+A live plan may declare `"request_journal": "history-sha256-v1"`. Request
+intents then store `node`, `message_count`, `body_sha256`, `elapsed_seconds`,
+and `deadline_seconds`; deliver-v1 delivery intents also retain `kind: "delivery"`.
+The count covers the provider request body's messages, and the SHA256 hash
+covers the canonical `encode(body)` bytes, including public request settings.
+
+Request histories are reconstructed from journal events, the pinned arm
+settings, and the context policy, then verified against their counts and hashes
+rather than stored in each request intent. User text and response bytes,
+including raw HTTP evidence, are still journaled. The actual provider request
+body and scoring behavior are unchanged. The default is unchanged: omitting
+the field retains the full public body in each intent. Unknown values are
+rejected; manual and legacy offline v1 plans do not accept this option.
+
+Both export versions replay hashed histories. Replay rejects inconsistent
+counts, body hashes, or prior user text even after the journal chain is
+recomputed. Deliver-v1 placement and kind checks still apply under both full
+and reset-v1; moved or retyped delivery requests remain invalid. Hashes provide
+consistency checks, not independent proof of execution or external attestation.
