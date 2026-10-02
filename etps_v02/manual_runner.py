@@ -213,6 +213,9 @@ def replay_manual_slot(store, slot):
     if state != "finished":
         result.update(measurement_valid=False, reason="unfinished_slot", R=None, RR=None,
                       rr_unavailable_reason="unfinished_slot", accepted=None)
+    verified = state != "finished" or result["measurement_valid"]
+    if not verified:
+        warnings += ["recomputed_measurement_invalid", "unverified_evidence: invalid_finished_trace"]
     return {**common, "state": state, "score": result, "record": record, "warnings": warnings,
             "operator_wall_seconds": wall, "reason_code": finish.get("reason_code"),
-            "implementation_mismatch": bool(changed), "evidence_verified": True}
+            "implementation_mismatch": bool(changed), "evidence_verified": verified}
