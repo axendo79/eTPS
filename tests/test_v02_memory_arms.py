@@ -100,7 +100,7 @@ class MemoryArmsTests(unittest.TestCase):
             self.assertEqual(replay_export(export_bundle(store))["trials"][0], trial)
 
     def test_malformed_objects_record_invalid_without_scoring_change(self):
-        for value in ([], "bad", 3, None, {"a": True}, {"a": None}, {"a": []}, {"a": {}}, {"a": "\ud800"}):
+        for value in ([], "bad", 3, None, {"a": True}, {"a": []}, {"a": {}}, {"a": "\ud800"}):
             # Raw JSON permits a surrogate escape to exercise invalid Unicode safely.
             import json
             raw = json.dumps({"choices": [{"message": {"role": "assistant", "content": '{"answer":"expected-private-marker"}'}}],

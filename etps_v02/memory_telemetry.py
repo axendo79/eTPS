@@ -25,7 +25,7 @@ def project(response, field):
         if field not in body:
             return {**result, "memory_telemetry_status": "missing"}
         value = body[field]
-        if not isinstance(value, dict) or not all(type(v) is str or numeric(v) for v in value.values()):
+        if not isinstance(value, dict) or not all(v is None or type(v) is str or numeric(v) for v in value.values()):
             raise InvalidRecord("invalid memory object")
         encode(value)  # Reject invalid Unicode as well as nonfinite numbers.
         return {"memory_telemetry": value, "memory_telemetry_status": "valid"}

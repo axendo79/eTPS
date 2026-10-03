@@ -1,5 +1,218 @@
 # eTPS v0.2 status
 
+## Current state
+
+The experimental v0.2 byte scorer, offline/live/manual runners, SQLite journal,
+replay/export, answer tolerance, reset/delivery policies and processing-cost
+diagnostics are implemented and covered by synthetic standard-library tests.
+Acceptance, first-attempt retention, RR and generation TPS remain separate;
+eTPS is a labeled experimental index. Legacy v0.1 modules remain preserved.
+
+Local live work includes run 7 (three arms) and run 8 (five arms, three separate
+repeats), using google/gemma-4-e4b only. These are exploratory calibration
+observations, not benchmark results or evidence of general superiority.
+There are no independent held-out tasks, no calibration manifest satisfying
+the measurement contract, and no benchmark claims. Run 8's frozen exploratory
+plans do not fill those gaps. Earlier entries below record historical states.
+
+Run `python -m unittest discover -s tests -v` from the repository root.
+Tests use synthetic inputs and ephemeral fake servers, not model endpoints.
+The website and leaderboard remain on hold until validity work is done.
+
+## Five-arm memory calibration, run 8 (2026-10-02)
+
+Codex executed the user-authorized run on 2026-10-02 local time. **Results
+describe Nyx-backed prototype memory, not Nyx proper. Calibration only.**
+The model was local google/gemma-4-e4b; no other model or remote service was
+evaluated. Eleven tasks per arm, one trial per task/arm/repeat, three separate
+55-slot plans/stores. All 55 slots finished in each repeat, with no invalid,
+aborted or unattempted slots. All three memory-mode checks passed and the saved
+exports replayed identically at the recorded revision. No retry occurred.
+
+| Arm | Configuration |
+|---|---|
+| A | gemma-full: full history |
+| B | gemma-reset: reset-only |
+| C | gemma-reset-nyx: reset plus Nyx-backed prototype memory |
+| D | gemma-reset-naive: reset plus chronological extracted-fact memory |
+| E | gemma-reset-recall: reset plus verbatim user-message recall |
+
+The same task bytes and final-generation settings were used across arms:
+temperature 0, max_tokens 2048, seed null, fence-v1, d10-v1, decode-v1,
+warm-declared and deliver-v1. Arm order rotates by (task index + repeat index)
+modulo five. C/D share extraction (same model, max_tokens 1024); E does not
+extract. Each memory slot uses a fresh bridge process and store.
+
+### Outcomes, separately by repeat
+
+Accepted counts include exact and tolerated format deviations, shown in
+parentheses. First-attempt retention uses eight fact-dependent tasks:
+retained_fact, supersession_current, historical, contradiction, new_evidence,
+context_pressure, scheduled_recap and mixed_recovery. The controls clarification,
+expired and never_established remain in acceptance and cost denominators.
+Scheduled_recap is retention under a scheduled recap, not unaided retention.
+Mixed_recovery counts only designated old-fact spans as reconstruction.
+
+Pooled RR below is descriptive **within one arm and repeat**: sum(R)/sum(I),
+including measured failures. Each row includes all 11 measurement-valid tasks;
+none is excluded or unavailable. Results and costs are never pooled across
+repeats. Accepted after re-supply means accepted=true and R>0; R=0 alone does
+not establish first-attempt retention.
+
+#### Repeat 1
+
+| Arm | Accepted /11 (exact, deviation) | First retained /8 | Accepted with R>0 /11 | Pooled RR |
+|---|---|---|---|---|
+| A | 9/11 (8, 1) | 6/8 | 0/11 | 41/15689 = 0.002613 |
+| B | 8/11 (7, 1) | 0/8 | 6/11 | 281/15933 = 0.017636 |
+| C | 10/11 (7, 3) | 7/8 | 0/11 | 25/15641 = 0.001598 |
+| D | 9/11 (7, 2) | 6/8 | 0/11 | 91/15709 = 0.005793 |
+| E | 10/11 (9, 1) | 7/8 | 0/11 | 66/15684 = 0.004208 |
+
+#### Repeat 2
+
+| Arm | Accepted /11 (exact, deviation) | First retained /8 | Accepted with R>0 /11 | Pooled RR |
+|---|---|---|---|---|
+| A | 9/11 (7, 2) | 6/8 | 0/11 | 41/15689 = 0.002613 |
+| B | 8/11 (7, 1) | 0/8 | 6/11 | 281/15933 = 0.017636 |
+| C | 9/11 (7, 2) | 5/8 | 1/11 | 73/15689 = 0.004653 |
+| D | 9/11 (7, 2) | 6/8 | 0/11 | 48/15664 = 0.003064 |
+| E | 10/11 (10, 0) | 7/8 | 0/11 | 66/15684 = 0.004208 |
+
+#### Repeat 3
+
+| Arm | Accepted /11 (exact, deviation) | First retained /8 | Accepted with R>0 /11 | Pooled RR |
+|---|---|---|---|---|
+| A | 9/11 (7, 2) | 6/8 | 0/11 | 41/15689 = 0.002613 |
+| B | 8/11 (7, 1) | 0/8 | 6/11 | 281/15933 = 0.017636 |
+| C | 10/11 (7, 3) | 7/8 | 0/11 | 23/15639 = 0.001471 |
+| D | 9/11 (7, 2) | 6/8 | 0/11 | 48/15664 = 0.003064 |
+| E | 10/11 (10, 0) | 7/8 | 0/11 | 66/15684 = 0.004208 |
+
+### Processing costs beside accuracy
+
+Prompt/completion columns include **all answer and boundary-delivery requests**,
+including failed trials; they are not probe-only or accepted-only totals.
+Coverage is reported requests / all requests for both usage fields and, for
+C/D/E, every extraction metric. Extraction seconds are rounded to three decimals
+and exclude storage and final generation; they are not end-to-end latency.
+Extraction token counts, calls and rejected batches are self-reported telemetry.
+A/B extraction is not_applicable; E's measured extraction values are zero.
+No live memory objects were missing, invalid or unavailable in any repeat.
+
+#### Repeat 1 costs
+
+| Arm | Prompt tokens | Completion tokens | Extraction calls | Extraction prompt | Extraction completion | Extraction seconds | Facts rejected | Coverage |
+|---|---|---|---|---|---|---|---|---|
+| A | 10159 | 6654 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 24/24 |
+| B | 4982 | 9970 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 30/30 |
+| C | 5368 | 5814 | 28 | 7164 | 7464 | 141.520 | 1 | 23/23 |
+| D | 5548 | 6725 | 29 | 7292 | 7924 | 147.318 | 1 | 24/24 |
+| E | 12511 | 5320 | 0 | 0 | 0 | 0.000 | 0 | 23/23 |
+
+#### Repeat 2 costs
+
+| Arm | Prompt tokens | Completion tokens | Extraction calls | Extraction prompt | Extraction completion | Extraction seconds | Facts rejected | Coverage |
+|---|---|---|---|---|---|---|---|---|
+| A | 10150 | 6818 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 24/24 |
+| B | 4970 | 9841 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 30/30 |
+| C | 5602 | 6845 | 30 | 7406 | 7891 | 148.876 | 1 | 25/25 |
+| D | 5485 | 6201 | 29 | 7282 | 7461 | 139.102 | 1 | 24/24 |
+| E | 12511 | 5304 | 0 | 0 | 0 | 0.000 | 0 | 23/23 |
+
+#### Repeat 3 costs
+
+| Arm | Prompt tokens | Completion tokens | Extraction calls | Extraction prompt | Extraction completion | Extraction seconds | Facts rejected | Coverage |
+|---|---|---|---|---|---|---|---|---|
+| A | 10150 | 6821 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 24/24 |
+| B | 4970 | 10010 | not_applicable | not_applicable | not_applicable | not_applicable | not_applicable | 30/30 |
+| C | 5358 | 6725 | 29 | 7282 | 7924 | 150.353 | 1 | 23/23 |
+| D | 5479 | 6408 | 29 | 7282 | 7476 | 138.095 | 1 | 24/24 |
+| E | 12511 | 5312 | 0 | 0 | 0 | 0.000 | 0 | 23/23 |
+
+### Interpretation, losses and disclosures
+
+C versus D compares current-belief storage against chronological retention of
+the same extracted facts. C versus E changes extraction and representation
+together, so it is not an isolated test of storage. A/B are full-history and
+reset-only controls. C lost context_pressure to A/B/E in repeats 1 and 2;
+C and D both failed that task in those repeats. C accepted contradiction only
+in repeat 1; all arms failed it in repeats 2 and 3. In repeat 2 C needed
+re-supply on supersession_current and retained fewer tasks on first attempt
+than D. These losses remain visible alongside C's successes. Full history
+failed mixed_recovery in every repeat while the other arms accepted it.
+
+There are only eight fact-dependent tasks. **Differences of one or two tasks
+are noise, not persuasive evidence of superiority. This is calibration, not
+proof.** Repeats reuse the same tasks and one model; they are not independent
+held-out tasks. The tasks and harness are model-authored, with prior model
+exposure and calibration-informed answer aliases. A fair general result needs
+independently authored held-out tasks and more than this model/task set.
+No broad architectural, causal or statistical-significance claim follows.
+
+The user reports that a separate e4b chat may have overlapped the first one or
+two repeat-1 slots. This is a possible **timing-only** confound; overlap was not
+independently established, and no timing result was corrected or rerun.
+
+The bridge uses ingestion-time identity/current-belief behavior rather than
+general contradiction, expiry or historical reasoning. All memory modes use
+the same "Facts remembered from earlier in this conversation:" prefix and
+prepended system position. Recall includes instructions and nonfacts and avoids
+extraction loss/errors/costs. Ingestion includes the current request, identical
+user content is deduplicated, and there is no injection cap, relevance filter,
+pruning or decay. C/D's extraction limit differs from recall's no-extraction
+path; storage overhead and failure exposure differ. Longer memory can increase
+cost or context failures. These are disclosed control differences, not isolated
+tests of an architecture. eTPS discounts user reconstruction burden, not total
+system compute; costs and coverage must stay beside accuracy.
+
+**Conflict:** the eTPS author builds Nyx and owns these control arms. Nyx must
+be allowed to lose. Model-authored tasks and model review are not independent
+validation. The website and leaderboard stay on hold until validity work.
+
+### Missing-usage coverage and provenance
+
+Offline synthetic validation exposed a coverage asymmetry: missing extraction
+usage in C/D produced null token counts, which the run-time eTPS revision
+rejected as an entirely invalid memory object. Coverage fell from 22/22 to
+21/22 even for available time/rejection fields, and combined token totals
+became null. E cannot encounter this extraction-usage failure because it makes
+no extraction calls. This was not observed in the live repeats above.
+
+The wrap-up fix accepts null field values and lowers numeric coverage only for
+the affected fields. Available extraction_seconds and facts_rejected retain
+coverage; incomplete combined token totals remain null. Strings keep their
+existing valid-but-nonnumeric behavior; nested objects, booleans and nonfinite
+numbers remain invalid. This changes telemetry projection, not scoring. The
+frozen run 8 artifacts and reports remain unchanged; the tables above come from
+their recorded revision, not a rescore. Old journals containing null fields
+marked invalid may fail projection verification under the new revision; use
+their recorded code revision for faithful replay rather than rewriting evidence.
+
+Run 8 used eTPS `02a01b4d21a225a095502e66d2e08c7306a330ac`,
+nyx-bridge `32d880117b6613ffb563d5b6b0f2f079b9b0d203`, and
+ProjectNyx `622c037770bbb96b41377d5775fcece4b7eeb9f6`.
+The combined freeze SHA-256, verified before and after execution, was
+`e104ee6520fa4400cc5148c1a9031d562cc8543330190bdf23490a0f2b29b0e9`.
+The approved eTPS untracked ProjectNotes-only exception was recorded;
+the other two trees were clean. Local hashes are not independent timestamp
+proofs, and frozen exploratory plans are not a formal calibration manifest.
+
+Evidence remains private in `local-5arm-controls-2026-10-02`: RUN_RECORD.md,
+ANALYSIS_PLAN.md, FREEZE.json, per-repeat reports/exports and slot logs.
+Only aggregate results and task names are reproduced here, with no private
+task text, prompts or answers. This wrap-up uses synthetic tests only and
+does not perform a model run or modify the private evidence.
+
+Validation: the full suite passed 283 tests before the fix and 290 after it,
+using `python -B -m unittest discover -s tests -v` on Windows Python 3.14.
+Seven new synthetic tests cover null-field coverage, incomplete token totals,
+unchanged string/invalid-value handling and replay integrity/compatibility.
+The user authorized removing the single contradictory null case from the old
+invalid-values test; byte checks verified all other existing test content
+unchanged across 28 files. Aggregate outcome/cost tables, coverage, freeze and
+revision identifiers were checked against the saved reports without rescoring.
+
 ## D10 answer tolerance and decode-v1 timing (2026-09-30)
 
 User decisions: freeze three answer tolerance rules and three result states;

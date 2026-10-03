@@ -2,7 +2,7 @@
 
 Research into user reconstruction burden and model generation throughput.
 
-**Status: v0.2 measurement design; experimental byte scorer, offline runner and SQLite replay store implemented alongside preserved v0.1 code. No validated model scores, frozen experiment corpus, or controlled comparison is available.**
+**Status: experimental v0.2 byte scorer, offline/live runners and SQLite replay store implemented alongside preserved v0.1 code. Local runs 7 and 8 used google/gemma-4-e4b for exploratory memory calibration. No independent held-out validation, calibration manifest, or benchmark claim is established. See [current state and run records](docs/STATUS.md).**
 
 The preserved code baseline is `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. Its audit identified measurement defects; passing its self-tests does not establish benchmark validity. See [implementation limitations](docs/V0.1_STATUS.md).
 
@@ -30,12 +30,12 @@ See [offline runner usage](docs/v0.2/OFFLINE_RUNNER.md) for exact-file import, s
 
 1. Run the synthetic replay tests and inspect exact byte-accounting results.
 2. Map the authored workload to the scorer, settle semantic coverage and budgets, and freeze external criteria and calibration counts.
-3. Integrate the reviewed workload with the offline runner/store, then implement and validate the actual system adapter and budgets.
+3. Review the implemented live adapter, workload mapping and enforced budgets against independent validity criteria; synthetic tests and local exploratory runs do not settle semantic validity.
 4. Run calibration under a committed manifest and complete attempt ledger; require independent timestamp proofs for confirmatory work.
 
 No dependencies or model endpoint are needed for `python -m unittest discover -s tests -v` or `python -m etps_v02.examples`. The root Python programs remain legacy prototypes. Their self-tests and demonstrations must not be presented as validated benchmark runs.
 
-The first intended experiment compares the same Gemini model/configuration with and without a memory layer, using identical scheduled input, decoding and budget policies. Recovery may differ only through frozen branches. Nyx must be allowed to lose. Author affiliation with Nyx is disclosed; the initial developer-authored profile is non-canonical. Backend energy unavailable means no system-energy-per-accepted-task result; local retrieval energy is component telemetry only.
+Local runs 7 and 8 compared google/gemma-4-e4b with full history, reset-only and Nyx-backed prototype memory; run 8 also included naive extracted-fact memory and verbatim recall. Results are calibration only, on model-authored tasks that are not held out. Differences of one or two tasks are noise. Recovery follows frozen branches. The eTPS author builds Nyx and owns the control arms; Nyx must be allowed to lose. Backend energy unavailable means no system-energy-per-accepted-task result; local retrieval energy is component telemetry only.
 
 The previously authored workload was intentionally excluded from the published repository and remains unavailable in this checkout. New synthetic executable fixtures are included; they are not that workload or a frozen experiment.
 
@@ -52,7 +52,7 @@ Website work, leaderboard expansion, account features, eScore and SEIT redesign 
 | `logger.py` | Legacy SQLite storage and summaries |
 | `seit.py` | Legacy energy-related companion calculations |
 | `user_profile.py`, `leaderboard.py` | Legacy profile/export/ranking utilities |
-| `etps_v02/` | Experimental byte scorer, offline runner, SQLite store, CLI and synthetic examples |
+| `etps_v02/` | Experimental byte scorer, offline/live/manual runners, SQLite store, replay/export, CLI and synthetic examples |
 | `tests/` | Synthetic unit, replay, adversarial and fake-server tests (standard library only) |
 | `tools/bench_v02_scaling.py` | Synthetic harness scaling benchmark; not a model benchmark |
 | `docs/v0.2/` | Draft measurement design and reviews |
