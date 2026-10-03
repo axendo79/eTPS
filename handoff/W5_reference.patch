@@ -1,0 +1,91 @@
+--- a/etps_v02/live_runner.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/live_runner.py	2026-10-02 20:41:10.909740811 +0000
+@@ -22,7 +22,10 @@
+     require(conversation and conversation[-1]["role"] == "user",
+             "live dispatch requires a public conversation ending with user")
+     body = adapter.public_request(arm, conversation)
+-    intent = {"node": current, "body": body, "elapsed_seconds": elapsed, "deadline_seconds": deadline}
++    intent = ({"node": current, "message_count": len(body["messages"]), "body_sha256": sha(encode(body)),
++               "elapsed_seconds": elapsed, "deadline_seconds": deadline}
++              if store.plan.get("request_journal") == "history-sha256-v1" else
++              {"node": current, "body": body, "elapsed_seconds": elapsed, "deadline_seconds": deadline})
+     if kind == "delivery":
+         intent["kind"] = "delivery"
+     store.append(slot, "request", intent)
+@@ -154,7 +157,9 @@
+                 require(False, "invalid exposure timestamp")
+             exposures.append(p)
+         elif kind == "request":
+-            scorer.mapping(p, "journal.request", ("node", "elapsed_seconds", "deadline_seconds", "body"))
++            hashed = store.plan.get("request_journal") == "history-sha256-v1"
++            scorer.mapping(p, "journal.request", ("node", "elapsed_seconds", "deadline_seconds") +
++                           (("message_count", "body_sha256") if hashed else ("body",)))
+             if delivery_path is not None:
+                 delivery_path.request(p)
+             else:
+@@ -163,7 +168,9 @@
+                 require(conversation and conversation[-1]["role"] == "user",
+                         "live request violates public conversation guard")
+             require(pending is None and (not remote or len(exposures) == 1), "missing intent/exposure boundary")
+-            require(encode(p["body"]) == encode(adapter.public_request(arm, conversation)), "request public history/settings mismatch")
++            expected_body = adapter.public_request(arm, conversation)
++            require(p["message_count"] == len(expected_body["messages"]) and p["body_sha256"] == sha(encode(expected_body))
++                    if hashed else encode(p["body"]) == encode(expected_body), "request public history/settings mismatch")
+             elapsed, deadline = p["elapsed_seconds"], p["deadline_seconds"]
+             require(finite(elapsed) and elapsed >= elapsed_end and finite(deadline, positive=True), "invalid dispatch timing")
+             require(deadline == min(store.plan["request_deadline_seconds"],
+--- a/etps_v02/runner.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/runner.py	2026-10-02 20:41:10.909103634 +0000
+@@ -62,6 +62,7 @@
+     store.append(slot, "start", {"evidence": "synthetic-offline", **implementation()})
+     current, index, messages = manifest["start"], 0, []
+     policy = store.plan.get("arms", {}).get(store.slots[slot]["arm"], {}).get("context_policy", "full")
++    hashed = store.plan.get("request_journal") == "history-sha256-v1"
+     try:
+         while manifest["nodes"][current]["kind"] != "terminal":
+             node = manifest["nodes"][current]
+@@ -78,7 +79,9 @@
+             else:
+                 # Intent is durable before the adapter is called. A crash never
+                 # silently resumes or reissues this request.
+-                store.append(slot, "request", {"node": current, "messages": messages})
++                store.append(slot, "request", {"node": current, "message_count": len(messages),
++                                               "messages_sha256": sha(encode(messages))}
++                             if hashed else {"node": current, "messages": messages})
+                 response = _next_response(responses, index, decode(encode(messages)))
+                 index += 1
+                 raw = raw_response(response["raw_base64"])
+@@ -158,9 +161,16 @@
+         kind, payload = entry["kind"], entry["payload"]
+         mapping(payload, "journal." + kind)
+         if kind == "request":
+-            mapping(payload, "journal.request", ("messages", "node"))
+-            identity(payload["node"], "journal.request.node")
+-            require(pending is None and payload["messages"] == messages, "request history mismatch")
++            if store.plan.get("request_journal") == "history-sha256-v1":
++                mapping(payload, "journal.request", ("node", "message_count", "messages_sha256"))
++                require(set(payload) == {"node", "message_count", "messages_sha256"}, "invalid request fields")
++                identity(payload["node"], "journal.request.node")
++                require(pending is None and payload["message_count"] == len(messages)
++                        and payload["messages_sha256"] == sha(encode(messages)), "request history mismatch")
++            else:
++                mapping(payload, "journal.request", ("messages", "node"))
++                identity(payload["node"], "journal.request.node")
++                require(pending is None and payload["messages"] == messages, "request history mismatch")
+             pending = payload["node"]
+         elif kind == "event":
+             event = payload
+--- a/etps_v02/workload.py	2026-10-02 00:23:54.000000000 +0000
++++ b/etps_v02/workload.py	2026-10-02 20:41:10.908199084 +0000
+@@ -113,7 +113,11 @@
+     offline_arms = not live and not manual and not legacy and "arms" in plan
+     if offline_arms:
+         fields.add("arms")
++    if "request_journal" in plan and (live or not legacy and not manual and plan.get("schema") == "etps-offline-plan-v2"):
++        fields.add("request_journal")
+     require(set(plan) == fields, "invalid plan fields")
++    if "request_journal" in plan:
++        require(plan["request_journal"] == "history-sha256-v1", "unsupported request_journal")
+     require((manual and plan["purpose"] == "dev-manual") or (live and plan["purpose"] == "live-exploratory") or
+             (legacy or plan["schema"] == "etps-offline-plan-v2") and
+             plan["purpose"] == "offline-verification", "invalid live purpose" if live else "only offline verification supported")
