@@ -54,6 +54,9 @@ def normalize(node, answer):
 
 
 def evaluate(manifest, node, event):
+    if manifest.get("answer_predicate") == "set-v1":
+        from .set_answers import evaluate as evaluate_sets
+        return evaluate_sets(manifest, node, event)
     outcome = classify(event, node["expected"], node.get("unknown_answers", LEGACY_UNKNOWN_ANSWERS),
                        manifest.get("answer_schema"))
     if outcome == "correct":

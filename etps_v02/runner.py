@@ -22,19 +22,28 @@ def implementation():
             "scorer_sha256": files["scorer.py"], "runner_sha256": files["runner.py"]}
 
 
-def answer_from_raw(raw, answer_schema=None):
+def answer_from_raw(raw, answer_schema=None, *, set_fields=()):
     try:
         answer = decode(raw)
         # Default: string fields; typed-v1 also admits exact int/null values.
         # Do not let
         # arbitrary decoded JSON (infinities, surrogates, deep containers) reach
         # journal serialization. Raw bytes remain on the response event.
-        if not scorer.answer_object(answer, answer_schema):
+        if set_fields:
+            from .set_answers import answer_object
+            shaped = answer_schema == "typed-v1" and answer_object(answer, set_fields)
+        else:
+            shaped = scorer.answer_object(answer, answer_schema)
+        if not shaped:
             return None
         for key, value in answer.items():
             key.encode("utf-8")
             if isinstance(value, str):
                 value.encode("utf-8")
+            if type(value) is list:
+                for element in value:
+                    if type(element) is str:
+                        element.encode("utf-8")
         return answer
     except (InvalidRecord, UnicodeError, RecursionError, OverflowError):
         return None  # Preserve bytes; malformed is a system outcome, not a protocol fix.
@@ -56,6 +65,7 @@ def _next_response(responses, index, messages):
 def run_offline(store, slot):
     require(store.plan["schema"] == "etps-offline-plan-v2", "legacy plans are replay-only; author a new plan")
     manifest = store.manifest(slot)
+    from .set_answers import projection_fields
     validate(manifest)  # Old evidence can replay; new execution must pass current authoring checks.
     script_hash = store.slots[slot]["script_sha256"]
     responses = script_responses(store.artifacts[script_hash])
@@ -86,7 +96,8 @@ def run_offline(store, slot):
                 index += 1
                 raw = raw_response(response["raw_base64"])
                 event = {"node": current, "kind": "probe", **response,
-                         "answer": answer_from_raw(raw, manifest.get("answer_schema"))}
+                         "answer": answer_from_raw(raw, manifest.get("answer_schema"),
+                                                   set_fields=projection_fields(manifest, node))}
                 store.append(slot, "event", event)
                 messages.append({"role": "assistant", "raw_base64": response["raw_base64"]})
                 outcome = scorer.classify_probe(manifest, node, event)
@@ -190,7 +201,9 @@ def replay_slot(store, slot, allow_running=False):
                 raw = raw_response(event["raw_base64"], admission=False)
                 # The immutable manifest artifact binds projection schema; no
                 # journal layout change or implicit upgrade of old answers.
-                projected = answer_from_raw(raw, manifest.get("answer_schema"))
+                from .set_answers import projection_fields
+                projected = answer_from_raw(raw, manifest.get("answer_schema"),
+                    set_fields=projection_fields(manifest, manifest["nodes"].get(event["node"], {})))
                 same = (encode(event["answer"]) == encode(projected)
                         if "answer_schema" in manifest else event["answer"] == projected)
                 if not same:
@@ -266,6 +279,9 @@ def replay_slot(store, slot, allow_running=False):
                       experimental_eTPS=None)
     if "result_state" in result and result["accepted"] is not True:
         result["result_state"] = "failed"
+    from .dimension_accuracy import abort_reason, finalize
+    finalize(manifest, result, reason=abort_reason(recomputed["reason"], entries[-1]["payload"].get("reason_code"))
+             if state == "aborted" and result["reason"] == "unfinished_slot" else None)
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],
             "state": state, "evidence": "synthetic-offline", "record": record,
             "reason": entries[-1]["payload"].get("reason"),
@@ -280,6 +296,8 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    from .dimension_accuracy import add_report
+    add_report(store, result)
     if "cache_policy" in store.plan:
         result["cache_policy"] = store.plan["cache_policy"]
     tolerance_tasks = {task for task, key in store.plan["tasks"].items()
@@ -298,12 +316,15 @@ def report(store):
     if store.plan.get("response_extraction") == "fence-v1":
         rates = {arm: {"numerator": 0, "denominator": 0} for arm in store.plan["arms"]}
         for slot, trial in zip(store.plan["slots"], result["trials"]):
-            schema = store.manifest(slot["id"]).get("answer_schema")
+            manifest = store.manifest(slot["id"])
+            schema = manifest.get("answer_schema")
             rate = rates[slot["arm"]]
             for event in trial.get("record", {}).get("events", []):
                 if event["kind"] == "probe" and event["status"] == "ok":
                     rate["denominator"] += 1
-                    rate["numerator"] += answer_from_raw(raw_response(event["raw_base64"], admission=False), schema) is not None
+                    from .set_answers import projection_fields
+                    rate["numerator"] += answer_from_raw(raw_response(event["raw_base64"], admission=False), schema,
+                        set_fields=projection_fields(manifest, manifest["nodes"].get(event["node"], {}))) is not None
         for rate in rates.values():
             rate["value"] = Fraction(rate["numerator"], rate["denominator"]) if rate["denominator"] else None
         result["strict_json_rate"] = rates

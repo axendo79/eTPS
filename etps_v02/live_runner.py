@@ -39,7 +39,9 @@ def _dispatch(store, slot, current, conversation, arm, base, manifest, elapsed, 
     raw = raw_response(response["raw_base64"])
     event = {"kind": kind, "node": current, **response}
     if kind == "probe":
-        answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
+        from .set_answers import projection_fields
+        answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"),
+            set_fields=projection_fields(manifest, manifest["nodes"][current]))
         event["answer"] = answer
         if "response_extraction" in store.plan:
             event["extracted"] = extracted
@@ -193,7 +195,9 @@ def replay_live_slot(store, slot, allow_running=False):
                 raw = raw_response(p["raw_base64"], admission=False)
                 if p["kind"] == "probe":
                     scorer.mapping(p, "journal.event.probe", ("answer",))
-                    answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"))
+                    from .set_answers import projection_fields
+                    answer, extracted = project_reply(raw, manifest.get("answer_schema"), store.plan.get("response_extraction"),
+                        set_fields=projection_fields(manifest, manifest["nodes"].get(p["node"], {})))
                     require(encode(p["answer"]) == encode(answer), "raw answer projection mismatch")
                     if "response_extraction" in store.plan:
                         require(type(p.get("extracted")) is bool and p["extracted"] is extracted,
@@ -267,6 +271,9 @@ def replay_live_slot(store, slot, allow_running=False):
             result["result_state"] = "failed"
     if issues:
         warnings.extend("unverified_evidence: " + i["code"] for i in issues)
+    from .dimension_accuracy import abort_reason, finalize
+    finalize(manifest, result, reason=abort_reason(recomputed["reason"], rows[-1]["payload"].get("reason_code"))
+             if state == "aborted" and result["reason"] == "unfinished_slot" else None)
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],
             "state": state, "evidence": "live-exploratory", "record": record, "exposure": exposures,
             "reason": rows[-1]["payload"].get("reason"), "reason_code": rows[-1]["payload"].get("reason_code"),

@@ -95,4 +95,18 @@ Dimension accuracy is diagnostic partial credit. It never changes binary accepta
 5. **Arms (six):** full history, reset-only, naive extracted facts, verbatim recall, the projector-0 Nyx configuration, and the projector-3 Nyx configuration, all on the same frozen corpus. Including projector 0 tests whether projector 3's transition handling matters at all on a harder workload.
 6. **Provenance:** F8 is in the first release. Every arm sees identical visible source/message identifiers, so provenance tests retention and selection, not privileged metadata.
 
+The [maintainer rulings (2026-10-06)](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06)
+settle one frozen logical field map per task, one plan per repeat, and a hash-locked
+authoritative state-record sidecar plus bounded intake validation. The validator
+does not prove semantics, source truth or authority; review must cross-check
+obligations and answer keys before freezing, and mismatches block the release.
+
 Next step: the scorer extension in ruling 3. Authoring begins only after it exists.
+
+Implementation cross-reference (2026-10-06): the user-authorized local
+[set-v1 extension](SET_ANSWERS.md) implements designated complete-set answers
+and separate status/value field scoring, with diagnostic first/terminal field
+counts for stable tagged plans. The [state-record options memo](STATE_RECORD_OPTIONS.md)
+now records the maintainer's representation, field-identity and repeat rulings.
+The separate intake validator and mandatory semantic review remain authoring/freeze
+prerequisites; recording a representation choice is not corpus validation.

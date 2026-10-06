@@ -1,5 +1,68 @@
 # eTPS v0.2 provenance
 
+## F2 diagnostic invalidation clarification and repair (2026-10-06)
+
+The user clarified that test preservation protects the 290 tests on main
+`530c5c2`, and authorized updating the PR-added aborted-slot assertion from
+`ab858d6`. This resolves the earlier F2 STUCK conflict recorded below and in
+the handoff. Codex updated the PR-added invalid-trace expectations before
+implementation and retained the finished-manual counterexample as a repository
+regression. Any measurement-invalid result now makes both dimension phases
+unavailable with its invalid reason; valid aborts retain their recorded reason
+code in the diagnostic. Primary acceptance, RR and eTPS remain unchanged.
+
+Synthetic tests cover pure invalid traces, changed manual recovery payloads,
+manual/offline/live aborts and a live running prefix, with v1/v2 export replay.
+All main test files remain unchanged. The user authorized this local repair,
+documentation and commit on `v02-set-answers`; no push or model run occurred.
+
+## Maintainer state-record rulings and intake authorization (2026-10-06)
+
+The user supplied the four [maintainer rulings](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06):
+one frozen logical field map per task (unsuppliable fields unavailable), one plan
+per repeat with within-plan per-arm aggregation only, authoritative hash-locked
+state-record sidecars, and a bounded separately versioned intake/freeze validator.
+The sidecar contains state/version chains, authority, establishment, valid time,
+applicability, update links, obligations, lapse/reinstatement and disagreement.
+Sidecar bytes and hash freeze with the manifest. This supersedes the earlier
+unselected representation status, not the preserved historical options analysis.
+
+The user authorized local F1/F2 repairs, a docs-first rulings commit and synthetic
+test-first validator implementation on `v02-set-answers`; no push or model run.
+Codex records the rulings and authors the mechanical intake format/checks.
+Neither scorer nor validator proves semantics, source truth or authority.
+Review must cross-check obligations and keys before freezing; any mismatch is a
+corpus/protocol defect blocking valid-evidence execution. F2 was initially STUCK
+under the existing-test preservation rule; the clarification above resolves it.
+No corpus task, private key or model result is authored by this implementation work.
+
+Codex implemented [state-records-v1](STATE_RECORDS_V1.md) in a separate intake
+subpackage with closed JSON, an exact-byte SHA-256 binding, bounded graph/order
+and obligation checks, fresh reinstatement, explicit disagreement/precedence
+and exact answer correspondence. The tool is never imported by production
+scoring or replay. All fixtures are public synthetic examples; no state corpus
+was authored or frozen. Normal replay of pre-validator synthetic exports with
+and without bindings remains byte-identical, including implementation identity.
+
+## Complete-set implementation authorization (2026-10-06)
+
+The user explicitly authorized local implementation on `v02-set-answers`,
+synthetic tests before code, documentation, and one local commit per task,
+overriding CLAUDE.md's no-commit default for this task. Scope is `D:\eTPS` only:
+no push, external network, model runs or private corpus reads. Codex authored
+[set-v1](SET_ANSWERS.md), the synthetic status/value fixtures and diagnostic
+field counts, and [the state-record options memo](STATE_RECORD_OPTIONS.md).
+The memo selects no state representation. No corpus task or answer key was
+authored, and passing synthetic tests does not establish semantic validity,
+independence or a benchmark result. The existing author/system conflict remains.
+
+First/terminal diagnostics cover stable tagged field plans, with unavailable
+reasons for heterogeneous plans and no repeat pooling. Corpus-wide repeat
+identity and heterogeneous field identity remain decisions, not inferred facts.
+Original tests, fixtures, manifests and evidence exports are preserved; older
+score arithmetic and classification remain unchanged. Implementation identity
+warnings continue to disclose changed source on replay.
+
 ## State-evolution corpus specification accepted (2026-10-06)
 
 The user accepted [STATE_EVOLUTION_CORPUS_SPEC](STATE_EVOLUTION_CORPUS_SPEC.md)
