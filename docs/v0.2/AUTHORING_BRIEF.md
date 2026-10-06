@@ -20,7 +20,7 @@ Each task has exactly one primary family. Cover all nine:
 | F6 | Distance and pressure: separate facts and questions with irrelevant material that makes no claims about the facts being tested. Include conversations within and beyond the declared context budget. |
 | F7 | Mixed question: ask current and historical values, and applicable status, together in separate answer fields. |
 | F8 | Provenance: ask which public source or message established the present value. Every answering condition receives the same public identifiers. |
-| F9 | Controls: single unchanged fact, never-established fact, legitimate clarification, and explicit expiration without an update chain. |
+| F9 | Controls: single unchanged fact, never-established fact, exact identification of missing information, and explicit expiration without an update chain. |
 
 Distribute partial-property changes, scoped exceptions, negation/retraction, and
 reinstatement after a lapse across families. For compound facts, change only the
@@ -49,6 +49,20 @@ Each field is one unit, including a whole set. Freeze one logical `field_map`
 per task; each question uses an unchanged subset. An omitted field remains
 unavailable; never rename or redefine it. First-answer and final-answer counts
 are separate; partial field credit does not change task acceptance.
+
+Use one fixed answer object per question. Alternative correct objects are
+disallowed; unordered multi-value content uses the designated complete-set form.
+Every requirement begins at its establishing message; delayed starts are disallowed.
+Each correction maps to exactly one failed question; combining failures is disallowed.
+
+F9's missing-information control concerns answerability only. A required item
+must never have been established before the question. The answer has exact
+`status` equal to `missing_information` and, when requested, an exact field naming
+the missing item's declared identifier. There is no open-ended clarification,
+free-form request, or acceptance of any reasonable phrasing. Previously supplied
+but forgotten, changed, disputed, or expired information is not missing information
+in this form. Record the required item as its own proposition, including an empty
+version list when it was never established. Do not infer absence from a typo.
 
 Choose chain-length ranges, distractor volume, counts, and the context budget
 on a separately identified development set. Then write and freeze an untouched
@@ -90,18 +104,23 @@ and correction IDs. Do not use IDs beginning with `$` or containing `:`.
   field names. Conversation order is delivery order.
 - Root task `field_map`: field name to an object with `dimension`, `record`
   (proposition ID), `kind` (`current`/`at-checkpoint`/`status`/`values`/
-  `provenance`/`clarification`), `checkpoint` (message ID for at-checkpoint,
+  `provenance`), `checkpoint` (message ID for at-checkpoint,
   null otherwise). At-checkpoint means the state just after that message.
+- A `missing_information` field-map entry instead has exactly `dimension`,
+  `record` (the proposition needing information), `kind` = `missing_information`,
+  `missing_item` (the separate declared proposition ID for the required item),
+  and `projection` (`status` or `identifier`), with no checkpoint.
+  The `status` answer field uses the status projection. Optional identifier fields
+  use the identifier projection and refer to the same record/item as `status`.
 - Question (`probes` entry): `id`, `position` (message or correction ID after
   which it is asked), `wording` (starts with `[id] `), `field_map` (an exact
   subset of the task map), `expected` (one JSON object), `set_fields` (unique
   field names), `unknown_answers` (exact admitted unknown-answer objects),
-  `alternative_answers` (other desired correct objects), `requirements`
+  `alternative_answers` (required empty array), `requirements`
   (unique IDs tested), and `outcomes`. Expected keys equal this question's
   map; `values` queries require set designation. Unknown and correct answers
-  must not overlap, including a reordered set. Alternative correct forms and
-  clarification queries can be recorded, but may require a format expansion
-  before execution; do not substitute another answer silently.
+  must not overlap, including a reordered set. General clarification forms are
+  disallowed; use only the exact missing-information form described above.
 - `outcomes`: exactly `correct`, `incorrect`, `unknown`, `malformed`, `timeout`.
   Correct uses `$continue`; each other outcome uses `$reject` or a correction
   ID. `$continue` resumes the ordered schedule (or ends in acceptance after
@@ -124,16 +143,16 @@ and correction IDs. Do not use IDs beginning with `$` or containing `:`.
 - Requirement: `id`, `kind` (`current`/`historical`), `begin_after`, `end_before`.
   Current requirements end at the next version's message or `$trial_end`.
   Historical requirements have independently declared ends. Explicitly record
-  starts and ends; a delayed start may be unexecutable and must be reported.
+  starts and ends; `begin_after` equals the version's establishing `message`.
   Reinstatement requires fresh IDs. Tested requirements must be active at the
   question and any correction that repeats their facts.
-- Correction (`recoveries` entry): `id`, `failure_probes` (question IDs), `text`
+- Correction (`recoveries` entry): `id`, `failure_probes`
+  (an array containing exactly one failed question ID), `text`
   (starts with `[id] `), `spans` (arrays `[begin,end,requirement_id]` for repeated
   facts), `new_spans` (arrays `[begin,end]` for new content), `retry` (question ID).
   Use half-open UTF-8 byte offsets at character boundaries; never edit text to
   fit offsets. The retry's position is this correction ID. Freeze exact text
-  and outcome routes in advance, one correction per declared route. Multiple
-  originating questions may be unexecutable and must be reported.
+  and outcome routes in advance, one correction per declared route.
 - Prediction: `arm` (A–F), `failing` (boolean or null), `reason` (nonempty plain
   explanation). These records are private authoring data, never public messages.
 

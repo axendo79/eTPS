@@ -34,48 +34,14 @@
   "additionalProperties": false,
   "$defs": {
     "field": {
-      "type": "object",
-      "properties": {
-        "dimension": {
-          "enum": [
-            "current",
-            "historical",
-            "expired",
-            "ambiguity",
-            "provenance",
-            "control"
-          ]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/field_standard"
         },
-        "record": {
-          "type": "string",
-          "minLength": 1,
-          "pattern": "^(?!\\$)[^:]+$"
-        },
-        "kind": {
-          "enum": [
-            "current",
-            "at-checkpoint",
-            "status",
-            "values",
-            "provenance",
-            "clarification"
-          ]
-        },
-        "checkpoint": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "minLength": 1
+        {
+          "$ref": "#/$defs/field_missing"
         }
-      },
-      "required": [
-        "dimension",
-        "record",
-        "kind",
-        "checkpoint"
-      ],
-      "additionalProperties": false
+      ]
     },
     "coverage": {
       "type": "object",
@@ -248,7 +214,7 @@
             "$ref": "#/$defs/answer"
           },
           "minItems": 0,
-          "maxItems": 4096
+          "maxItems": 0
         },
         "requirements": {
           "type": "array",
@@ -545,7 +511,7 @@
             "pattern": "^(?!\\$)[^:]+$"
           },
           "minItems": 1,
-          "maxItems": 4096,
+          "maxItems": 1,
           "uniqueItems": true
         },
         "text": {
@@ -728,6 +694,90 @@
         "state_history",
         "recoveries",
         "predictions"
+      ],
+      "additionalProperties": false
+    },
+    "field_standard": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "enum": [
+            "current",
+            "historical",
+            "expired",
+            "ambiguity",
+            "provenance",
+            "control"
+          ]
+        },
+        "record": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "kind": {
+          "enum": [
+            "current",
+            "at-checkpoint",
+            "status",
+            "values",
+            "provenance",
+            "clarification"
+          ]
+        },
+        "checkpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "dimension",
+        "record",
+        "kind",
+        "checkpoint"
+      ],
+      "additionalProperties": false
+    },
+    "field_missing": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "enum": [
+            "current",
+            "historical",
+            "expired",
+            "ambiguity",
+            "provenance",
+            "control"
+          ]
+        },
+        "record": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "missing_information"
+        },
+        "missing_item": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projection": {
+          "enum": [
+            "status",
+            "identifier"
+          ]
+        }
+      },
+      "required": [
+        "dimension",
+        "record",
+        "kind",
+        "missing_item",
+        "projection"
       ],
       "additionalProperties": false
     }

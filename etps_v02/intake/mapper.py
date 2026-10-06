@@ -176,7 +176,10 @@ def map_task(task, source_prefix, names):
 
 
 def map_authoring(raw):
-    document = validate_authoring(raw)
+    try:
+        document = validate_authoring(raw)
+    except AuthoringError as exc:
+        raise MappingError(exc.code, exc.path, exc.detail) from exc
     files, traces, tasks = {"source.json": raw}, {}, []
     index = {"version": VERSION, "authoring_format_version": document["version"], "brief_version": document["brief_version"],
              "dataset": document["dataset"], "source_sha256": sha(raw), "tasks": tasks,

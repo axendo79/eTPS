@@ -19,6 +19,7 @@ FIELDS = {
     "coverage": ("chain_depth", "distance", "entity_similarity", "ambiguity_status", "provenance_need", "context_pressure", "verbatim_possible", "subcases"),
     "message": ("id", "text", "recap"),
     "field": ("dimension", "record", "kind", "checkpoint"),
+    "field_missing": ("dimension", "record", "kind", "missing_item", "projection"),
     "probe": ("id", "position", "wording", "field_map", "expected", "set_fields", "unknown_answers", "alternative_answers", "requirements", "outcomes"),
     "record": ("id", "entity", "property", "scope", "status_labels", "versions"),
     "version": ("id", "message", "change", "status", "value", "sources", "time", "applicability", "requirements"),
@@ -28,7 +29,7 @@ FIELDS = {
     "prediction": ("arm", "failing", "reason"),
 }
 STATUSES = ("active", "expired", "unresolved", "unestablished")
-KINDS = ("current", "at-checkpoint", "status", "values", "provenance", "clarification")
+KINDS = ("current", "at-checkpoint", "status", "values", "provenance", "clarification", "missing_information")
 CHANGES = ("establish", "change", "lapse", "reinstate", "precedence")
 SUBCASES = ("partial", "scoped", "negation", "retraction", "reinstatement", "revisit")
 
@@ -100,12 +101,18 @@ def field_map(value, path):
     need(type(value) is dict and bool(value), "field_type", path, "expected nonempty field map")
     for name, item in value.items():
         string(name, path)
-        closed(item, FIELDS["field"], path + "." + name)
+        need(type(item) is dict, "field_type", path + "." + name, "expected field object")
+        missing = item.get("kind") == "missing_information"
+        closed(item, FIELDS["field_missing" if missing else "field"], path + "." + name)
         enum(item["dimension"], DIMENSIONS, path)
         string(item["record"], path)
         enum(item["kind"], KINDS, path)
-        string(item["checkpoint"], path, nullable=item["kind"] != "at-checkpoint")
-        need(item["kind"] == "at-checkpoint" or item["checkpoint"] is None, "field_map", path, "unexpected checkpoint")
+        if missing:
+            string(item["missing_item"], path)
+            enum(item["projection"], ("status", "identifier"), path)
+        else:
+            string(item["checkpoint"], path, nullable=item["kind"] != "at-checkpoint")
+            need(item["kind"] == "at-checkpoint" or item["checkpoint"] is None, "field_map", path, "unexpected checkpoint")
 
 
 def validate_task(task, path):
@@ -189,10 +196,15 @@ def validate_task(task, path):
                     string(req[key], vp)
                     need(req[key] in messages or key == "end_before" and req[key] == "$trial_end",
                          "reference", vp, "requirement boundary absent")
+                need(req["begin_after"] == version["message"], "delayed_obligation", vp + ".requirements",
+                     "maintainer ruling 1: every requirement begins at its establishing message")
     field_map(task["field_map"], path + ".field_map")
     for query in task["field_map"].values():
         need(query["record"] in record_ids, "reference", path, "field proposition absent")
-        need(query["checkpoint"] is None or query["checkpoint"] in messages, "reference", path, "checkpoint absent")
+        if query["kind"] == "missing_information":
+            need(query["missing_item"] in record_ids, "reference", path, "missing item must reference a declared proposition")
+        else:
+            need(query["checkpoint"] is None or query["checkpoint"] in messages, "reference", path, "checkpoint absent")
     for pid, probe in probes.items():
         pp = path + ".probes." + pid
         string(probe["position"], pp)
@@ -208,8 +220,22 @@ def validate_task(task, path):
         need(probe["expected"].keys() == probe["field_map"].keys(), "field_map", pp, "expected keys differ from map")
         for key in ("unknown_answers", "alternative_answers"):
             array(probe[key], pp)
+            if key == "alternative_answers":
+                need(not probe[key], "alternative_answers", pp + ".alternative_answers",
+                     "maintainer ruling 3: one canonical answer object per question")
             for item in probe[key]:
                 answer(item, probe["set_fields"], pp)
+        missing = {name: q for name, q in probe["field_map"].items() if q["kind"] == "missing_information"}
+        if missing:
+            status = missing.get("status")
+            need(status is not None and status["projection"] == "status" and probe["expected"]["status"] == "missing_information",
+                 "missing_information_answer", pp, "exact status field missing_information required")
+            pair = (status["record"], status["missing_item"])
+            for name, query in missing.items():
+                need((query["record"], query["missing_item"]) == pair and
+                     (name == "status" if query["projection"] == "status" else
+                      probe["expected"][name] == query["missing_item"]), "missing_information_answer", pp,
+                     "identifier fields must exactly name the same declared missing item")
         for item in probe["unknown_answers"]:
             need(not any(exact_answer(item, expected, probe["set_fields"]) for expected in [probe["expected"]] + probe["alternative_answers"]),
                  "unknown_overlap", pp, "unknown overlaps correct answer")
@@ -223,6 +249,8 @@ def validate_task(task, path):
     for rid, recovery in recoveries.items():
         rp = path + ".recoveries." + rid
         unique_strings(recovery["failure_probes"], rp)
+        need(len(recovery["failure_probes"]) == 1, "multi_failure_recovery", rp + ".failure_probes",
+             "maintainer ruling 2: one correction maps to exactly one failed question")
         need(bool(recovery["failure_probes"]) and set(recovery["failure_probes"]) <= probes.keys(), "reference", rp, "failure question absent")
         string(recovery["retry"], rp)
         need(recovery["retry"] in probes and probes[recovery["retry"]]["position"] == rid, "position", rp, "retry must follow correction")

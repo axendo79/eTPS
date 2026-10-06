@@ -146,3 +146,28 @@ clean worktree checked after the A7 commit. No push or PR is performed.
 Skipped: none. Tooling delivery is complete; real corpus authoring and execution
 are outside this session. Full F9 release remains STUCK until the clarification
 representation is settled; no subcase was deleted or replaced to conceal it.
+
+## Authoring rulings — 2026-10-06
+
+The maintainer has settled the earlier A3 representation choices: delayed
+starts, combined-failure corrections and alternative correct objects are
+disallowed. F9 is limited to exact missing-information answerability, with
+`status = missing_information` and an optional exact missing-item identifier.
+No open-ended clarification is admitted. These rulings supersede the historical
+A3 STUCK entries above; implementation and verification follow below.
+
+### R1 — authoring-stage refusals and neutral brief
+
+Commit: R1 task commit, `feat(v02): enforce authoring rulings at admission`.
+Files: etps_v02/intake/authoring.py, mapper.py (error-type compatibility adapter),
+AUTHORING_BRIEF.md, authoring-v1.schema.json, new
+tests/authoring_rulings_fixtures.py and tests/test_v02_authoring_rulings.py,
+this handoff. All pre-existing tests are unchanged.
+Fail-before: the five new tests exposed absent admission refusals, an unsupported
+missing-information field shape, and missing brief rules. The existing neutrality
+scan then refused the word "canonical"; the brief now states the equivalent
+"one fixed answer object" without changing the denylist or prior tests.
+Pass-after: 5/5 new tests; 29/29 authoring tests; full suite **386/386**, exit 0,
+53.417 seconds. The mapper preserves its public MappingError type when reporting
+the earlier authoring-stage reason codes. STUCK: none. R2/R3 will implement the
+sidecar projection before this new source form is executable.
