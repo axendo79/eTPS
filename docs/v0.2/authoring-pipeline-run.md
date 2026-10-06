@@ -50,6 +50,20 @@ STUCK (implemented refusals, no approximation):
   projected by the mandatory sidecar. Code `clarification_unrepresentable`;
   release of complete F9 coverage needs a representation ruling/extension.
 
+## A4 — within-plan corpus aggregation
+
+Commit: `feat(v02): aggregate corpus diagnostics within one plan`.
+Files: intake/corpus_aggregation.py, tests/test_v02_corpus_aggregation.py,
+CORPUS_AGGREGATION.md, this handoff.
+Fail-before: new test module failed import (aggregation tool absent).
+Pass-after: 6/6 targeted tests; canonical per-arm/family/tag counts, separate
+first/terminal sets, omitted fields, abort/unattempted slots, all outcome classes,
+refusal to combine plans/repeats, v1/v2 replay CLI and exclusive output creation.
+Cumulative test count: 366. A1–A3 full suite: 360/360 passed unchanged.
+STUCK: earlier repeat/aggregation item is resolved by maintainer ruling 2.
+No new corpus-semantic choice made; repeat identity is a frozen external
+hash-bound declaration because existing plan fields are closed.
+
 ## Final task table
 
 Pending completion of A2–A7 and full-suite verification.
