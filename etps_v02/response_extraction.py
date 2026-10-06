@@ -16,7 +16,7 @@ def fence_v1(raw):
     return candidate[candidate.index(b"\n") + 1:-3], True
 
 
-def project_reply(raw, answer_schema, rule=None):
+def project_reply(raw, answer_schema, rule=None, *, set_fields=()):
     from .runner import answer_from_raw
     projected, extracted = fence_v1(raw) if rule == "fence-v1" else (raw, False)
-    return answer_from_raw(projected, answer_schema), extracted
+    return answer_from_raw(projected, answer_schema, set_fields=set_fields), extracted

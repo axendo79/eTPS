@@ -94,8 +94,12 @@ def validate(manifest, *, authoring=True):
     findings = []
     if authoring:
         limits.check_value_depth(manifest)
-    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema", "routing", "answer_tolerance"},
+    declared_fields(manifest, {"unit", "nodes", "obligations", "start", "answer_schema", "routing", "answer_tolerance", "answer_predicate"},
                     "manifest", authoring, findings)
+    if "answer_predicate" in manifest:
+        require(manifest["answer_predicate"] == "set-v1", "unsupported answer_predicate")
+        require(manifest.get("answer_schema") == "typed-v1", "set-v1 requires typed-v1")
+    set_answers = manifest.get("answer_predicate") == "set-v1"
     if "answer_tolerance" in manifest:
         require(manifest["answer_tolerance"] == "d10-v1", "unsupported answer_tolerance")
     if "routing" in manifest:
@@ -156,6 +160,8 @@ def validate(manifest, *, authoring=True):
             allowed |= {"field_obligations", "field_routes"}
         if manifest.get("answer_tolerance") == "d10-v1" and kind == "probe":
             allowed |= {"key_aliases", "fixed_value_fields"}
+        if set_answers and kind == "probe":
+            allowed |= {"set_fields"}
         declared_fields(node, allowed, path, authoring, findings)
         if kind == "terminal":
             mapping(node, path, ("accepted",))
@@ -168,17 +174,24 @@ def validate(manifest, *, authoring=True):
                 require("unknown_answers" in node, "probe must declare unknown_answers (possibly empty)")
             mapping(node["next"], path + ".next")
             require(set(node["next"]) == OUTCOMES, "incomplete outcome policy")
-            require(answer_object(node["expected"], answer_schema),
-                    "answers require typed-v1 fields" if answer_schema else "answers require string fields")
+            if set_answers:
+                from .set_answers import answer_object as set_object, equal as set_equal, validate_probe as validate_sets
+                mapping(node["expected"], path + ".expected")
+                validate_sets(node)
+            else:
+                require(answer_object(node["expected"], answer_schema),
+                        "answers require typed-v1 fields" if answer_schema else "answers require string fields")
             if manifest.get("answer_tolerance") == "d10-v1":
                 from .answer_tolerance import validate_probe
                 validate_probe(node)
             if "unknown_answers" in node:
                 answers = node["unknown_answers"]
-                require(isinstance(answers, list) and all(answer_object(a, answer_schema)
+                require(isinstance(answers, list) and all((set_object(a, node.get("set_fields", []))
+                        if set_answers else answer_object(a, answer_schema))
                         for a in answers), "unknown_answers must declare exact typed-v1 objects"
                         if answer_schema else "unknown_answers must declare exact string-field objects")
-                require(not any(answer_equal(node["expected"], a) for a in answers),
+                require(not any((set_equal(node, node["expected"], a) if set_answers else
+                                 answer_equal(node["expected"], a)) for a in answers),
                         "correct/unknown declarations overlap")
                 require(len({digest(a) for a in answers}) == len(answers), "duplicate unknown answer")
             tested = node.get("obligations", [])
@@ -388,6 +401,9 @@ def classify(event, expected, unknown_answers=(), answer_schema=None):
 
 
 def classify_probe(manifest, node, event):
+    if manifest.get("answer_predicate") == "set-v1":
+        from .set_answers import evaluate
+        return evaluate(manifest, node, event)[0]
     if manifest.get("answer_tolerance") == "d10-v1":
         from .answer_tolerance import evaluate
         return evaluate(manifest, node, event)[0]
@@ -406,8 +422,12 @@ def route(manifest, node, event, outcome):
         answer, expected, _ = normalized
     if (manifest.get("routing") == "field-v1" and "field_routes" in node
             and outcome == "incorrect" and answer.keys() == expected.keys()):
-        fields = sorted(k for k in expected
-                        if not answer_equal({k: answer[k]}, {k: expected[k]}))
+        if manifest.get("answer_predicate") == "set-v1":
+            from .set_answers import field_equal
+            fields = sorted(k for k in expected if not field_equal(node, k, answer[k], expected[k]))
+        else:
+            fields = sorted(k for k in expected
+                            if not answer_equal({k: answer[k]}, {k: expected[k]}))
         for entry in node["field_routes"]:
             if entry["failed_fields"] == fields:
                 return entry["next"], fields

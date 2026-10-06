@@ -8,6 +8,7 @@ import time
 
 from . import scorer
 from .scorer import InvalidRecord, identity, mapping, require
+from .set_answers import projection_fields
 from .workload import INVALIDATION_POLICY, encode, raw_response, sha
 
 EVIDENCE = "dev-manual-human-coded"
@@ -115,7 +116,8 @@ def run_manual(store, slot, *, allow_manual=False, stdin=None, stdout=None,
             event = {"kind": "probe", "node": current, "status": "timeout" if timeout else "ok",
                      "raw_base64": base64.b64encode(raw).decode("ascii"),
                      "coded_raw_base64": base64.b64encode(coded).decode("ascii"),
-                     "answer": None if timeout else answer_from_raw(coded, manifest.get("answer_schema")),
+                     "answer": None if timeout else answer_from_raw(coded, manifest.get("answer_schema"),
+                         set_fields=projection_fields(manifest, node)),
                      "coder": arm["coder"]}
             outcome = scorer.classify_probe(manifest, node, event)
             target, _ = scorer.route(manifest, node, event, outcome)
@@ -186,7 +188,8 @@ def replay_manual_slot(store, slot):
                 coded = raw_response(p["coded_raw_base64"], admission=False)
                 timeout = coded.strip() == b"timeout"
                 require(p["status"] == ("timeout" if timeout else "ok"), "manual status mismatch")
-                answer = None if timeout else answer_from_raw(coded, manifest.get("answer_schema"))
+                answer = None if timeout else answer_from_raw(coded, manifest.get("answer_schema"),
+                    set_fields=projection_fields(manifest, node))
                 require(encode(p["answer"]) == encode(answer), "manual coded answer projection mismatch")
                 require(p.get("generation") is None, "manual generation telemetry prohibited")
                 outcome = scorer.classify_probe(manifest, node, p)
