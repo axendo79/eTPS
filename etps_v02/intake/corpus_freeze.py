@@ -171,12 +171,19 @@ def verify_freeze(files, raw):
             "record_sha256": record["record_sha256"], "artifacts": len(files), "semantics_verified": False}
 
 
+def _is_junction(path):
+    """Path.is_junction exists from Python 3.12; on 3.11 (which has no
+    junction API) fall back to False rather than raising."""
+    probe = getattr(path, "is_junction", None)
+    return bool(probe()) if probe is not None else False
+
+
 def read_directory(directory):
     root = Path(directory)
-    need(root.is_dir() and not root.is_symlink() and not root.is_junction(), "artifact_path", str(root), "ordinary bundle directory required")
+    need(root.is_dir() and not root.is_symlink() and not _is_junction(root), "artifact_path", str(root), "ordinary bundle directory required")
     files, size = {}, 0
     for path in sorted(root.rglob("*")):
-        need(not path.is_symlink() and not path.is_junction(), "artifact_path", str(path), "linked bundle paths refused")
+        need(not path.is_symlink() and not _is_junction(path), "artifact_path", str(path), "linked bundle paths refused")
         if path.is_file():
             need(len(files) < MAX_FILES, "safety_limit", str(root), "file admission ceiling")
             raw = read_bounded(path, MAX_FILE_BYTES)
