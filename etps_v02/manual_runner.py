@@ -212,6 +212,7 @@ def replay_manual_slot(store, slot):
     record = {"manifest_sha256": scorer.digest(manifest), "purpose": "dev-manual", "events": events,
               "wall_seconds": None, "operator_wall_seconds": wall, "wall_time_kind": "operator-paced"}
     result = scorer.score(manifest, record)
+    scored_reason = result["reason"]
     result.update(TPS=None, experimental_eTPS=None)
     if state != "finished":
         result.update(measurement_valid=False, reason="unfinished_slot", R=None, RR=None,
@@ -219,8 +220,8 @@ def replay_manual_slot(store, slot):
     verified = state != "finished" or result["measurement_valid"]
     if not verified:
         warnings += ["recomputed_measurement_invalid", "unverified_evidence: invalid_finished_trace"]
-    from .dimension_accuracy import finalize
-    finalize(manifest, result, reason=finish.get("reason_code")
+    from .dimension_accuracy import abort_reason, finalize
+    finalize(manifest, result, reason=abort_reason(scored_reason, finish.get("reason_code"))
              if state == "aborted" and result["reason"] == "unfinished_slot" else None)
     return {**common, "state": state, "score": result, "record": record, "warnings": warnings,
             "operator_wall_seconds": wall, "reason_code": finish.get("reason_code"),

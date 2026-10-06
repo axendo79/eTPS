@@ -125,6 +125,29 @@ class InvalidDimensionTests(unittest.TestCase):
             finally:
                 store.close()
 
+    def test_manual_abort_with_corrupted_evidence_reports_evidence_reason(self):
+        # SET_ANSWERS: evidence invalidation takes precedence over an abort reason.
+        m = self.recovery_manifest()
+        p, a = manual_bundle(m)
+        with tempfile.TemporaryDirectory() as temp:
+            store = Store.create(Path(temp) / "manual-abort-corrupt.db", encode(p), a)
+            try:
+                answer = encode(m["nodes"]["p1"]["expected"])
+                run_manual(store, "slot", allow_manual=True,
+                    stdin=io.BytesIO(paste(answer) + paste(answer, confirm=b"no")), stdout=io.StringIO())
+                for fmt in ("v1", "v2"):
+                    with self.subTest(fmt=fmt):
+                        exported = export_bundle(store, fmt)
+                        event = next(row["payload"] for row in exported["journal"]["slot"]
+                                     if row["kind"] == "event" and row["payload"]["node"] == "recover")
+                        event["text"] = "Changed synthetic recovery payload"
+                        rechain_fixture(exported)
+                        scored = replay_export(exported)["dev_manual"]["trials"][0]["score"]
+                        self.assertFalse(scored["measurement_valid"])
+                        self.assert_unavailable(scored["dimension_accuracy"], "unmatched_user_payload")
+            finally:
+                store.close()
+
     def test_live_abort_and_running_prefix_after_correct_answer_have_no_credit(self):
         m = dimensions(set_manifest())
         p, _ = live_bundle("http://127.0.0.1:1")

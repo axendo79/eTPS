@@ -80,6 +80,16 @@ def diagnostics(manifest, events, labels, *, terminal_available, reason=None, un
             "first_fields": first, "terminal_fields": terminal, "unavailable_reason": None}
 
 
+# Scorer reasons that only mean "the trace stopped early". Any other scorer
+# reason is an evidence invalidation, which takes precedence over an abort reason.
+INCOMPLETE_ONLY = frozenset({None, "truncated_trace"})
+
+
+def abort_reason(scored_reason, abort_code):
+    """SET_ANSWERS: evidence invalidation takes precedence over an abort reason."""
+    return abort_code if scored_reason in INCOMPLETE_ONLY else scored_reason
+
+
 def finalize(manifest, result, *, reason=None):
     """Make both diagnostic phases unavailable for any invalid measurement."""
     diagnostic = result.get("dimension_accuracy")

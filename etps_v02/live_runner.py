@@ -271,8 +271,8 @@ def replay_live_slot(store, slot, allow_running=False):
             result["result_state"] = "failed"
     if issues:
         warnings.extend("unverified_evidence: " + i["code"] for i in issues)
-    from .dimension_accuracy import finalize
-    finalize(manifest, result, reason=rows[-1]["payload"].get("reason_code")
+    from .dimension_accuracy import abort_reason, finalize
+    finalize(manifest, result, reason=abort_reason(recomputed["reason"], rows[-1]["payload"].get("reason_code"))
              if state == "aborted" and result["reason"] == "unfinished_slot" else None)
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],
             "state": state, "evidence": "live-exploratory", "record": record, "exposure": exposures,
