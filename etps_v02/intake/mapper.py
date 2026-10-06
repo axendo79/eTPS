@@ -180,7 +180,9 @@ def map_authoring(raw):
     files, traces, tasks = {"source.json": raw}, {}, []
     index = {"version": VERSION, "authoring_format_version": document["version"], "brief_version": document["brief_version"],
              "dataset": document["dataset"], "source_sha256": sha(raw), "tasks": tasks,
-             "counts": {"tasks": len(document["tasks"]), "families": {}, "coverage_tags": {}}}
+             "counts": {"tasks": len(document["tasks"]), "families": {}, "coverage_tags": {}},
+             "family_predictions": "family-predictions.json"}
+    prediction_summary = {}
     for i, task in enumerate(document["tasks"]):
         prefix = f"task-{i+1:04d}"
         names = {kind: prefix + "." + kind + ".json" for kind in
@@ -188,6 +190,13 @@ def map_authoring(raw):
         derived, mappings = map_task(task, f"/tasks/{i}", names)
         files.update(derived)
         traces.update(mappings)
+        family_summary = prediction_summary.setdefault(task["family"], {
+            arm: {"failing": [], "not_failing": [], "unknown": [], "reasons": []} for arm in "ABCDEF"})
+        for prediction in task["predictions"]:
+            grouping = "unknown" if prediction["failing"] is None else "failing" if prediction["failing"] else "not_failing"
+            family_summary[prediction["arm"]][grouping].append(task["id"])
+            family_summary[prediction["arm"]]["reasons"].append({"task": task["id"], "reason": prediction["reason"]})
+        traces[f"/tasks/{i}/predictions"].append({"artifact": "family-predictions.json", "pointer": "/families/" + task["family"], "kind": "prediction"})
         tasks.append({"id": task["id"], "family": task["family"], "coverage_tags": copy.deepcopy(task["coverage_tags"]),
                       **names, "manifest_sha256": sha(derived[names["manifest"]])})
         families = index["counts"]["families"]
@@ -196,6 +205,12 @@ def map_authoring(raw):
             tags = ["subcases=" + v for v in value] if key == "subcases" else [key + "=" + encode(value).decode("utf-8")]
             for tag in tags:
                 index["counts"]["coverage_tags"][tag] = index["counts"]["coverage_tags"].get(tag, 0) + 1
+    for arms in prediction_summary.values():
+        for values in arms.values():
+            for key in ("failing", "not_failing", "unknown"):
+                values[key].sort()
+            values["reasons"].sort(key=lambda item: item["task"])
+    files["family-predictions.json"] = encode({"version": "prediction-summary-v1", "families": prediction_summary})
     for key, target in (("version", "authoring_format_version"), ("brief_version", "brief_version"), ("dataset", "dataset")):
         traces["/" + key] = [{"artifact": "bundle.json", "pointer": "/" + target, "kind": "metadata"}]
     traces[""] = [{"artifact": "bundle.json", "pointer": "", "kind": "metadata"}]

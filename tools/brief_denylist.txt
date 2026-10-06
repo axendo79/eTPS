@@ -30,3 +30,9 @@ implementation
 calibration results
 conflict disclosure
 governance
+reviewer
+canonical
+non-canonical
+affiliation
+conflict
+attestation

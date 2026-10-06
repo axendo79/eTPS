@@ -17,7 +17,10 @@ directory. No executable plan or experiment budget is invented.
 Each task yields a typed-v1 + set-v1 manifest, bound sidecar, answer-key object,
 field map, prediction file, intake receipt and derivation log. `bundle.json`
 records versions, dataset, exact source SHA-256, task order, manifest SHA-256,
-family and coverage counts. `source.json` preserves byte-exact original input.
+family and coverage counts. `family-predictions.json` groups only the supplied
+per-task predictions/reasons by family and anonymous condition, with separate
+failing/not-failing/unknown task-ID lists; it invents no prediction.
+`source.json` preserves byte-exact original input.
 The manifest's canonical digest equals its emitted byte SHA-256. Sidecar binding
 hashes exact sidecar bytes. Correct paths reach acceptance; author-declared
 failure paths reject or enter the exact correction/retry route. Questions are

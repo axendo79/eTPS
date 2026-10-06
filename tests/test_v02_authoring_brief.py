@@ -11,6 +11,10 @@ def forbidden(text, terms):
 
 
 class BriefTests(unittest.TestCase):
+    def test_no_maintainer_review_or_governance_material(self):
+        brief = (ROOT / "docs/v0.2/AUTHORING_BRIEF.md").read_text(encoding="utf-8")
+        self.assertEqual(forbidden(brief, ["reviewer", "governance", "canonical", "affiliation", "conflict", "attestation"]), [])
+
     def test_brief_is_self_contained_and_neutral(self):
         brief = (ROOT / "docs/v0.2/AUTHORING_BRIEF.md").read_text(encoding="utf-8")
         terms = [s.strip() for s in (ROOT / "tools/brief_denylist.txt").read_text(encoding="utf-8").splitlines()

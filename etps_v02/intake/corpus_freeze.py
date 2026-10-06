@@ -56,7 +56,7 @@ def validate_files(files):
 def role(name, index):
     fixed = {"bundle.json": "counts", "source.json": "source", "authoring-brief.md": "brief",
              "review.json": "review", "authorship.json": "authorship", "settings.json": "settings",
-             "development-freeze.json": "development_freeze"}
+             "development-freeze.json": "development_freeze", "family-predictions.json": "prediction_summary"}
     if name in fixed:
         return fixed[name]
     for item in index["tasks"]:
@@ -70,6 +70,7 @@ def checked_record(raw):
     try:
         record = decode(raw)
         closed(record, RECORD_FIELDS, "freeze")
+        need(encode(record) == raw, "freeze_record", "freeze", "canonical receipt bytes changed")
         need(record["version"] == VERSION, "freeze_record", "freeze.version", "unsupported record version")
         payload = {k: v for k, v in record.items() if k != "record_sha256"}
         need(sha(encode(payload)) == record["record_sha256"], "freeze_record", "freeze.record_sha256", "freeze record changed")

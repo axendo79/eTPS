@@ -106,3 +106,8 @@ class AuthoringFormatTests(unittest.TestCase):
                                     cwd=root, capture_output=True, check=False)
             self.assertEqual(result.returncode, 2)
             self.assertEqual(json.loads(result.stdout)["code"], "required_fields")
+            path.unlink()
+            result = subprocess.run([sys.executable, "-B", "-m", "etps_v02.intake.authoring", str(path)],
+                                    cwd=root, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(json.loads(result.stdout)["code"], "file_unavailable")

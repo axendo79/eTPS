@@ -140,6 +140,37 @@ class MapperTests(unittest.TestCase):
             recover_source(files)
         self.assertEqual(caught.exception.code, "bundle_changed")
 
+    def test_cyclic_recovery_and_inactive_tested_requirement_refuse(self):
+        doc = synthetic_recovery()
+        t = doc["tasks"][0]
+        t["recoveries"][0]["failure_probes"] = ["SYNTHETIC-retry"]
+        t["probes"][0]["outcomes"]["incorrect"] = "$reject"
+        t["probes"][1]["outcomes"]["incorrect"] = "SYNTHETIC-recovery"
+        with self.assertRaises(MappingError) as caught:
+            map_authoring(encode(doc))
+        self.assertEqual(caught.exception.code, "recovery_cycle")
+        doc = synthetic_document()
+        doc["tasks"][0]["probes"][0]["requirements"] = ["SYNTHETIC-v1-current"]
+        with self.assertRaises(MappingError) as caught:
+            map_authoring(encode(doc))
+        self.assertEqual(caught.exception.code, "probe_obligation_inactive")
+
+    def test_multiple_tasks_have_separate_manifests_and_complete_derivations(self):
+        doc = synthetic_document()
+        other = copy.deepcopy(doc["tasks"][0])
+        other["id"], other["family"] = "SYNTHETIC-other-task", "F8"
+        doc["tasks"].append(other)
+        self.check_bundle(doc)
+
+    def test_family_prediction_summary_only_groups_supplied_synthetic_predictions(self):
+        doc = synthetic_document()
+        doc["tasks"][0]["predictions"][0].update(failing=True, reason="SYNTHETIC supplied reason")
+        files = map_authoring(encode(doc))
+        summary = decode(files["family-predictions.json"])["families"]["F1"]
+        self.assertEqual(summary["A"]["failing"], ["SYNTHETIC-task"])
+        self.assertEqual(summary["B"]["unknown"], ["SYNTHETIC-task"])
+        self.assertEqual(summary["A"]["reasons"], [{"task": "SYNTHETIC-task", "reason": "SYNTHETIC supplied reason"}])
+
     def test_cli_refuses_overwrite_and_failed_mapping_leaves_no_output(self):
         root = Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory(prefix="etps-SYNTHETIC-") as folder:

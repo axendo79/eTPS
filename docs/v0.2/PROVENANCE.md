@@ -1,5 +1,39 @@
 # eTPS v0.2 provenance
 
+## Authoring-pipeline tooling authorization (2026-10-06)
+
+Codex-authored tooling under user authorization; no corpus content.
+The user authorized local A1–A7 work and one commit per task on the new
+`v02-authoring-pipeline` branch from `v02-set-answers` at `937b514`, overriding
+CLAUDE.md's default no-commit rule only for this task. The audited base branch
+and main remain unchanged. Authorization excludes push, external network,
+real model runs, private-workspace access and changes to other projects.
+
+Codex authored the neutral brief, separate governance-only scan list,
+authoring-v1 schema/validator, deterministic mapper and derivation logs,
+within-plan/repeat diagnostic aggregation, corpus-freeze/review gates, runbook
+and documentation. Every newly authored executable fixture is trivial and
+explicitly labeled SYNTHETIC in its data. No real task, development task,
+answer key, corpus prediction or author-session response was authored or read.
+Prior implementation exposure prevents this tooling session from authoring the
+real corpus; the [runbook](AUTHORING_RUNBOOK.md) requires an isolated session
+given only the [brief](AUTHORING_BRIEF.md).
+
+The separate tools never change scoring or replay. Field identity and plan
+grouping implement the maintainer's rulings, with unsuppliable fields unavailable.
+The freeze tool requires exact-artifact review declarations but does not prove
+semantic validity, independence, truthful provenance or attestation. The mapper
+refuses unrepresentable forms; F9 clarification remains a mandatory-sidecar
+representation blocker, disclosed in the [handoff](authoring-pipeline-run.md).
+No replacement of the missing original corpus or benchmark-validity claim is made.
+
+Validation: 381 tests pass (344 unchanged baseline plus 37 new tests); per-task
+fail-before/pass-after evidence is in the [handoff](authoring-pipeline-run.md). Existing
+tests remain byte-for-byte unchanged. Only new synthetic tooling fixtures and
+the existing suite's ephemeral loopback fake servers are used; no actual model,
+external endpoint, author session, private corpus folder, push or PR was used.
+The [pipeline index](README.md) links the complete tooling and procedure.
+
 ## F2 diagnostic invalidation clarification and repair (2026-10-06)
 
 The user clarified that test preservation protects the 290 tests on main

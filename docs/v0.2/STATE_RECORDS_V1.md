@@ -205,3 +205,14 @@ Mechanical success and a hash do not establish semantic correctness, independent
 authorship, source truth, authority or lack of prior exposure. Review mismatches
 block release. Corrections after freeze require a new corpus version; no silent
 old-run repair is authorized.
+
+## Authoring pipeline cross-reference (2026-10-06)
+
+The [neutral format](AUTHORING_FORMAT_V1.md) and [mapper](AUTHORING_MAPPER.md)
+now derive hash-bound sidecars and explicitly call this intake validator.
+The separate [within-plan aggregator](CORPUS_AGGREGATION.md) implements the
+frozen logical-map/one-plan-per-repeat rulings, including omitted fields.
+[Corpus freeze](CORPUS_FREEZE.md) reasserts intake and requires exact-artifact
+declared review; [the runbook](AUTHORING_RUNBOOK.md) requires a human cross-check.
+Scoring/replay still never calls this validator or proves semantics.
+The complete [pipeline index](README.md) includes the only author-facing brief.

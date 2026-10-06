@@ -3,12 +3,13 @@
 Authorized local tooling only, in D:\eTPS, on `v02-authoring-pipeline` created
 from `v02-set-answers` at `937b514`. No real task, development task, key or
 prediction is authored. Every executable fixture added here is labeled SYNTHETIC.
-Existing tests are preserved. No network, model run, private workspace access,
-push, or edit to another project is authorized or performed.
+Existing tests are preserved. No external network, real model run, private
+workspace access, push, or edit to another project is performed. The unchanged
+suite uses ephemeral loopback fake servers; new tooling tests invoke no endpoints.
 
 ## A1 — neutral authoring brief
 
-Commit: `feat(v02): add neutral authoring brief` (resolved in final table).
+Commit: `77e7467` — `feat(v02): add neutral authoring brief`.
 Files: AUTHORING_BRIEF.md, tools/brief_denylist.txt,
 tests/test_v02_authoring_brief.py, this handoff.
 Fail-before: 2 tests errored because both requested artifacts were absent.
@@ -18,7 +19,7 @@ neutral brief cannot disclose implementation behavior. No winner is prescribed.
 
 ## A2 — authoring-v1 schema and strict validator
 
-Commit: `feat(v02): validate neutral authoring-v1` (resolved in final table).
+Commit: `55ee10e` — `feat(v02): validate neutral authoring-v1`.
 Files: intake/authoring.py, authoring-v1.schema.json, AUTHORING_FORMAT_V1.md,
 tests/authoring_fixtures.py, tests/test_v02_authoring_format.py, this handoff.
 Fail-before: new test module failed import (validator absent).
@@ -28,7 +29,7 @@ STUCK: none for format admission; representability is tested separately in A3.
 
 ## A3 — mapper and bounded sidecar intake
 
-Commit: `feat(v02): derive manifests from authoring-v1` (resolved in final table).
+Commit: `c863230` — `feat(v02): derive manifests from authoring-v1`.
 Files: intake/mapper.py, tests/test_v02_authoring_mapper.py,
 AUTHORING_MAPPER.md, this handoff.
 Fail-before: new test module failed import (mapper absent).
@@ -52,7 +53,7 @@ STUCK (implemented refusals, no approximation):
 
 ## A4 — within-plan corpus aggregation
 
-Commit: `feat(v02): aggregate corpus diagnostics within one plan`.
+Commit: `94a6521` — `feat(v02): aggregate corpus diagnostics within one plan`.
 Files: intake/corpus_aggregation.py, tests/test_v02_corpus_aggregation.py,
 CORPUS_AGGREGATION.md, this handoff.
 Fail-before: new test module failed import (aggregation tool absent).
@@ -66,7 +67,7 @@ hash-bound declaration because existing plan fields are closed.
 
 ## A5 — corpus freeze and verification
 
-Commit: `feat(v02): freeze reviewed corpus bundles`.
+Commit: `3834a5c` — `feat(v02): freeze reviewed corpus bundles`.
 Files: intake/corpus_freeze.py, tests/test_v02_corpus_freeze.py,
 CORPUS_FREEZE.md, this handoff.
 Fail-before: new test module failed import (freeze tool absent).
@@ -80,7 +81,7 @@ author/maintainer supplied, never guessed. A3's clarification blocker persists.
 
 ## A6 — isolated author-session runbook
 
-Commit: `docs(v02): document isolated author-session procedure`.
+Commit: `2816c2f` — `docs(v02): document isolated author-session procedure`.
 Files: AUTHORING_RUNBOOK.md, tests/test_v02_authoring_runbook.py, this handoff.
 Fail-before: 2 tests errored because the runbook did not exist.
 Pass-after: 2/2 targeted procedure checks. Cumulative test count: 374.
@@ -91,6 +92,57 @@ hash-bound review and the defect-blocks-release rule.
 STUCK: no new procedure decision; A3's representation blockers are explicit
 release gates. No actual author/model session or private corpus folder was created.
 
+## A7 — documentation, provenance and final consistency verification
+
+Commit: `v02-authoring-pipeline` (final branch tip) —
+`docs(v02): link authoring pipeline and record final verification`.
+The tip reference avoids embedding a self-referential commit hash in its own
+committed handoff; A1–A6 hashes above are immutable local commit IDs.
+Files: docs/INDEX.md, docs/v0.2/README.md, PROVENANCE.md, SET_ANSWERS.md,
+STATE_RECORDS_V1.md, this handoff, and final consistency fixes/tests to the new
+brief/denylist, mapper, aggregation and freeze tools. No pre-existing test or
+scorer/runner/replay source file is edited.
+
+Fail-before: 2 new documentation checks failed (index absent and provenance
+entry absent). Final QA regressions also demonstrated brief review-language
+leakage, a corrupt report's uncaught KeyError, a missing derived per-family
+prediction summary, and acceptance of whitespace-edited freeze receipts.
+Pass-after: documentation 2/2, brief 3/3, format 7/7, mapper 10/10,
+aggregation 7/7, freeze 6/6, runbook 2/2. The per-family summary only groups
+author-supplied predictions, with no authored prediction of its own. Every new
+fixture remains SYNTHETIC. Added mapper checks cover inactive requirement refusal,
+recovery-cycle refusal and multiple-task derivations. Format CLI also checks
+missing-file refusal. STUCK: A3's explicit representation limitations only.
+
+## Final verification
+
+Full command:
+`C:/Users/axend/AppData/Local/Python/pythoncore-3.14-64/python.exe -B -m unittest discover -s tests -q`.
+Unchanged baseline: 344/344. Intermediate full suites: 360/360 and 380/380.
+Final full suite: **381/381 passed**, exit 0, 48.830 seconds (344 unchanged
+baseline tests plus 37 new tests). Final staged `git diff --cached --check`:
+exit 0. All targeted pass-after checks above are included in that full run.
+All existing test paths are unchanged in `git diff v02-set-answers -- tests`;
+only new files are present. Scorer, runner, replay, existing intake and all
+other pre-existing Python modules are unchanged. `v02-set-answers` remains
+`937b51452980212d8e24e3f5055ae826b66b82d9`. All seven commits are local on the new
+branch. No goal/author session, model run, external network, public corpus,
+private-workspace access or other-project edit occurred.
+Closure: final branch `v02-authoring-pipeline`; seven local task commits;
+clean worktree checked after the A7 commit. No push or PR is performed.
+
 ## Final task table
 
-Pending completion of A2–A7 and full-suite verification.
+| Task | Status | Commit | Tests / STUCK |
+|---|---|---|---|
+| A1 brief | done | `77e7467` | Initially 2 tests; final 3. Separate denylist; no governance text in the brief. |
+| A2 format/validator | done | `55ee10e` | 7 tests; all format refusal codes and closed structures. |
+| A3 mapper | done | `c863230` | Initially 7 tests; final 10. STUCK forms are explicitly refused: delayed obligations, multi-failure recovery, alternatives, clarification sidecar projection. |
+| A4 aggregation | done | `94a6521` | Initially 6 tests; final 7. Earlier aggregation STUCK resolved by ruling 2. |
+| A5 freeze | done | `3834a5c` | 6 tests; exact inventory, review, dev/eval separation and later-change refusal. |
+| A6 runbook | done | `2816c2f` | 2 tests; isolated only-brief author, private custody, human review and defect gates. |
+| A7 docs/provenance | done | `v02-authoring-pipeline` | 2 documentation tests plus final consistency regressions and full suite. |
+
+Skipped: none. Tooling delivery is complete; real corpus authoring and execution
+are outside this session. Full F9 release remains STUCK until the clarification
+representation is settled; no subcase was deleted or replaced to conceal it.

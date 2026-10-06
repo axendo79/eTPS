@@ -138,6 +138,5 @@ and correction IDs. Do not use IDs beginning with `$` or containing `:`.
   explanation). These records are private authoring data, never public messages.
 
 Supply all branches, answers, annotations, and predictions before freezing.
-Keep the original bytes unchanged. A format check cannot establish whether
-the conversation truly supports the answers: have a separate reviewer cross-check
-the complete history, sources, requirements, and keys. Any mismatch blocks release.
+Keep the original bytes unchanged. Check that the conversation supports every
+answer and that the history, sources, requirements, and keys agree.

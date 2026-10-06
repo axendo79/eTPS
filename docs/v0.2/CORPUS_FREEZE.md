@@ -7,7 +7,8 @@ author independence, lack of prior exposure or execution. It is not independent
 attestation; confirmatory use still requires the contract's external proofs.
 
 API: `create_freeze(files, release_id, dataset, frozen_at)` returns canonical
-record bytes. `verify_freeze(files, record_bytes)` rechecks the complete byte
+record bytes. Receipt bytes must remain canonical; whitespace changes also fail.
+`verify_freeze(files, record_bytes)` rechecks the complete byte
 inventory and admission gates. `files` maps canonical relative POSIX filenames
 to byte-exact contents. No date, budget or release name is invented: freeze time
 is an explicit declaration. Same input and declarations yield the same bytes.

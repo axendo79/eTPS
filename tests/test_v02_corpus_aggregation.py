@@ -138,6 +138,20 @@ class CorpusAggregationTests(unittest.TestCase):
             finally:
                 store.close()
 
+    def test_corrupt_report_is_a_reason_coded_refusal(self):
+        plan, artifacts, grouping = synthetic_plan(synthetic_document())
+        with tempfile.TemporaryDirectory(prefix="etps-SYNTHETIC-") as temp:
+            store = Store.create(Path(temp) / "SYNTHETIC.db", plan, artifacts)
+            try:
+                run_offline(store, "SYNTHETIC-slot-0")
+                r = report(store)
+                del r["trials"][0]["score"]["measurement_valid"]
+                with self.assertRaises(AggregationError) as caught:
+                    aggregate_report(plan, artifacts, r, grouping)
+                self.assertEqual(caught.exception.code, "report_shape")
+            finally:
+                store.close()
+
     def test_timeout_unknown_malformed_incorrect_are_reason_coded(self):
         for outcome, raw in (("timeout", b""), ("malformed", b"SYNTHETIC"), ("incorrect", b'{}'),
                              ("unknown", b'{"status":"SYNTHETIC-unknown"}')):

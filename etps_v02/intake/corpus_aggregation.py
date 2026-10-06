@@ -113,7 +113,7 @@ def coverage_labels(coverage):
     return result
 
 
-def aggregate_report(plan_raw, artifacts, report, grouping):
+def _aggregate_report(plan_raw, artifacts, report, grouping):
     need(type(plan_raw) is bytes, "multiple_plans", "plan", "exactly one plan byte string required")
     need(type(report) is dict, "multiple_reports", "report", "exactly one per-plan report required")
     need(type(grouping) is dict and grouping.keys() == {"version", "repeat_id", "plan_sha256"},
@@ -166,6 +166,14 @@ def aggregate_report(plan_raw, artifacts, report, grouping):
             "arms": arms, "slots": [{"slot": row["slot"]["id"], "arm": row["slot"]["arm"],
                                      "task": row["slot"]["task"], "state": row["trial"]["state"],
                                      "first_fields": row["first_attempt"], "terminal_fields": row["terminal"]} for row in rows]}
+
+
+def aggregate_report(plan_raw, artifacts, report, grouping):
+    """Reject corrupt report structure instead of leaking container exceptions."""
+    try:
+        return _aggregate_report(plan_raw, artifacts, report, grouping)
+    except (KeyError, TypeError, IndexError, AttributeError) as exc:
+        raise AggregationError("report_shape", "report", "missing or malformed observation fields") from exc
 
 
 def main():

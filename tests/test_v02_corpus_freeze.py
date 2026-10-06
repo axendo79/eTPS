@@ -73,6 +73,9 @@ class CorpusFreezeTests(unittest.TestCase):
         with self.assertRaises(FreezeError) as caught:
             verify_freeze(files, encode(record))
         self.assertEqual(caught.exception.code, "freeze_record")
+        with self.assertRaises(FreezeError) as caught:
+            verify_freeze(files, raw + b" ")
+        self.assertEqual(caught.exception.code, "freeze_record")
 
     def test_review_and_defects_gate_release(self):
         for mutate, code in ((lambda f: f.pop("review.json"), "missing_artifact"),
