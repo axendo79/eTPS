@@ -78,6 +78,19 @@ Cumulative test count: 372. No actual corpus or real review was frozen.
 STUCK: none for the hash/review tool. Numeric experiment settings remain
 author/maintainer supplied, never guessed. A3's clarification blocker persists.
 
+## A6 — isolated author-session runbook
+
+Commit: `docs(v02): document isolated author-session procedure`.
+Files: AUTHORING_RUNBOOK.md, tests/test_v02_authoring_runbook.py, this handoff.
+Fail-before: 2 tests errored because the runbook did not exist.
+Pass-after: 2/2 targeted procedure checks. Cumulative test count: 374.
+Runbook covers fresh only-brief/no-repository sessions, S1–S16 and S2–S4
+records, private placeholder custody (not created), separate dev tuning/freeze
+then untouched eval, A2/A3/explicit sidecar intake, human cross-check ruling 4,
+hash-bound review and the defect-blocks-release rule.
+STUCK: no new procedure decision; A3's representation blockers are explicit
+release gates. No actual author/model session or private corpus folder was created.
+
 ## Final task table
 
 Pending completion of A2–A7 and full-suite verification.
