@@ -26,6 +26,30 @@ Pass-after: 7/7 targeted tests, including every format refusal code and closed
 objects, strict JSON, CLI, and portable strings. Cumulative test count: 353.
 STUCK: none for format admission; representability is tested separately in A3.
 
+## A3 — mapper and bounded sidecar intake
+
+Commit: `feat(v02): derive manifests from authoring-v1` (resolved in final table).
+Files: intake/mapper.py, tests/test_v02_authoring_mapper.py,
+AUTHORING_MAPPER.md, this handoff.
+Fail-before: new test module failed import (mapper absent).
+Pass-after: 7/7 targeted tests with lossless-source round trips and canonical
+byte comparisons; synthetic A→B→C, A→B→A, lapse/reinstatement, unresolved then
+precedence, scoped/partial change, provenance, recovery, recap, and omitted fields.
+Cumulative test count: 360. Every result passes the existing intake validator.
+
+STUCK (implemented refusals, no approximation):
+- Delayed obligations: CORPUS_INTAKE §3 decision 3 and executable
+  `begin_after == source`; code `delayed_obligation`.
+- Multi-probe recovery: CORPUS_INTAKE §3 decision 4, one `user.failure` ID;
+  code `multi_failure_recovery`.
+- Additional correct forms: SET_ANSWERS supports one expected object; code
+  `alternative_answers`.
+- F9 legitimate clarification: STATE_RECORDS_V1 query table has only current,
+  at-checkpoint, status, values and provenance projections. A clarification-only
+  expected answer is supported by the scorer (CORPUS_INTAKE §2), but cannot be
+  projected by the mandatory sidecar. Code `clarification_unrepresentable`;
+  release of complete F9 coverage needs a representation ruling/extension.
+
 ## Final task table
 
 Pending completion of A2–A7 and full-suite verification.
