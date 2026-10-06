@@ -44,12 +44,13 @@ def projection_fields(manifest, node):
     return fields
 
 
-def validate_probe(node):
+def validate_probe(manifest, node):
     fields = node.get("set_fields", [])
     require(isinstance(fields, list) and all(isinstance(k, str) for k in fields)
             and len(fields) == len(set(fields)) and set(fields) <= node["expected"].keys(),
             "set_fields must be unique expected fields")
-    require(answer_object(node["expected"], fields), "set-v1 requires arrays of typed-v1 scalars")
+    require(answer_object(node["expected"], projection_fields(manifest, node)),
+            "set-v1 requires arrays of typed-v1 scalars")
     require(all(len(element_keys(node["expected"][k])) == len(node["expected"][k]) for k in fields),
             "duplicate expected set element")
 

@@ -175,20 +175,24 @@ def validate(manifest, *, authoring=True):
             mapping(node["next"], path + ".next")
             require(set(node["next"]) == OUTCOMES, "incomplete outcome policy")
             if set_answers:
-                from .set_answers import answer_object as set_object, equal as set_equal, validate_probe as validate_sets
+                from .set_answers import (answer_object as set_object, equal as set_equal,
+                                          projection_fields, validate_probe as validate_sets)
                 mapping(node["expected"], path + ".expected")
-                validate_sets(node)
+                if manifest.get("answer_tolerance") == "d10-v1":
+                    from .answer_tolerance import validate_probe
+                    validate_probe(node)
+                validate_sets(manifest, node)
                 from .dimension_accuracy import validate_probe as validate_dimensions
                 validate_dimensions(node)
             else:
                 require(answer_object(node["expected"], answer_schema),
                         "answers require typed-v1 fields" if answer_schema else "answers require string fields")
-            if manifest.get("answer_tolerance") == "d10-v1":
+            if not set_answers and manifest.get("answer_tolerance") == "d10-v1":
                 from .answer_tolerance import validate_probe
                 validate_probe(node)
             if "unknown_answers" in node:
                 answers = node["unknown_answers"]
-                require(isinstance(answers, list) and all((set_object(a, node.get("set_fields", []))
+                require(isinstance(answers, list) and all((set_object(a, projection_fields(manifest, node))
                         if set_answers else answer_object(a, answer_schema))
                         for a in answers), "unknown_answers must declare exact typed-v1 objects"
                         if answer_schema else "unknown_answers must declare exact string-field objects")
