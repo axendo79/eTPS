@@ -15,6 +15,16 @@ from test_v02_runner import bundle, response
 from test_v02_typed_answers import typed
 
 
+
+def _after_latency(event):
+    """Mocked send that really takes its declared client latency, so recorded
+    timing stays consistent with measured wall time on fast machines."""
+    import time
+    def send(*args, **kwargs):
+        time.sleep(event["client_latency_seconds"] * 2)
+        return event
+    return send
+
 def set_manifest(expected=None):
     m = typed({"values": ["alpha", 7, None], "code": 42} if expected is None else expected)
     m["answer_predicate"] = "set-v1"
@@ -181,7 +191,7 @@ class CompleteSetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store = Store.create(Path(temp) / "live.db", encode(plan), {sha(raw_manifest): raw_manifest})
             try:
-                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", return_value=event):
+                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", side_effect=_after_latency(event)):
                     trial = run_live(store, "slot", allow_live=True)
                 self.assertTrue(trial["score"]["accepted"])
                 self.assertEqual(replay_export(export_bundle(store))["trials"][0], trial)

@@ -22,6 +22,16 @@ from test_v02_set_ambiguity import trace
 from test_v02_set_answers import set_manifest
 
 
+
+def _after_latency(event):
+    """Mocked send that really takes its declared client latency, so recorded
+    timing stays consistent with measured wall time on fast machines."""
+    import time
+    def send(*args, **kwargs):
+        time.sleep(event["client_latency_seconds"] * 2)
+        return event
+    return send
+
 def rechain_fixture(exported):
     """Bind the edited synthetic journal, including the v2 envelope."""
     rechain(exported)
@@ -161,7 +171,7 @@ class InvalidDimensionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store = Store.create(Path(temp) / "live.db", encode(p), {sha(raw_manifest): raw_manifest})
             try:
-                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", return_value=event):
+                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", side_effect=_after_latency(event)):
                     valid = run_live(store, "slot", allow_live=True)
                 self.assertTrue(valid["score"]["measurement_valid"])
                 for fmt in ("v1", "v2"):
