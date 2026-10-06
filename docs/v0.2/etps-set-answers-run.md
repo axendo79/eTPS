@@ -79,3 +79,20 @@ fractions and diagnostic results. Saved derived reports are ignored on replay.
 No existing failing test required a change. Software checks establish mechanical
 behavior only, not corpus validity or independent authorship. Stop after the
 final local docs commit and clean branch/status verification.
+
+## Follow-up F1/F2 (2026-10-06)
+
+| Task | Status | Evidence |
+|---|---|---|
+| F1: declaration/runtime set-alias typing | done | `f82ec8d`: expected and unknown objects use `projection_fields(manifest, node)`; scalar set aliases reject, array aliases admit and classify unknown. Four new synthetic tests; non-set d10 unchanged. |
+| F2: invalidate all dimension field credit | STUCK | A test-first synthetic finished manual trace with a correct first probe and changed later recovery payload reproduces first credit 2 under `unmatched_user_payload`. The proposed fix gives credit 0, but fails the existing aborted-slot test, which requires first credit 2. No existing test was edited and the attempted source change was reverted. |
+
+F2 evidence: `tests/test_v02_dimension_accuracy.py`,
+`test_completed_answer_in_aborted_slot_has_no_terminal_credit`, line 119,
+asserts first-attempt credit 2 for a measurement-invalid aborted slot. Applying
+the requested any-invalid rule changes it to 0 and fails that assertion.
+The rule "any existing test needing a change is STUCK" therefore applies.
+The synthetic counterexample is retained in
+`%TEMP%\etps-state-intake-b5dd971563f94f34af3c8618c940c2ea\test_f2_invalid.py`;
+it fails on retained code and passes under the attempted fix. This is an open
+diagnostic defect, not a successful F2 implementation. R and V remain independent.
