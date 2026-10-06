@@ -606,12 +606,13 @@ def score(manifest, record):
         if not offline and tps is None:
             result["throughput_unavailable_reason"] = "decode_timing_unavailable"
     if manifest.get("answer_predicate") == "set-v1":
-        from .dimension_accuracy import diagnostics
+        from .dimension_accuracy import diagnostics, finalize
         diagnostic = diagnostics(manifest, events, labels,
             terminal_available=valid and current in manifest["nodes"] and terminal["kind"] == "terminal",
             reason=reason or record.get("stop_reason"))
         if diagnostic is not None:
             result["dimension_accuracy"] = diagnostic
+            finalize(manifest, result)
     return result
 
 

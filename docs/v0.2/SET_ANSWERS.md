@@ -86,10 +86,14 @@ gives malformed reasons for all fields, and a timeout gives unavailable reasons
 with a timeout count. A d10 alias collision cannot yield an unambiguous normalized
 object and gives incorrect field reasons.
 
-Unobserved first fields are unattempted. Terminal fields in truncated, aborted
-or running slots are unavailable; wholly unattempted slots retain unattempted
-counts in both phases. Invalid evidence gives unavailable diagnostic credit.
-Known first observations from an otherwise unfinished trace remain visible.
+For any measurement-invalid result, every first-attempt and terminal field is
+unavailable with zero credit and the invalid reason, even if its first answer
+was correct. This applies to pure scoring and offline, live and manual replay.
+A valid recorded abort uses its reason code (for example, `operator_abort`)
+in the diagnostic; the primary score keeps its existing `unfinished_slot`
+reason. Evidence invalidation takes precedence over an abort reason.
+Wholly unattempted slots have no scored result and retain unattempted counts
+in both phases. Valid measurements retain the observed first/terminal outcomes.
 Every planned tagged field stays in the denominator; no missing observation is
 silently discarded. Accuracy is a diagnostic count ratio, never an efficiency
 multiplier or a replacement for binary acceptance or obligation retention.

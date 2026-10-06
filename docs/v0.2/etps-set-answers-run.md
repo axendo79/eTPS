@@ -1,5 +1,8 @@
 # eTPS set-answer implementation handoff
 
+Latest update: F2 is resolved by the maintainer's test-preservation clarification;
+see the final F2 completion section below. Earlier STUCK entries are historical.
+
 2026-10-06. Work stayed in `D:\eTPS`, with synthetic verification artifacts in
 the explicitly authorized `%TEMP%` area. Branch: `v02-set-answers`, based on
 `530c5c2`. No push, external network request, model run, corpus authoring, private
@@ -160,3 +163,60 @@ OK
 The four follow-up commits are F1 implementation, F2 STUCK evidence, R docs-only
 rulings, then V implementation/docs/handoff. Final branch is v02-set-answers;
 the working tree is checked clean after the V commit. No push occurs.
+
+## F2 clarification and completion (2026-10-06)
+
+The maintainer clarified that the no-existing-test-change rule protects the
+290 tests on main `530c5c2`. The aborted-slot test was added in this PR at
+`ab858d6` and may be corrected. This resolves the prior F2 STUCK entries;
+those entries remain as a record of the earlier instruction and evidence.
+
+| Task | Status | Evidence / commit |
+|---|---|---|
+| F1: uniform set-alias declaration typing | done | `f82ec8d`; unchanged by this repair. |
+| F2: any-invalid dimension unavailability | done | This F2 commit updates the PR-added aborted-slot and truncated-trace expectations test-first, retains the manual counterexample in `tests/test_v02_dimension_invalid.py`, and makes both diagnostic phases unavailable for every invalid measurement. |
+| R: maintainer rulings, docs first | done | `37095d6`; unchanged by this repair. |
+| V: bounded state-record sidecar intake | done | `b69bd2f`; unchanged by this repair. |
+
+`dimension_accuracy.finalize` now clears every planned first-attempt and terminal
+field for any measurement-invalid result, including pure-score invalid traces.
+Offline, manual and live replay preserve a valid abort's recorded diagnostic
+reason, such as `operator_abort`, while leaving the primary reason
+`unfinished_slot` unchanged. Evidence invalidation still takes precedence.
+Report rows reuse the finalized diagnostic, so they cannot replace or lose its
+reason. Wholly unattempted slots remain unattempted in both phases; valid
+measurements retain their observed field credit.
+
+The updated tests were run before production edits and failed on retained code:
+15 focused tests, 11 failing assertions/subtests, no fixture errors. After the
+fix, all 15 focused tests pass. Four new synthetic regression tests cover the
+retained finished-manual counterexample (`unmatched_user_payload` after a
+correct first probe), pure invalid traces, manual aborts and mocked live
+aborted/running prefixes. Both export formats reproduce trial/report diagnostics.
+Primary-score comparisons exclude only the diagnostic and match every other
+score field, including acceptance, RR and experimental eTPS.
+
+All 29 test files present on main `530c5c2`, containing its protected 290 tests,
+are unchanged (`git diff --exit-code 530c5c2 -- <all main test paths>` succeeds).
+Only the two invalid-result expectations in the PR-added dimension test file
+were updated; the manual counterexample is now a permanent repository test.
+No existing manifest, golden fixture or evidence export was edited. Test logs
+are retained under `%TEMP%\etps-state-intake-b5dd971563f94f34af3c8618c940c2ea`
+as `f2-red.txt` and `f2-final-unittest.txt`.
+
+No F2 STUCK item remains. Corpus semantic review and other limits recorded in
+the preceding handoff sections remain unchanged. This handoff is updated at
+the repo-local path explicitly requested for this follow-up.
+
+Final full verification from `D:\eTPS`:
+
+```text
+C:/Users/axend/AppData/Local/Python/pythoncore-3.14-64/python.exe -B -m unittest discover -s tests -v
+Ran 344 tests in 41.194s
+OK
+```
+
+The repair, synthetic tests, documentation and handoff form one local F2 commit
+on `v02-set-answers`. A final post-commit status check confirms a clean working
+tree. No push, external network request, model run, private-workspace read or
+other-repository edit occurred. Stop after the clean-status check.

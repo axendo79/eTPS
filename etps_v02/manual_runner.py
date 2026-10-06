@@ -220,7 +220,8 @@ def replay_manual_slot(store, slot):
     if not verified:
         warnings += ["recomputed_measurement_invalid", "unverified_evidence: invalid_finished_trace"]
     from .dimension_accuracy import finalize
-    finalize(manifest, result)
+    finalize(manifest, result, reason=finish.get("reason_code")
+             if state == "aborted" and result["reason"] == "unfinished_slot" else None)
     return {**common, "state": state, "score": result, "record": record, "warnings": warnings,
             "operator_wall_seconds": wall, "reason_code": finish.get("reason_code"),
             "implementation_mismatch": bool(changed), "evidence_verified": verified}

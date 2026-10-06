@@ -1,5 +1,21 @@
 # eTPS v0.2 provenance
 
+## F2 diagnostic invalidation clarification and repair (2026-10-06)
+
+The user clarified that test preservation protects the 290 tests on main
+`530c5c2`, and authorized updating the PR-added aborted-slot assertion from
+`ab858d6`. This resolves the earlier F2 STUCK conflict recorded below and in
+the handoff. Codex updated the PR-added invalid-trace expectations before
+implementation and retained the finished-manual counterexample as a repository
+regression. Any measurement-invalid result now makes both dimension phases
+unavailable with its invalid reason; valid aborts retain their recorded reason
+code in the diagnostic. Primary acceptance, RR and eTPS remain unchanged.
+
+Synthetic tests cover pure invalid traces, changed manual recovery payloads,
+manual/offline/live aborts and a live running prefix, with v1/v2 export replay.
+All main test files remain unchanged. The user authorized this local repair,
+documentation and commit on `v02-set-answers`; no push or model run occurred.
+
 ## Maintainer state-record rulings and intake authorization (2026-10-06)
 
 The user supplied the four [maintainer rulings](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06):
@@ -16,9 +32,9 @@ test-first validator implementation on `v02-set-answers`; no push or model run.
 Codex records the rulings and authors the mechanical intake format/checks.
 Neither scorer nor validator proves semantics, source truth or authority.
 Review must cross-check obligations and keys before freezing; any mismatch is a
-corpus/protocol defect blocking valid-evidence execution. F2 remains STUCK under
-the existing-test preservation rule, as documented in the handoff. No corpus
-task, private key or model result is authored by this implementation work.
+corpus/protocol defect blocking valid-evidence execution. F2 was initially STUCK
+under the existing-test preservation rule; the clarification above resolves it.
+No corpus task, private key or model result is authored by this implementation work.
 
 Codex implemented [state-records-v1](STATE_RECORDS_V1.md) in a separate intake
 subpackage with closed JSON, an exact-byte SHA-256 binding, bounded graph/order

@@ -80,19 +80,17 @@ def diagnostics(manifest, events, labels, *, terminal_available, reason=None, un
             "first_fields": first, "terminal_fields": terminal, "unavailable_reason": None}
 
 
-def finalize(manifest, result):
-    """Apply evidence/slot invalidation after pure event scoring, if necessary."""
+def finalize(manifest, result, *, reason=None):
+    """Make both diagnostic phases unavailable for any invalid measurement."""
     diagnostic = result.get("dimension_accuracy")
     tags, _ = plan(manifest)
     if diagnostic is None or tags is None or result["measurement_valid"]:
         return
-    terminal = {key: "unavailable" for key in tags}
-    diagnostic = dict(diagnostic, terminal_fields=terminal,
-                      terminal=aggregate(tags, terminal, result["reason"]))
-    if result["reason"] == "unverified_evidence":
-        diagnostic.update(first_fields=dict(terminal),
-                          first_attempt=aggregate(tags, terminal, result["reason"]))
-    result["dimension_accuracy"] = diagnostic
+    unavailable = {key: "unavailable" for key in tags}
+    reason = reason or result["reason"]
+    result["dimension_accuracy"] = dict(diagnostic,
+        first_fields=dict(unavailable), first_attempt=aggregate(tags, unavailable, reason),
+        terminal_fields=unavailable, terminal=aggregate(tags, unavailable, reason))
 
 
 def add_report(store, result):
@@ -108,11 +106,6 @@ def add_report(store, result):
         if diagnostic is None:
             diagnostic = diagnostics(manifest, [], [], terminal_available=False,
                                      reason=trial.get("reason"), unattempted=trial["state"] == "unattempted")
-        elif tags is not None and (trial["state"] != "finished" or not scored["measurement_valid"]):
-            diagnostic = dict(diagnostic)
-            terminal = {key: "unavailable" for key in tags}
-            diagnostic.update(terminal_fields=terminal,
-                terminal=aggregate(tags, terminal, scored.get("reason") or trial["state"]))
         rows.append({"slot": slot["id"], "task": slot["task"], "arm": slot["arm"],
                      "state": trial["state"], "dimension_accuracy": diagnostic})
     if rows:

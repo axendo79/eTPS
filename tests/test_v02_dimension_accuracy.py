@@ -72,13 +72,19 @@ class DimensionAccuracyTests(unittest.TestCase):
     def test_unattempted_prefix_and_truncated_terminal(self):
         m = dimensions()
         r = score(m, {"manifest_sha256": digest(m), "events": []})
-        self.check(r, "first_attempt", 0, unattempted=2)
+        self.check(r, "first_attempt", 0, unavailable=2)
         self.check(r, "terminal", 0, unavailable=2)
+        for phase in ("first_attempt", "terminal"):
+            self.assertEqual(r["dimension_accuracy"][phase]["ambiguity"]["unavailable_reasons"],
+                             {"truncated_trace": 2})
         record = trace(m, [{"status": "unresolved", "values": []}, m["nodes"]["p2"]["expected"]])
         record["events"] = record["events"][:2]
         r = score(m, record)
-        self.check(r, "first_attempt", 1, incorrect=1)
+        self.check(r, "first_attempt", 0, unavailable=2)
         self.check(r, "terminal", 0, unavailable=2)
+        for phase in ("first_attempt", "terminal"):
+            self.assertEqual(r["dimension_accuracy"][phase]["ambiguity"]["unavailable_reasons"],
+                             {"truncated_trace": 2})
 
     def test_tags_never_change_primary_scores(self):
         untagged = ambiguity_manifest()
@@ -116,9 +122,18 @@ class DimensionAccuracyTests(unittest.TestCase):
                     store.append("slot-1", entry["kind"], entry["payload"])
                 store.abort("slot-1", "operator_abort", "synthetic stop before finish")
                 r = report(store)
-                self.check(r["trials"][1]["score"], "first_attempt", 2)
-                self.check(r["trials"][1]["score"], "terminal", 0, unavailable=2)
-                self.check(r["dimension_accuracy"][1], "terminal", 0, unavailable=2)
+                scored = r["trials"][1]["score"]
+                self.assertFalse(scored["measurement_valid"])
+                self.assertEqual(scored["reason"], "unfinished_slot")
+                for key in ("accepted", "RR", "experimental_eTPS"):
+                    self.assertIsNone(scored[key])
+                for result in (scored, r["dimension_accuracy"][1]):
+                    for phase, fields in (("first_attempt", "first_fields"), ("terminal", "terminal_fields")):
+                        self.check(result, phase, 0, unavailable=2)
+                        self.assertEqual(result["dimension_accuracy"][fields],
+                                         {"values": "unavailable", "code": "unavailable"})
+                        self.assertEqual(result["dimension_accuracy"][phase]["ambiguity"]["unavailable_reasons"],
+                                         {"operator_abort": 2})
             finally:
                 store.close()
 
