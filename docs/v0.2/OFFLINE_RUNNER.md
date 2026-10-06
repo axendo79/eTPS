@@ -1,5 +1,13 @@
 # Offline runner and replay store
 
+## Complete-set answers: set-v1 (2026-10-06)
+
+The optional `answer_predicate: "set-v1"`, alongside `answer_schema: "typed-v1"`,
+adds per-probe `set_fields` and diagnostic `field_dimensions`. Designated arrays
+must match the complete expected set with exact typed scalar elements and no
+duplicates. See [set-v1 rules, diagnostics and replay](SET_ANSWERS.md). Default
+typed-v1 and d10-v1 behavior remains unchanged.
+
 ## Frozen opt-in answer tolerance: d10-v1 (2026-09-30)
 
 A manifest opts in with top-level `"answer_tolerance": "d10-v1"`. Before any

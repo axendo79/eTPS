@@ -96,3 +96,11 @@ Dimension accuracy is diagnostic partial credit. It never changes binary accepta
 6. **Provenance:** F8 is in the first release. Every arm sees identical visible source/message identifiers, so provenance tests retention and selection, not privileged metadata.
 
 Next step: the scorer extension in ruling 3. Authoring begins only after it exists.
+
+Implementation cross-reference (2026-10-06): the user-authorized local
+[set-v1 extension](SET_ANSWERS.md) implements designated complete-set answers
+and separate status/value field scoring, with diagnostic first/terminal field
+counts for stable tagged plans. Heterogeneous field identity and corpus-wide
+repeat grouping remain unresolved. The [state-record options memo](STATE_RECORD_OPTIONS.md)
+selects no representation; ruling 3's state/obligation decision is still required
+before corpus authoring.

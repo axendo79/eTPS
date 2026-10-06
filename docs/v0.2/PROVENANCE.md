@@ -1,5 +1,24 @@
 # eTPS v0.2 provenance
 
+## Complete-set implementation authorization (2026-10-06)
+
+The user explicitly authorized local implementation on `v02-set-answers`,
+synthetic tests before code, documentation, and one local commit per task,
+overriding CLAUDE.md's no-commit default for this task. Scope is `D:\eTPS` only:
+no push, external network, model runs or private corpus reads. Codex authored
+[set-v1](SET_ANSWERS.md), the synthetic status/value fixtures and diagnostic
+field counts, and [the state-record options memo](STATE_RECORD_OPTIONS.md).
+The memo selects no state representation. No corpus task or answer key was
+authored, and passing synthetic tests does not establish semantic validity,
+independence or a benchmark result. The existing author/system conflict remains.
+
+First/terminal diagnostics cover stable tagged field plans, with unavailable
+reasons for heterogeneous plans and no repeat pooling. Corpus-wide repeat
+identity and heterogeneous field identity remain decisions, not inferred facts.
+Original tests, fixtures, manifests and evidence exports are preserved; older
+score arithmetic and classification remain unchanged. Implementation identity
+warnings continue to disclose changed source on replay.
+
 ## State-evolution corpus specification accepted (2026-10-06)
 
 The user accepted [STATE_EVOLUTION_CORPUS_SPEC](STATE_EVOLUTION_CORPUS_SPEC.md)
