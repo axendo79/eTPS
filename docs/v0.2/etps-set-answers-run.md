@@ -96,3 +96,12 @@ The synthetic counterexample is retained in
 `%TEMP%\etps-state-intake-b5dd971563f94f34af3c8618c940c2ea\test_f2_invalid.py`;
 it fails on retained code and passes under the attempted fix. This is an open
 diagnostic defect, not a successful F2 implementation. R and V remain independent.
+
+## Maintainer rulings R (2026-10-06)
+
+| Task | Status | Evidence |
+|---|---|---|
+| R: record the maintainer rulings before V code | done | This docs-only commit records all four rulings in STATE_RECORD_OPTIONS.md, a section 8 spec pointer and PROVENANCE. Representation, frozen field identity and repeat grouping are now ruled; neither validator nor scorer proves semantics/truth/authority, and review mismatches block release. |
+
+R documents the supplied decisions. It does not implement new diagnostic mapping
+or plan aggregation beyond the current scorer, or remove the F2 STUCK conflict.

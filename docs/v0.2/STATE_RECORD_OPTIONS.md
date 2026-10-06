@@ -1,8 +1,9 @@
 # State-record representation options
 
 Docs-only decision memo, 2026-10-06. Codex authored this under the user's local
-implementation authorization. **No option is selected.** This memo does not
-authorize schema growth, a sidecar, corpus authoring or a model run. It addresses
+implementation authorization. The original options review selected nothing;
+the subsequent maintainer rulings below select the pilot sidecar and bounded
+intake validation. They do not authorize scorer schema growth or a model run. It addresses
 [corpus intake section 3, decision 5](CORPUS_INTAKE.md#3-decisions-that-need-the-original-corpus)
 and [measurement contract section 3](MEASUREMENT_CONTRACT.md#3-established-state-and-obligations).
 The accepted [state-evolution specification](STATE_EVOLUTION_CORPUS_SPEC.md)
@@ -74,3 +75,32 @@ have different shapes, plus explicit per-arm/per-repeat slot grouping for
 corpus-wide reports. Those answer-unit questions cannot be settled by naming a
 state-record storage format. All options and their tests above remain unselected;
 none is a recommendation disguised as an implementation requirement.
+
+## Maintainer rulings (2026-10-06)
+
+The maintainer supplied the following rulings. They supersede the unselected
+status and decision gaps above for this pilot; the options table remains the
+historical review of alternatives.
+
+1. **Field identity:** each task uses one frozen logical field map across its
+   probes. If a probe cannot supply one of those fields, that field is reported
+   unavailable; fields are never redefined or remapped mid-task.
+2. **Repeat grouping:** one plan file per repeat; aggregate per arm within that
+   plan only; never pool across plans/repeats.
+3. **State representation for this pilot:** a hash-locked state-record sidecar,
+   which is authoritative corpus metadata, not executable scorer logic. It
+   carries the full state/version chain, source authority, establishment event,
+   valid-time/applicability record, supersession/update relations, obligation
+   references, lapse/reinstatement status, and unresolved-disagreement state.
+   The sidecar bytes and hash are frozen with the manifest.
+4. **Bounded intake validator:** a separately versioned intake/freeze tool,
+   never called by scoring or replay and never changing a score. Neither the
+   scorer nor the validator proves sidecar semantics, source truth or authority.
+   Before freezing a corpus version, review cross-checks the sidecar against
+   the executable obligations and answer keys. Any mismatch is a corpus/protocol
+   defect that blocks that release from being run as valid evidence.
+
+These are attributable maintainer decisions, not model-selected semantic
+defaults. Implementation of the intake format and mechanical checks is documented
+separately in [state-records-v1](STATE_RECORDS_V1.md). Recording rulings 1 and 2
+does not silently change diagnostic field mapping or add report aggregation.

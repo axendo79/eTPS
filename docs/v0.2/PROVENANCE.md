@@ -1,5 +1,25 @@
 # eTPS v0.2 provenance
 
+## Maintainer state-record rulings and intake authorization (2026-10-06)
+
+The user supplied the four [maintainer rulings](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06):
+one frozen logical field map per task (unsuppliable fields unavailable), one plan
+per repeat with within-plan per-arm aggregation only, authoritative hash-locked
+state-record sidecars, and a bounded separately versioned intake/freeze validator.
+The sidecar contains state/version chains, authority, establishment, valid time,
+applicability, update links, obligations, lapse/reinstatement and disagreement.
+Sidecar bytes and hash freeze with the manifest. This supersedes the earlier
+unselected representation status, not the preserved historical options analysis.
+
+The user authorized local F1/F2 repairs, a docs-first rulings commit and synthetic
+test-first validator implementation on `v02-set-answers`; no push or model run.
+Codex records the rulings and authors the mechanical intake format/checks.
+Neither scorer nor validator proves semantics, source truth or authority.
+Review must cross-check obligations and keys before freezing; any mismatch is a
+corpus/protocol defect blocking valid-evidence execution. F2 remains STUCK under
+the existing-test preservation rule, as documented in the handoff. No corpus
+task, private key or model result is authored by this implementation work.
+
 ## Complete-set implementation authorization (2026-10-06)
 
 The user explicitly authorized local implementation on `v02-set-answers`,
