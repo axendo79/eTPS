@@ -161,7 +161,7 @@ def validate(manifest, *, authoring=True):
         if manifest.get("answer_tolerance") == "d10-v1" and kind == "probe":
             allowed |= {"key_aliases", "fixed_value_fields"}
         if set_answers and kind == "probe":
-            allowed |= {"set_fields"}
+            allowed |= {"set_fields", "field_dimensions"}
         declared_fields(node, allowed, path, authoring, findings)
         if kind == "terminal":
             mapping(node, path, ("accepted",))
@@ -178,6 +178,8 @@ def validate(manifest, *, authoring=True):
                 from .set_answers import answer_object as set_object, equal as set_equal, validate_probe as validate_sets
                 mapping(node["expected"], path + ".expected")
                 validate_sets(node)
+                from .dimension_accuracy import validate_probe as validate_dimensions
+                validate_dimensions(node)
             else:
                 require(answer_object(node["expected"], answer_schema),
                         "answers require typed-v1 fields" if answer_schema else "answers require string fields")
@@ -599,6 +601,13 @@ def score(manifest, record):
         result["timing_convention"] = "decode-v1"
         if not offline and tps is None:
             result["throughput_unavailable_reason"] = "decode_timing_unavailable"
+    if manifest.get("answer_predicate") == "set-v1":
+        from .dimension_accuracy import diagnostics
+        diagnostic = diagnostics(manifest, events, labels,
+            terminal_available=valid and current in manifest["nodes"] and terminal["kind"] == "terminal",
+            reason=reason or record.get("stop_reason"))
+        if diagnostic is not None:
+            result["dimension_accuracy"] = diagnostic
     return result
 
 

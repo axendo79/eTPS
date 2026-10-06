@@ -279,6 +279,8 @@ def replay_slot(store, slot, allow_running=False):
                       experimental_eTPS=None)
     if "result_state" in result and result["accepted"] is not True:
         result["result_state"] = "failed"
+    from .dimension_accuracy import finalize
+    finalize(manifest, result)
     return {"slot": slot, "arm": store.slots[slot]["arm"], "task": store.slots[slot]["task"],
             "state": state, "evidence": "synthetic-offline", "record": record,
             "reason": entries[-1]["payload"].get("reason"),
@@ -293,6 +295,8 @@ def replay_slot(store, slot, allow_running=False):
 
 def report(store):
     result = _report(store)
+    from .dimension_accuracy import add_report
+    add_report(store, result)
     if "cache_policy" in store.plan:
         result["cache_policy"] = store.plan["cache_policy"]
     tolerance_tasks = {task for task, key in store.plan["tasks"].items()
