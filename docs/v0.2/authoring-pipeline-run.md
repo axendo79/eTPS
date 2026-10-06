@@ -64,6 +64,20 @@ STUCK: earlier repeat/aggregation item is resolved by maintainer ruling 2.
 No new corpus-semantic choice made; repeat identity is a frozen external
 hash-bound declaration because existing plan fields are closed.
 
+## A5 — corpus freeze and verification
+
+Commit: `feat(v02): freeze reviewed corpus bundles`.
+Files: intake/corpus_freeze.py, tests/test_v02_corpus_freeze.py,
+CORPUS_FREEZE.md, this handoff.
+Fail-before: new test module failed import (freeze tool absent).
+Pass-after: 6/6 targeted tests; deterministic complete inventory and verification,
+every file's byte change, additions/deletions, record tampering, review/defect
+gates, dev/eval separation and parent binding, reused IDs, counts and review
+hashes, unsafe paths, CLI exclusive receipt creation and later-change refusal.
+Cumulative test count: 372. No actual corpus or real review was frozen.
+STUCK: none for the hash/review tool. Numeric experiment settings remain
+author/maintainer supplied, never guessed. A3's clarification blocker persists.
+
 ## Final task table
 
 Pending completion of A2–A7 and full-suite verification.
