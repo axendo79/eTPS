@@ -22,6 +22,16 @@ from test_v02_set_ambiguity import trace
 from test_v02_set_answers import set_manifest
 
 
+
+def _after_latency(event):
+    """Mocked send that really takes its declared client latency, so recorded
+    timing stays consistent with measured wall time on fast machines."""
+    import time
+    def send(*args, **kwargs):
+        time.sleep(event["client_latency_seconds"] * 2)
+        return event
+    return send
+
 def rechain_fixture(exported):
     """Bind the edited synthetic journal, including the v2 envelope."""
     rechain(exported)
@@ -125,6 +135,29 @@ class InvalidDimensionTests(unittest.TestCase):
             finally:
                 store.close()
 
+    def test_manual_abort_with_corrupted_evidence_reports_evidence_reason(self):
+        # SET_ANSWERS: evidence invalidation takes precedence over an abort reason.
+        m = self.recovery_manifest()
+        p, a = manual_bundle(m)
+        with tempfile.TemporaryDirectory() as temp:
+            store = Store.create(Path(temp) / "manual-abort-corrupt.db", encode(p), a)
+            try:
+                answer = encode(m["nodes"]["p1"]["expected"])
+                run_manual(store, "slot", allow_manual=True,
+                    stdin=io.BytesIO(paste(answer) + paste(answer, confirm=b"no")), stdout=io.StringIO())
+                for fmt in ("v1", "v2"):
+                    with self.subTest(fmt=fmt):
+                        exported = export_bundle(store, fmt)
+                        event = next(row["payload"] for row in exported["journal"]["slot"]
+                                     if row["kind"] == "event" and row["payload"]["node"] == "recover")
+                        event["text"] = "Changed synthetic recovery payload"
+                        rechain_fixture(exported)
+                        scored = replay_export(exported)["dev_manual"]["trials"][0]["score"]
+                        self.assertFalse(scored["measurement_valid"])
+                        self.assert_unavailable(scored["dimension_accuracy"], "unmatched_user_payload")
+            finally:
+                store.close()
+
     def test_live_abort_and_running_prefix_after_correct_answer_have_no_credit(self):
         m = dimensions(set_manifest())
         p, _ = live_bundle("http://127.0.0.1:1")
@@ -138,7 +171,7 @@ class InvalidDimensionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store = Store.create(Path(temp) / "live.db", encode(p), {sha(raw_manifest): raw_manifest})
             try:
-                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", return_value=event):
+                with patch("etps_v02.adapter_openai.preflight"), patch("etps_v02.adapter_openai.send", side_effect=_after_latency(event)):
                     valid = run_live(store, "slot", allow_live=True)
                 self.assertTrue(valid["score"]["measurement_valid"])
                 for fmt in ("v1", "v2"):
