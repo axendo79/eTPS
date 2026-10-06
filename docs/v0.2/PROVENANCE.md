@@ -20,6 +20,14 @@ corpus/protocol defect blocking valid-evidence execution. F2 remains STUCK under
 the existing-test preservation rule, as documented in the handoff. No corpus
 task, private key or model result is authored by this implementation work.
 
+Codex implemented [state-records-v1](STATE_RECORDS_V1.md) in a separate intake
+subpackage with closed JSON, an exact-byte SHA-256 binding, bounded graph/order
+and obligation checks, fresh reinstatement, explicit disagreement/precedence
+and exact answer correspondence. The tool is never imported by production
+scoring or replay. All fixtures are public synthetic examples; no state corpus
+was authored or frozen. Normal replay of pre-validator synthetic exports with
+and without bindings remains byte-identical, including implementation identity.
+
 ## Complete-set implementation authorization (2026-10-06)
 
 The user explicitly authorized local implementation on `v02-set-answers`,

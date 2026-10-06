@@ -105,3 +105,58 @@ diagnostic defect, not a successful F2 implementation. R and V remain independen
 
 R documents the supplied decisions. It does not implement new diagnostic mapping
 or plan aggregation beyond the current scorer, or remove the F2 STUCK conflict.
+
+## Follow-up V: state-records-v1 intake (2026-10-06)
+
+| Task | Status | Evidence / commit |
+|---|---|---|
+| F1: uniform set-alias declaration typing | done | `f82ec8d`; four new test-first regressions for scalar/array aliases and unchanged non-set d10. |
+| F2: any-invalid dimension unavailability | STUCK | `6eb7cff` records the reproducible conflict with the existing aborted-slot first-credit assertion. Attempted fix reverted; neither existing test nor production behavior was changed. |
+| R: maintainer rulings, docs first | done | `37095d6`; all four supplied rulings recorded before validator code, with spec and provenance pointers. |
+| V: bounded state-record sidecar intake | done | This V commit: separate `etps_v02/intake/state_records.py`, closed state-records-v1 JSON and metadata SHA-256 binding, checks (a)-(h), CLI/API and explicit review limitation in STATE_RECORDS_V1.md. Twenty new synthetic tests. |
+
+V uses one immutable task field map and lists unsuppliable probe fields as
+unavailable in its intake result. It verifies version, source/event, branch,
+obligation and expected-key correspondence mechanically; it does not evaluate
+free-form applicability or valid-time labels, read source truth from user text,
+or decide authority. Records separate entity/property/scope, while old versions
+and independent historical obligations survive current-state changes. Every
+disagreement has distinct sources and can resolve only through recorded precedence.
+
+The intake tool is never imported or called by production scoring, execution or
+replay. No scorer/runner module or implementation fingerprint changed for V.
+Pre-validator synthetic exports were captured with and without metadata bindings;
+normal replay of both reproduces the entire serialized report byte-identically,
+including source identity and warnings, without identity pinning. Tests also
+compare score bytes before/after intake, both export versions, and input bytes
+before/after validation. A valid A-B-C command-line intake was executed on a
+synthetic fixture and returned validated with semantics_verified=false.
+
+All 316 pre-follow-up tests remain in unedited files. F1 adds four synthetic tests;
+V adds twenty. No corpus content, model calls, external network access, pushes,
+private-workspace reads or evaluated-system edits occurred. The full test log,
+pre-validator exports, CLI fixtures and F2 counterexample remain under
+`%TEMP%\etps-state-intake-b5dd971563f94f34af3c8618c940c2ea`.
+
+Remaining limits: F2 is an unresolved diagnostic defect under the existing-test
+preservation rule. R records field-unavailability and repeat-grouping rulings;
+integrating those changes into existing scorer dimension reporting/aggregation
+is not part of V. Semantic review is mandatory before corpus freeze, and any
+sidecar/obligation/key mismatch blocks the release as valid evidence. Generic
+exports do not automatically preserve sidecar bytes; the release artifact set
+must retain them separately with review evidence. The previous outside-repo
+handoff was delivered after the user's clarification; that historical destination
+STUCK entry is resolved. This follow-up updates the repo handoff explicitly
+requested in the current instruction.
+
+Final full verification from D:\eTPS, using the user-authorized executable:
+
+```text
+C:/Users/axend/AppData/Local/Python/pythoncore-3.14-64/python.exe -B -m unittest discover -s tests -v
+Ran 340 tests in 42.156s
+OK
+```
+
+The four follow-up commits are F1 implementation, F2 STUCK evidence, R docs-only
+rulings, then V implementation/docs/handoff. Final branch is v02-set-answers;
+the working tree is checked clean after the V commit. No push occurs.
