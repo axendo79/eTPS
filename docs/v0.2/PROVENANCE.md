@@ -1,5 +1,20 @@
 # eTPS v0.2 provenance
 
+## State-evolution corpus specification accepted (2026-10-06)
+
+The user accepted [STATE_EVOLUTION_CORPUS_SPEC](STATE_EVOLUTION_CORPUS_SPEC.md)
+draft 2 with the rulings recorded in its section 8. Claude drafted it; the
+requirement list came from the user, relaying model-advisor recommendations
+the user endorsed. A model design review (the Dot) shaped draft 2. Rulings:
+all nine families plus sub-cases; about 50 evaluation tasks after a separate
+development set; separate status/values fields with order-insensitive
+complete-set scoring; an isolated neutral-brief model session as the
+developer-directed, non-canonical author; six arms, including both projector-0
+and projector-3 Nyx configurations; provenance tasks in the first release. A
+narrow, versioned scorer extension must exist before any task is authored. The
+user builds Nyx; the author-system conflict applies. No task, answer key or
+model run exists under this specification yet.
+
 ## D10 and timing decisions and calibration exposure (2026-09-30)
 
 The user authorized opt-in d10-v1 answer tolerance and decode-v1 live timing on

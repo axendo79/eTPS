@@ -2,7 +2,7 @@
 
 Authorship/provenance: Claude (Claude Code) drafted this document on 2026-10-06 from the user's direction to specify a corpus in which evolving state, not lucky recall, decides outcomes. The requirement list in section 2 was delivered by the user (relaying a model advisor's recommendations, which the user endorsed); every operational detail below is model-proposed and under review. Draft 2 incorporates a model design review (the Dot, 2026-10-06), whose points were adopted as proposals, not rulings. Traces to [contract](MEASUREMENT_CONTRACT.md) draft 4, [corpus intake](CORPUS_INTAKE.md) and [counterexamples](COUNTEREXAMPLES.md). No task, message, answer key or count has been authored. This is a specification for authoring, not a corpus.
 
-**Status:** draft 2. Non-normative until the user accepts it. **Conflict:** the user builds Nyx, one of the systems this corpus will evaluate, and the drafting model has read Nyx's implementation. A corpus authored under this specification by the same people, or by a model session they direct, is developer-authored and non-canonical (contract §2.1). An isolated model session reduces tailoring but does not establish independence. Section 6 limits, but does not remove, that conflict.
+**Status:** draft 2, **accepted by the user on 2026-10-06** with the rulings in section 8 (recorded in [provenance](PROVENANCE.md)). No tasks are authored yet. **Conflict:** the user builds Nyx, one of the systems this corpus will evaluate, and the drafting model has read Nyx's implementation. A corpus authored under this specification by the same people, or by a model session they direct, is developer-authored and non-canonical (contract §2.1). An isolated model session reduces tailoring but does not establish independence. Section 6 limits, but does not remove, that conflict.
 
 ## 1. Purpose and claim
 
@@ -86,15 +86,13 @@ Dimension accuracy is diagnostic partial credit. It never changes binary accepta
 - No external calendar dates are required to answer probes in this release. "Earlier" and "current" refer to conversation order. The manifest still records the contract's distinction between valid time and event order (contract §3); questions needing world-validity time are out of scope.
 - No scheduled recap restating obligated state unless it is marked as a recap (contract §4).
 
-## 8. Open decisions for the user
+## 8. User rulings (2026-10-06)
 
-1. Accept or change the families F1–F9, the sub-cases and the coverage tags.
-2. Counts per family, chain-length range N, F6 distractor volume, the declared context budget, and the development-set procedure.
-3. The ambiguity and multi-valued answer format, the answer-predicate extension, and the manifest state/obligation representation (must be resolved before authoring).
-4. The authoring route (section 6.2), recognizing that any developer-directed route stays non-canonical.
-5. Arms for the first run of this corpus.
-6. Whether provenance (F8) is in the first release.
+1. **Families:** all nine families F1–F9, plus the sub-cases partial-property changes, scoped exceptions, negation/retraction and reinstatement after a lapse.
+2. **Size and pressure:** about 6 evaluation tasks per family F1–F8 plus controls, roughly 50 tasks. Counts are coverage, not statistical power. Chain lengths, distractor volume and the context budget are tuned only on the development set; the evaluation set is then frozen untouched.
+3. **Answers:** ambiguity uses separate `status` and `values` fields. A designated multi-valued field is correct only as the complete set, order-insensitive; missing or extra values fail. A narrow, versioned scorer extension implementing exactly this (exact scalar fields plus unordered complete-set fields where the manifest designates them, with no fuzzy evaluation) is built **before any task is authored**. The manifest state/obligation representation is resolved at the same time.
+4. **Authoring route:** an isolated model session given only the neutral authoring brief, explicitly developer-directed and non-canonical, with the exact author, model and session recorded. A later independent-human corpus can become the canonical test.
+5. **Arms (six):** full history, reset-only, naive extracted facts, verbatim recall, the projector-0 Nyx configuration, and the projector-3 Nyx configuration, all on the same frozen corpus. Including projector 0 tests whether projector 3's transition handling matters at all on a harder workload.
+6. **Provenance:** F8 is in the first release. Every arm sees identical visible source/message identifiers, so provenance tests retention and selection, not privileged metadata.
 
-Model-proposed recommendations, from the design review and the drafter, not selected: keep all nine families and five comparator types (full history, reset-only, naive extracted facts, verbatim recall, and the memory configurations under study); include F8 if every arm gets the same public source/message identifiers; resolve item 3 before any authoring.
-
-Nothing here selects these values. When the user accepts the specification, record the acceptance in [provenance](PROVENANCE.md). Authoring begins only after that.
+Next step: the scorer extension in ruling 3. Authoring begins only after it exists.
