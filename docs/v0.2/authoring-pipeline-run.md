@@ -174,7 +174,7 @@ sidecar projection before this new source form is executable.
 
 ### R2 — separate state-records-v1.1 intake
 
-Commit: R2 task commit, `feat(v02): add exact missing-information sidecar intake`.
+Commit: `ac2115a`, `feat(v02): add exact missing-information sidecar intake`.
 Files: new etps_v02/intake/state_records_v11.py,
 tests/test_v02_state_records_v11.py, this handoff.
 Fail-before: new test module could not import the absent extension.
@@ -186,3 +186,19 @@ IDs prevent typo-inferred absence. Exact status and optional identifier, prior
 active/expired/unresolved establishment, branch inconsistency, later establishment,
 normal projections, bounded input, opt-out and CLI hash refusal are covered.
 STUCK: none. Human review remains required; intake does not assert source meaning.
+
+### R3 — exact F9 mapping and round trips
+
+Commit: R3 task commit, `feat(v02): map exact F9 missing-information controls`.
+Files: etps_v02/intake/mapper.py, AUTHORING_MAPPER.md, new
+tests/test_v02_authoring_missing_information.py, this handoff.
+Fail-before: 8 new tests ran; 6 failed/errored because the mapper selected v1
+for the new query. Existing-ruling refusals and pre-extension byte fingerprints
+already passed. Pass-after: 8/8 new tests, 37/37 authoring tests, and full suite
+**406/406**, exit 0, 46.841 seconds. Exact source recovery, every source pointer,
+new leaf-to-sidecar derivations, matching version/SHA binding, missing-unit status
+and identifier, mixed v1/v1.1 bundles, original typed scoring, freeze verification
+and CLI no-partial-output refusals are covered. Ordinary chain and recovery
+bundles match pre-extension all-artifact SHA fingerprints. General clarification
+still refuses; rulings 1–3 fail at authoring admission and preserve mapper codes.
+STUCK: none. This is answerability only, not open-ended clarification semantics.

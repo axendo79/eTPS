@@ -9,7 +9,7 @@ python -B -m etps_v02.intake.mapper SOURCE.json NEW_OUTPUT_DIRECTORY
 ```
 
 The [authoring validator](AUTHORING_FORMAT_V1.md) runs first. All tasks are mapped
-and pass [state-records-v1 intake](STATE_RECORDS_V1.md) in memory before output
+and pass [state-records intake](STATE_RECORDS_V1.md) in memory before output
 creation. An existing destination is refused (`output_exists`). I/O errors report
 `file_unavailable`; interrupted writes must be discarded and re-derived to a new
 directory. No executable plan or experiment budget is invented.
@@ -27,6 +27,12 @@ failure paths reject or enter the exact correction/retry route. Questions are
 new user nodes immediately preceding their answer probes. Scheduled recaps and
 new-content spans are identified in hash-bound metadata, without changing scorer
 semantics. The runner delivers node text, never keys or prediction metadata.
+
+Tasks using the exact `missing_information` query receive a
+`state-records-v1.1` sidecar and matching version/hash binding. Other tasks
+retain byte-identical v1 artifacts. The explicit v1/v1.1 intake dispatcher
+validates each result; scoring, runner and replay remain unchanged. New query
+leaves are traced to sidecar fields and dimension annotations in the derivation.
 
 Requirement IDs/boundaries and tested links come from source. Version numbers
 and reciprocal links come from the ordered version list. Public source message
@@ -49,14 +55,17 @@ Mapping refusals include `delayed_obligation`, `multi_failure_recovery`,
 `alternative_answers`, `clarification_unrepresentable`, `schedule_unrepresentable`,
 `recovery_cycle`, `probe_obligation_inactive`, and `bundle_changed`. Format and
 state-record intake reason codes propagate with their evidence paths. No refusal
-becomes an approximation or a valid release. Delayed obligations and multi-probe
-linkage are explicitly unsupported by the executable pilot (intake §3).
-Clarification answers work in the scorer, but no clarification query projection
-exists in the mandatory sidecar. This is a release blocker for F9's clarification
-subcase until a separately authorized representation decision is supplied.
+becomes an approximation or a valid release. Under the maintainer's 2026-10-06
+authoring rulings 1–3, delayed starts, multi-failure recovery and alternative
+correct objects are hard authoring-stage refusals, propagated as MappingError;
+they are settled exclusions, not STUCK choices. Ruling 4 permits only F9's exact
+missing-information answerability form: literal `status = missing_information`,
+optional exact declared item ID, and no earlier establishment of that item at
+the question. The generic legacy `clarification` kind still refuses with
+`clarification_unrepresentable`; no open-ended form is approximated.
 
 Synthetic round trips exercise A→B→C, A→B→A, lapse, reinstatement, unresolved
 disagreement then precedence, partial/scoped updates, provenance, recaps, missing
-logical fields and correction spans. These are mechanical checks, not semantic
+logical fields, correction spans and a missing-unit control. These are mechanical checks, not semantic
 validation. Human cross-check review is mandatory before [freeze](CORPUS_FREEZE.md)
 under [ruling 4](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06).

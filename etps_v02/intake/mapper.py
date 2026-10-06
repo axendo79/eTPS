@@ -7,7 +7,8 @@ from pathlib import Path
 from ..scorer import InvalidRecord
 from ..workload import decode, encode, sha
 from .authoring import AuthoringError, MAX_BYTES, validate_authoring
-from .state_records import IntakeError, EventGraph, read_bounded, validate_state_records
+from .state_records import IntakeError, EventGraph, read_bounded
+from .state_records_v11 import validate_state_records
 
 VERSION = "authoring-mapper-v1"
 
@@ -54,20 +55,31 @@ def map_task(task, source_prefix, names):
     nodes = manifest["nodes"]
     accept, reject = "terminal:accept", "terminal:reject"
     nodes[accept], nodes[reject] = {"kind": "terminal", "accepted": True}, {"kind": "terminal", "accepted": False}
-    sidecar = {"version": "state-records-v1", "records": [], "fields": {}, "probes": {}}
+    sidecar_version = ("state-records-v1.1" if any(q["kind"] == "missing_information" for q in task["field_map"].values())
+                       else "state-records-v1")
+    sidecar = {"version": sidecar_version, "records": [], "fields": {}, "probes": {}}
     trace("", "manifest", "/metadata/authoring", "metadata")
     for key in ("id", "family", "coverage_tags"):
         trace("/" + key, "manifest", "/metadata/authoring/" + ("task_id" if key == "id" else key), "metadata")
     trace("/field_map", "field_map", "", "field_map")
     for field, query in task["field_map"].items():
         need(query["kind"] != "clarification", "clarification_unrepresentable", source_prefix + "/field_map/" + field,
-             "state-records-v1 has no clarification query projection; do not substitute a current query")
+             "maintainer ruling 4 admits only the exact missing_information form, not general clarification")
         sidecar["fields"][field] = {k: v for k, v in query.items() if k != "dimension"}
+        if query["kind"] == "missing_information":
+            for key in query:
+                src = "/field_map/" + escape(field) + "/" + escape(key)
+                pointer = "/" + escape(field) + "/" + escape(key)
+                if key == "dimension":
+                    trace(src, "field_map", pointer, "field_map")
+                else:
+                    trace(src, "sidecar", "/fields" + pointer, "state",
+                          [{"artifact": names["field_map"], "pointer": pointer, "kind": "field_map"}])
     recoveries = {r["id"]: r for r in task["recoveries"]}
     probes = {p["id"]: p for p in task["probes"]}
     for recovery in recoveries.values():
         need(len(recovery["failure_probes"]) == 1, "multi_failure_recovery", source_prefix + "/recoveries",
-             "manifest user.failure supports one originating probe only (CORPUS_INTAKE section 3)")
+             "maintainer ruling 2: exactly one failed question per correction")
     scheduled = []
     for message in task["conversation"]:
         scheduled.append(message["id"])
@@ -99,7 +111,8 @@ def map_task(task, source_prefix, names):
         trace(f"/conversation/{i}/recap", "manifest", "/nodes/" + escape(mid) + "/metadata/authoring/recap", "metadata")
     for i, probe in enumerate(task["probes"]):
         pp, pid = f"/probes/{i}", probe["id"]
-        need(not probe["alternative_answers"], "alternative_answers", source_prefix + pp, "set-v1 supports one correct answer object")
+        need(not probe["alternative_answers"], "alternative_answers", source_prefix + pp,
+             "maintainer ruling 3: one canonical answer object per question")
         nodes["question:" + pid] = user(probe["wording"], pid)
         expected = copy.deepcopy(probe["expected"])
         for field in probe["set_fields"]:
@@ -116,6 +129,14 @@ def map_task(task, source_prefix, names):
                          ("requirements", "obligations"), ("outcomes", "next"), ("field_map", "field_dimensions")):
             trace(pp + "/" + src, "manifest", "/nodes/" + escape(pid) + "/" + dst, "obligation" if src == "requirements" else "node")
         trace(pp + "/position", "manifest", "/nodes/" + escape("question:" + pid), "node")
+        for field, query in probe["field_map"].items():
+            if query["kind"] == "missing_information":
+                for key in query:
+                    src = pp + "/field_map/" + escape(field) + "/" + escape(key)
+                    if key == "dimension":
+                        trace(src, "manifest", "/nodes/" + escape(pid) + "/field_dimensions/" + escape(field), "node")
+                    else:
+                        trace(src, "sidecar", "/fields/" + escape(field) + "/" + escape(key), "state")
     for i, recovery in enumerate(task["recoveries"]):
         rp, rid = f"/recoveries/{i}", recovery["id"]
         nodes[rid] = user(recovery["text"], "question:" + recovery["retry"],
@@ -148,14 +169,14 @@ def map_task(task, source_prefix, names):
                 trace(vp + "/" + src, "sidecar", target + "/" + dst, "state")
             for k, req in enumerate(version["requirements"]):
                 need(req["begin_after"] == version["message"], "delayed_obligation", source_prefix + vp,
-                     "pilot requires begin_after == establishing message (CORPUS_INTAKE section 3)")
+                     "maintainer ruling 1: every requirement begins at its establishing message")
                 manifest["obligations"][req["id"]] = {"source": version["message"], "begin_after": req["begin_after"], "end_before": req["end_before"]}
                 vout["obligations"].append(copy.deepcopy(req))
                 trace(vp + f"/requirements/{k}", "manifest", "/obligations/" + escape(req["id"]), "obligation",
                       [{"artifact": names["sidecar"], "pointer": target + f"/obligations/{k}", "kind": "obligation"}])
     trace("/predictions", "predictions", "", "prediction")
     raw_sidecar = encode(sidecar)
-    manifest["metadata"]["state_records"] = {"version": "state-records-v1", "sha256": sha(raw_sidecar)}
+    manifest["metadata"]["state_records"] = {"version": sidecar_version, "sha256": sha(raw_sidecar)}
     try:
         intake = validate_state_records(manifest, raw_sidecar)
     except IntakeError as exc:
