@@ -24,14 +24,29 @@ Version arrays preserve author order; previous/next links and contiguous numbers
 are a mechanical derivation. Requirement boundaries, authority, applicability,
 answer keys, branches and predictions are supplied by the author, never inferred
 from prose. Field maps remain identical subsets of one task map. Omitted logical
-fields remain unavailable. The format can record delayed starts, multiple failure
-links, desired answer alternatives and clarification-only questions, so the
-mapper can refuse them explicitly rather than discarding an author decision.
+fields remain unavailable. The maintainer's 2026-10-06 authoring rulings 1–3 are
+hard admission rules: every requirement's `begin_after` equals its establishing
+version's `message`; every recovery's `failure_probes` array contains exactly
+one failed question; every probe's `alternative_answers` is an empty array.
+One canonical expected object is required; unordered content uses set-v1.
+These are settled exclusions, not unresolved mapping choices.
+
+Ruling 4 adds the exact `missing_information` field-map shape: `dimension`,
+`record`, `kind`, `missing_item`, `projection`, with no checkpoint. Both IDs refer
+to declared propositions. A probe must contain `status` with the status projection
+and expected literal `missing_information`; optional identifier projections
+expect the exact missing-item ID and refer to the same record/item pair. The
+mapper's [v1.1 sidecar intake](STATE_RECORDS_V1.md#state-records-v11-exact-missing-information-answerability)
+then checks absence at the probe position. No free-form clarification is accepted.
+The legacy `clarification` field shape remains parseable for compatibility but
+the mapper still refuses it as `clarification_unrepresentable`; it is not a
+second admitted answerability form.
 
 Refusal codes: `invalid_json`, `safety_limit`, `required_fields`, `closed_fields`,
 `field_type`, `format_version`, `brief_version`, `duplicate_id`, `coverage_tag`,
 `reference`, `position`, `field_map`, `answer_shape`, `unknown_overlap`, `route`,
-`span`, `prediction`, `public_identifier`, `history_order`. File-read failures
+`span`, `prediction`, `public_identifier`, `history_order`, `delayed_obligation`,
+`multi_failure_recovery`, `alternative_answers`, `missing_information_answer`. File-read failures
 use `file_unavailable` from the bounded intake reader. The first failure includes
 a source path and detail. All refusal groups have trivial SYNTHETIC fixtures.
 

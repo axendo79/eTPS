@@ -142,3 +142,9 @@ their historical `heterogeneous_field_plan` diagnostic. The [mapper](AUTHORING_M
 emits set-v1 manifests, [freeze](CORPUS_FREEZE.md) binds all artifacts and reviewed
 keys, and the [runbook](AUTHORING_RUNBOOK.md) specifies isolated authoring.
 See the [pipeline index](README.md) for the neutral brief and complete format.
+
+The maintainer's [authoring rulings](PROVENANCE.md#maintainer-authoring-rulings-2026-10-06)
+disallow alternative correct objects; unordered content still uses set-v1.
+F9's narrow [missing-information query](STATE_RECORDS_V1.md#state-records-v11-exact-missing-information-answerability)
+uses exact typed scalar status and optional identifier fields. Set-v1 and
+the scorer receive no extension or change.

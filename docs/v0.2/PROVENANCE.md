@@ -1,5 +1,41 @@
 # eTPS v0.2 provenance
 
+## Maintainer authoring rulings (2026-10-06)
+
+The maintainer supplied and accepted these four authoring rulings:
+
+1. Delayed obligation starts are disallowed; each begins at its establishing message.
+2. Multi-failure recovery is disallowed; one recovery maps to exactly one failed question.
+3. Alternative correct objects are disallowed; one canonical answer object per question,
+   with unordered multi-value content expressed using set-v1.
+4. F9 receives one narrow versioned `missing_information` query, **answerability only**:
+   exact `status = missing_information`, plus an exact missing-item identifier when
+   requested. No open-ended or "any reasonable" clarification is accepted.
+
+These settle the historical A3 STUCK list in the [handoff](authoring-pipeline-run.md#authoring-rulings--2026-10-06).
+They are distinct from the earlier state-record options rulings below. The user
+authorized local R1–R4 implementation and one commit per task on
+`v02-authoring-pipeline`, overriding CLAUDE.md's no-commit default for this task.
+Other branches, private workspaces, pushes, external network and model runs
+remain outside authorization.
+
+Codex-authored tooling under user authorization; no corpus content. Codex added
+authoring-stage reason-coded refusals, the neutral brief's rules, a separately
+versioned [state-records-v1.1 intake](STATE_RECORDS_V1.md#state-records-v11-exact-missing-information-answerability),
+the [mapper](AUTHORING_MAPPER.md) integration and [runbook](AUTHORING_RUNBOOK.md)
+review instructions. The new sidecar only adds a query kind; v1 record/state
+semantics, source files, fixtures and binding behavior remain unchanged. Ordinary
+mapper artifact bytes are checked against pre-extension fingerprints. Neither
+scorer, runner nor replay is edited or calls the intake extension.
+
+Only trivial SYNTHETIC fixtures were authored. No real task, development task,
+answer key, prediction or author response was authored or read. Earlier
+implementation exposure remains; fresh real authoring must receive only the
+neutral brief with no repository access. Intake checks declared absence and exact
+answers; human review must confirm the required item and full source history.
+Any defect still blocks release. Fail-before/pass-after evidence and full test
+totals are recorded in the handoff; all 381 pre-existing tests remain unchanged.
+
 ## Authoring-pipeline tooling authorization (2026-10-06)
 
 Codex-authored tooling under user authorization; no corpus content.
@@ -23,8 +59,8 @@ The separate tools never change scoring or replay. Field identity and plan
 grouping implement the maintainer's rulings, with unsuppliable fields unavailable.
 The freeze tool requires exact-artifact review declarations but does not prove
 semantic validity, independence, truthful provenance or attestation. The mapper
-refuses unrepresentable forms; F9 clarification remains a mandatory-sidecar
-representation blocker, disclosed in the [handoff](authoring-pipeline-run.md).
+refused unrepresentable forms at the A1–A7 handoff; that historical F9 mandatory-sidecar
+blocker is settled by the later authoring rulings and narrow extension above.
 No replacement of the missing original corpus or benchmark-validity claim is made.
 
 Validation: 381 tests pass (344 unchanged baseline plus 37 new tests); per-task

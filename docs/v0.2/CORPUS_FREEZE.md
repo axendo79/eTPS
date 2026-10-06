@@ -49,6 +49,13 @@ complete hash inventory. Any unresolved defect or missing cross-check blocks
 freeze. A `semantics_verified: false` response is always returned: the tool
 requires a declared review but cannot prove the review was performed correctly.
 
+Sidecar intake dispatches from the exact binding version: v1.1 adds only the F9
+missing-information query; v1 remains unchanged. The full v1.1 sidecar, exact
+answer/status/identifier fields, field map and intake receipt are inventoried
+and re-derived like every other artifact. Human review must additionally confirm
+that the required missing item was never established before its question; a
+declared empty history alone cannot prove faithful source interpretation.
+
 Development and evaluation are separate directories and receipts. Development
 settings have null development_freeze_sha256 and no parent receipt. Evaluation
 requires `development-freeze.json`: a development receipt whose exact byte

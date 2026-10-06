@@ -94,10 +94,10 @@ release gates. No actual author/model session or private corpus folder was creat
 
 ## A7 — documentation, provenance and final consistency verification
 
-Commit: `v02-authoring-pipeline` (final branch tip) —
+Commit: `59d1182` (A1–A7 final tip) —
 `docs(v02): link authoring pipeline and record final verification`.
-The tip reference avoids embedding a self-referential commit hash in its own
-committed handoff; A1–A6 hashes above are immutable local commit IDs.
+The original handoff used a branch-tip reference to avoid embedding a
+self-referential hash; this immutable hash identifies that historical tip.
 Files: docs/INDEX.md, docs/v0.2/README.md, PROVENANCE.md, SET_ANSWERS.md,
 STATE_RECORDS_V1.md, this handoff, and final consistency fixes/tests to the new
 brief/denylist, mapper, aggregation and freeze tools. No pre-existing test or
@@ -141,7 +141,7 @@ clean worktree checked after the A7 commit. No push or PR is performed.
 | A4 aggregation | done | `94a6521` | Initially 6 tests; final 7. Earlier aggregation STUCK resolved by ruling 2. |
 | A5 freeze | done | `3834a5c` | 6 tests; exact inventory, review, dev/eval separation and later-change refusal. |
 | A6 runbook | done | `2816c2f` | 2 tests; isolated only-brief author, private custody, human review and defect gates. |
-| A7 docs/provenance | done | `v02-authoring-pipeline` | 2 documentation tests plus final consistency regressions and full suite. |
+| A7 docs/provenance | done | `59d1182` | 2 documentation tests plus final consistency regressions and full suite. |
 
 Skipped: none. Tooling delivery is complete; real corpus authoring and execution
 are outside this session. Full F9 release remains STUCK until the clarification
@@ -189,7 +189,7 @@ STUCK: none. Human review remains required; intake does not assert source meanin
 
 ### R3 — exact F9 mapping and round trips
 
-Commit: R3 task commit, `feat(v02): map exact F9 missing-information controls`.
+Commit: `c24ccab`, `feat(v02): map exact F9 missing-information controls`.
 Files: etps_v02/intake/mapper.py, AUTHORING_MAPPER.md, new
 tests/test_v02_authoring_missing_information.py, this handoff.
 Fail-before: 8 new tests ran; 6 failed/errored because the mapper selected v1
@@ -202,3 +202,51 @@ and CLI no-partial-output refusals are covered. Ordinary chain and recovery
 bundles match pre-extension all-artifact SHA fingerprints. General clarification
 still refuses; rulings 1–3 fail at authoring admission and preserve mapper codes.
 STUCK: none. This is answerability only, not open-ended clarification semantics.
+
+### R4 — attributed rulings, procedure and final verification
+
+Commit: `v02-authoring-pipeline` (final R4 task tip),
+`docs(v02): record authoring rulings and v1.1 release procedure`.
+Files: STATE_RECORDS_V1.md, AUTHORING_FORMAT_V1.md, AUTHORING_RUNBOOK.md,
+README.md, PROVENANCE.md, CORPUS_FREEZE.md, SET_ANSWERS.md, new
+tests/test_v02_authoring_rulings_docs.py, this handoff.
+Fail-before: 2 new procedure/documentation checks failed/errored because the
+versioned query section, dispatcher instruction and attributed ruling entry were
+absent. Pass-after: 2/2 new checks and 39/39 authoring checks, all included in
+the final full-suite result below.
+The maintainer's rulings 1–4 are attributed and distinguished from the earlier
+state-record rulings. The runbook uses explicit v1/v1.1 intake for every task
+and adds human review of the required item and complete earlier source history.
+Only the brief goes to the isolated author. Existing release, development/evaluation
+separation and defect gates remain. STUCK: none; no task is skipped.
+
+Final full command:
+`C:/Users/axend/AppData/Local/Python/pythoncore-3.14-64/python.exe -B -m unittest discover -s tests -q`.
+Result: **408/408 passed**, exit 0, 51.609 seconds (381 pre-existing tests plus
+27 new tests). No pre-existing test file changed against the starting pipeline
+tip `59d1182`; `git diff --exit-code --diff-filter=MDR 59d1182 -- tests` passed.
+The original state_records.py, scorer.py and runner.py also have empty diffs
+against that tip. All new fixture data is explicitly SYNTHETIC. The separate
+brief denylist is unchanged and its existing scan passes. `git diff --check`
+passed; the post-R4 commit closure check requires a clean worktree on
+`v02-authoring-pipeline` and is reported in delivery.
+
+The historical creation point above remains `937b514`; an end-of-run read of
+`v02-set-answers` now returns `ccd241d7e3abec88448c4b19aabf35488f6e529d`.
+This queue performed no operation to move or commit on that branch, main or
+any other branch. It stays on the authorized pipeline branch without merging
+or switching to the independently advanced base.
+
+### Authoring rulings task table
+
+| Task | Status | Commit | Evidence / STUCK |
+|---|---|---|---|
+| R1 | done | `01d5f4a` | 5 new tests; authoring hard refusals and neutral brief; STUCK: none. |
+| R2 | done | `ac2115a` | 12 new tests; separate query-only v1.1 intake; unchanged v1; STUCK: none. |
+| R3 | done | `c24ccab` | 8 new tests; missing-unit round trips, freeze and exact v1 bytes; STUCK: none. |
+| R4 | done | `v02-authoring-pipeline` (final tip) | 2 new documentation checks; final 408/408 full suite; STUCK: none. |
+
+Skipped: none. The historical A3 STUCK list is superseded by settled exclusions
+and the narrow implemented F9 form. No real corpus content or prediction is
+authored; no isolated author session, external network, model run, private
+directory, other-project edit, push or PR is performed.

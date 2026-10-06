@@ -216,3 +216,72 @@ frozen logical-map/one-plan-per-repeat rulings, including omitted fields.
 declared review; [the runbook](AUTHORING_RUNBOOK.md) requires a human cross-check.
 Scoring/replay still never calls this validator or proves semantics.
 The complete [pipeline index](README.md) includes the only author-facing brief.
+
+## state-records-v1.1: exact missing-information answerability
+
+This separate opt-in version implements the maintainer's 2026-10-06 authoring
+ruling 4, attributed with rulings 1–3 in [PROVENANCE](PROVENANCE.md#maintainer-authoring-rulings-2026-10-06).
+It adds only the query kind `missing_information`. All record, version, source,
+transition, interval, obligation, probe and ordinary-query shapes and checks
+remain v1. There is no new state status or general clarification semantics.
+Existing `state-records-v1` bindings, validator behavior and fixtures are unchanged.
+
+Both the root `version` and manifest binding version are `state-records-v1.1`;
+the binding still has exactly `version` and `sha256`, hashing the original bytes.
+The new query has exactly `record`, `kind`, `missing_item`, and `projection`.
+`record` identifies the proposition needing information; `missing_item` identifies
+a separately declared required item record, such as a proposition's unit component.
+Both identifiers must resolve. Missing information is never inferred from an
+undeclared or misspelled ID. The relationship and need for the item are authored
+metadata requiring human review, not inferred from prose.
+
+The following field-map fragment is explicitly **SYNTHETIC**, only a format example:
+
+```json
+{
+  "status": {
+    "record": "SYNTHETIC-quantity",
+    "kind": "missing_information",
+    "missing_item": "SYNTHETIC-unit",
+    "projection": "status"
+  },
+  "missing_item": {
+    "record": "SYNTHETIC-quantity",
+    "kind": "missing_information",
+    "missing_item": "SYNTHETIC-unit",
+    "projection": "identifier"
+  }
+}
+```
+
+Every probe using a new query requires the literal answer field `status`, with
+this query's `status` projection and expected value exactly `missing_information`.
+Optional identifier fields use `projection = identifier` and expect exactly the
+declared missing-item ID. All new fields in that answer refer to the same
+record/item pair. Identifier-only answers, alternate status labels, vague requests
+and open-ended or "any reasonable" clarification are refused. Ordinary fields
+can coexist and still pass their original v1 state projections; the full typed-v1
+manifest is admitted before any projection check.
+
+At the probe's graph position, the missing item's version history must have no
+established version on any incoming path. An empty history is sufficient; a first
+establishment strictly later than the probe is also permitted. Prior active,
+expired, reinstated or unresolved information is not insufficient information:
+`missing_item_established` refuses it. An establishment on only some paths refuses
+with `branch_inconsistent`. Exact answer-form mismatches refuse with
+`missing_information_answer`; reference/shape/binding errors retain the v1 codes.
+This distinguishes insufficient information from forgetting and nothing more.
+
+Use the explicit dispatcher API in `etps_v02/intake/state_records_v11.py`, or:
+
+```text
+python -B -m etps_v02.intake.state_records_v11 --manifest manifest.json --sidecar state-records.json
+```
+
+The dispatcher delegates v1 bindings and opt-out unchanged to the old validator;
+unsupported bindings still refuse. The original v1 CLI/API remain available and
+intentionally refuse a v1.1 binding. Scoring, runner and replay do not call either
+intake module. A v1.1 pass adds `missing_information` to its receipt's checks and
+still returns `semantics_verified: false`. Review must cross-check public source,
+the missing item's full earlier history, exact identifiers and answer keys before
+freeze; a mismatch remains a defect blocking release.

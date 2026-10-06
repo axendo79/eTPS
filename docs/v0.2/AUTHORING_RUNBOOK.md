@@ -128,11 +128,13 @@ Windows PowerShell can use this interpreter without installing dependencies:
 $TaskPython = 'C:/Users/axend/AppData/Local/Python/pythoncore-3.14-64/python.exe'
 & $TaskPython -B -m etps_v02.intake.authoring ORIGINAL.json
 & $TaskPython -B -m etps_v02.intake.mapper ORIGINAL.json NEW_DERIVED_DIRECTORY
-& $TaskPython -B -m etps_v02.intake.state_records --manifest NEW_DERIVED_DIRECTORY/task-0001.manifest.json --sidecar NEW_DERIVED_DIRECTORY/task-0001.sidecar.json
+& $TaskPython -B -m etps_v02.intake.state_records_v11 --manifest NEW_DERIVED_DIRECTORY/task-0001.manifest.json --sidecar NEW_DERIVED_DIRECTORY/task-0001.sidecar.json
 ```
 
 Run the explicit sidecar command for **every** task (the mapper already calls the
-same validator). Preserve all receipts and reason-coded refusals. Review the
+same dispatcher). It selects v1 or v1.1 from the exact binding; v1.1 is used only
+for the new missing-information query. The original `state_records` command is
+still valid for v1-only bundles. Preserve all receipts and reason-coded refusals. Review the
 derivation log's source fields, output nodes, byte spans and requirement links
 against the unchanged original. No text/offset repair is permitted during mapping.
 Missing or contradictory source material is a finding for its author, not a guess.
@@ -155,12 +157,24 @@ and their resolution evidence. Architecture-informed selection and affiliations
 also require the specified independent challenge review; a software pass does not
 replace it or establish canonical status.
 
-Current unsupported forms are STUCK rather than approximated: delayed starts,
-multi-probe failure linkage, alternative correct answer objects, and
-`clarification_unrepresentable`. F9's legitimate-clarification subcase cannot
-pass the present mandatory sidecar projection, despite scorer support. Obtain a
-representation ruling and separately tested extension before releasing full F9
-coverage. Do not drop the subcase or substitute a different control silently.
+The maintainer's **authoring rulings 1–4 (2026-10-06)** settle the earlier A3
+STUCK list. Delayed starts, multiple failure links in one correction and alternative
+correct objects are disallowed at authoring admission. F9 permits only exact
+missing-information answerability: `status = missing_information`, plus an exact
+missing-item identifier when requested. It permits no open-ended clarification.
+The legacy/general form still refuses as `clarification_unrepresentable`.
+These are settled rulings, not missing representation decisions. The earlier
+state-record **ruling 4** about bounded intake and human review still applies;
+it is separate from this new authoring ruling 4.
+
+For each missing-information control, human review compares the missing item's earlier source history
+with the separately declared item record and probe position. Confirm that the
+item is required to answer the public question, was never supplied on any incoming
+path, and is identified exactly in any identifier field. Previously supplied but
+expired, disputed or forgotten items cannot use this control. Check that no
+undeclared-ID typo, omitted version, alternate label or vague request is disguised
+as insufficient information. The validator proves declared absence, not that the
+author's history faithfully represents the conversation.
 
 The **defect blocks release** rule is absolute: any sidecar/obligation/key
 mismatch or unresolved corpus/protocol defect prevents freeze and use as valid
