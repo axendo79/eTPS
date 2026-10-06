@@ -1,0 +1,735 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "authoring-v1",
+  "description": "Structural schema only. The strict validator additionally checks references, immutable maps, routes, typed set identity, public IDs, byte spans and bounds.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": "authoring-v1"
+    },
+    "brief_version": {
+      "const": "authoring-brief-v1"
+    },
+    "dataset": {
+      "enum": [
+        "development",
+        "evaluation"
+      ]
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/task"
+      },
+      "minItems": 1,
+      "maxItems": 256
+    }
+  },
+  "required": [
+    "version",
+    "brief_version",
+    "dataset",
+    "tasks"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "field": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "enum": [
+            "current",
+            "historical",
+            "expired",
+            "ambiguity",
+            "provenance",
+            "control"
+          ]
+        },
+        "record": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "kind": {
+          "enum": [
+            "current",
+            "at-checkpoint",
+            "status",
+            "values",
+            "provenance",
+            "clarification"
+          ]
+        },
+        "checkpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "dimension",
+        "record",
+        "kind",
+        "checkpoint"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "chain_depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "distance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entity_similarity": {
+          "enum": [
+            "distinct",
+            "similar"
+          ]
+        },
+        "ambiguity_status": {
+          "enum": [
+            "active",
+            "expired",
+            "unestablished",
+            "unresolved",
+            "resolved"
+          ]
+        },
+        "provenance_need": {
+          "enum": [
+            "needed",
+            "none"
+          ]
+        },
+        "context_pressure": {
+          "enum": [
+            "within",
+            "over"
+          ]
+        },
+        "verbatim_possible": {
+          "type": "boolean"
+        },
+        "subcases": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "partial",
+              "scoped",
+              "negation",
+              "retraction",
+              "reinstatement",
+              "revisit"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "chain_depth",
+        "distance",
+        "entity_similarity",
+        "ambiguity_status",
+        "provenance_need",
+        "context_pressure",
+        "verbatim_possible",
+        "subcases"
+      ],
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "recap"
+      ],
+      "additionalProperties": false
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 4096,
+            "uniqueItems": true
+          }
+        ]
+      }
+    },
+    "probe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "wording": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field_map": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/field"
+          }
+        },
+        "expected": {
+          "$ref": "#/$defs/answer"
+        },
+        "set_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "unknown_answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/answer"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        },
+        "alternative_answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/answer"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!\\$)[^:]+$"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "outcomes": {
+          "type": "object",
+          "properties": {
+            "correct": {
+              "type": "string",
+              "minLength": 1
+            },
+            "incorrect": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unknown": {
+              "type": "string",
+              "minLength": 1
+            },
+            "malformed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeout": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "correct",
+            "incorrect",
+            "unknown",
+            "malformed",
+            "timeout"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "wording",
+        "field_map",
+        "expected",
+        "set_fields",
+        "unknown_answers",
+        "alternative_answers",
+        "requirements",
+        "outcomes"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "authority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "message",
+        "authority",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "requirement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "kind": {
+          "enum": [
+            "current",
+            "historical"
+          ]
+        },
+        "begin_after": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "end_before": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "begin_after",
+        "end_before"
+      ],
+      "additionalProperties": false
+    },
+    "version": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "change": {
+          "enum": [
+            "establish",
+            "change",
+            "lapse",
+            "reinstate",
+            "precedence"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "expired",
+            "unresolved"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        },
+        "time": {
+          "type": "object",
+          "properties": {
+            "begin": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "end": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          },
+          "required": [
+            "begin",
+            "end"
+          ],
+          "additionalProperties": false
+        },
+        "applicability": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requirement"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "id",
+        "message",
+        "change",
+        "status",
+        "value",
+        "sources",
+        "time",
+        "applicability",
+        "requirements"
+      ],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "property": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status_labels": {
+          "type": "object",
+          "properties": {
+            "active": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expired": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unresolved": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unestablished": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "active",
+            "expired",
+            "unresolved",
+            "unestablished"
+          ],
+          "additionalProperties": false
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/version"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "id",
+        "entity",
+        "property",
+        "scope",
+        "status_labels",
+        "versions"
+      ],
+      "additionalProperties": false
+    },
+    "recovery": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "failure_probes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!\\$)[^:]+$"
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!\\$)[^:]+$"
+              }
+            ],
+            "items": false,
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        },
+        "new_spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        },
+        "retry": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        }
+      },
+      "required": [
+        "id",
+        "failure_probes",
+        "text",
+        "spans",
+        "new_spans",
+        "retry"
+      ],
+      "additionalProperties": false
+    },
+    "prediction": {
+      "type": "object",
+      "properties": {
+        "arm": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F"
+          ]
+        },
+        "failing": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "arm",
+        "failing",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!\\$)[^:]+$"
+        },
+        "family": {
+          "enum": [
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8",
+            "F9"
+          ]
+        },
+        "coverage_tags": {
+          "$ref": "#/$defs/coverage"
+        },
+        "conversation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/message"
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        },
+        "field_map": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/field"
+          }
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/probe"
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        },
+        "state_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/record"
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        },
+        "recoveries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/recovery"
+          },
+          "minItems": 0,
+          "maxItems": 4096
+        },
+        "predictions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prediction"
+          },
+          "minItems": 6,
+          "maxItems": 6
+        }
+      },
+      "required": [
+        "id",
+        "family",
+        "coverage_tags",
+        "conversation",
+        "field_map",
+        "probes",
+        "state_history",
+        "recoveries",
+        "predictions"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
