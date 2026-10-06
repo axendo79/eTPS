@@ -158,7 +158,7 @@ A3 STUCK entries above; implementation and verification follow below.
 
 ### R1 — authoring-stage refusals and neutral brief
 
-Commit: R1 task commit, `feat(v02): enforce authoring rulings at admission`.
+Commit: `01d5f4a`, `feat(v02): enforce authoring rulings at admission`.
 Files: etps_v02/intake/authoring.py, mapper.py (error-type compatibility adapter),
 AUTHORING_BRIEF.md, authoring-v1.schema.json, new
 tests/authoring_rulings_fixtures.py and tests/test_v02_authoring_rulings.py,
@@ -171,3 +171,18 @@ Pass-after: 5/5 new tests; 29/29 authoring tests; full suite **386/386**, exit 0
 53.417 seconds. The mapper preserves its public MappingError type when reporting
 the earlier authoring-stage reason codes. STUCK: none. R2/R3 will implement the
 sidecar projection before this new source form is executable.
+
+### R2 — separate state-records-v1.1 intake
+
+Commit: R2 task commit, `feat(v02): add exact missing-information sidecar intake`.
+Files: new etps_v02/intake/state_records_v11.py,
+tests/test_v02_state_records_v11.py, this handoff.
+Fail-before: new test module could not import the absent extension.
+Pass-after: 12/12 new tests and all 20 unchanged v1 intake tests (32/32 targeted).
+Cumulative suite contains 398 tests; final full-suite verification follows R4.
+The old module and fixtures are untouched. Dispatch to v1 produces byte-identical
+results; the new binding adds only the missing_information query. Declared item
+IDs prevent typo-inferred absence. Exact status and optional identifier, prior
+active/expired/unresolved establishment, branch inconsistency, later establishment,
+normal projections, bounded input, opt-out and CLI hash refusal are covered.
+STUCK: none. Human review remains required; intake does not assert source meaning.
