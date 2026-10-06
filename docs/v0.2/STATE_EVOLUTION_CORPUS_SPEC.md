@@ -1,21 +1,21 @@
 # State-evolution corpus specification
 
-Authorship/provenance: Claude (Claude Code) drafted this document on 2026-10-06 from the user's direction to specify a corpus in which evolving state, not lucky recall, decides outcomes. The requirement list in section 2 was delivered by the user (relaying a model advisor's recommendations, which the user endorsed); every operational detail below is model-proposed and under review. Traces to [contract](MEASUREMENT_CONTRACT.md) draft 4, [corpus intake](CORPUS_INTAKE.md) and [counterexamples](COUNTEREXAMPLES.md). No task, message, answer key or count has been authored. This is a specification for authoring, not a corpus.
+Authorship/provenance: Claude (Claude Code) drafted this document on 2026-10-06 from the user's direction to specify a corpus in which evolving state, not lucky recall, decides outcomes. The requirement list in section 2 was delivered by the user (relaying a model advisor's recommendations, which the user endorsed); every operational detail below is model-proposed and under review. Draft 2 incorporates a model design review (the Dot, 2026-10-06), whose points were adopted as proposals, not rulings. Traces to [contract](MEASUREMENT_CONTRACT.md) draft 4, [corpus intake](CORPUS_INTAKE.md) and [counterexamples](COUNTEREXAMPLES.md). No task, message, answer key or count has been authored. This is a specification for authoring, not a corpus.
 
-**Status:** draft 1. Non-normative until the user accepts it. **Conflict:** the user builds Nyx, one of the systems this corpus will evaluate, and the drafting model has read Nyx's implementation. Any corpus authored under this specification by the same people is developer-authored and non-canonical (contract §2.1). Section 6 limits, but does not remove, that conflict.
+**Status:** draft 2. Non-normative until the user accepts it. **Conflict:** the user builds Nyx, one of the systems this corpus will evaluate, and the drafting model has read Nyx's implementation. A corpus authored under this specification by the same people, or by a model session they direct, is developer-authored and non-canonical (contract §2.1). An isolated model session reduces tailoring but does not establish independence. Section 6 limits, but does not remove, that conflict.
 
 ## 1. Purpose and claim
 
 Measure whether a memory configuration reduces errors and user reconstruction burden when established state **changes over time**: repeated updates, lapses, unresolved disagreement and questions about earlier states. The question is comparative and system-agnostic: given identical tasks, does configuration X answer current, historical, expired, ambiguous and provenance questions more correctly and with less re-supply than simpler configurations?
 
-**Why a new corpus is needed.** In recent exploratory calibration runs on the existing 11-task workload, a reset-only arm with no memory layer accepted 10 of 11 tasks in each repeat. A workload that a no-memory arm nearly solves cannot separate memory designs. Those runs validated harness and bridge mechanics only.
+**Why a new corpus is needed.** In recent exploratory calibration runs on the existing 11-task workload, a reset-only arm with no memory layer accepted 10 of 11 tasks in each repeat. A workload that a no-memory arm nearly solves cannot separate memory designs. Those runs validated harness and bridge mechanics only. This motivation is governance context and is excluded from the authoring brief (section 6).
 
 No claim beyond the frozen corpus, profile and arms is authorized (contract §2.1, §9). A memory arm may lose.
 
 ## 2. Requirements (user-delivered)
 
 1. Long histories with repeated changes to the same property.
-2. Multiple replace → replace → expire chains.
+2. Multiple change → change → lapse chains.
 3. Historical questions mixed with current-state questions.
 4. Contradictions that remain unresolved, never silently collapsed.
 5. Irrelevant intervening facts that create context pressure.
@@ -24,68 +24,77 @@ No claim beyond the frozen corpus, profile and arms is authorized (contract §2.
 8. Task authoring done independently of any memory system's implementation details.
 9. Held-out tasks and answer keys frozen before the run.
 10. Separate scoring for current state, historical state, expired state, ambiguity and provenance.
-11. **Hard constraint:** tasks describe ordinary state evolution in natural terms. No task may use, mirror or be shaped around any evaluated system's internal vocabulary or machinery (for Nyx, for example: projector, candidate, live/retained, replacement/expiry event names, belief identifiers). Each system solves the task however it can.
+11. **Hard constraint:** tasks describe ordinary state evolution in natural terms. No task may use, mirror or be shaped around any evaluated system's internal vocabulary or machinery. The governance list of prohibited terms is kept outside the authoring brief, so it cannot itself steer authoring.
 
 ## 3. Task families
 
-Every task belongs to exactly one family. Families constrain structure, not wording. Domains are neutral and fictional (contract-style blueprint, [counterexamples](COUNTEREXAMPLES.md)). Each family needs alternate response traces for correct, wrong, unknown, malformed and timeout outcomes.
+Every task has exactly one primary family plus crossed coverage tags (section 5). Families constrain structure, not wording. Domains are neutral and fictional, with unpredictable values (no stereotyped answers such as round numbers or common names). Each task needs alternate response traces for correct, wrong, unknown, malformed and timeout outcomes.
 
 | ID | Family | Required structure | Primary scoring dimension |
 |---|---|---|---|
 | F1 | Long update chain | One property changes N times across the conversation; probe asks for the present value. | current |
-| F2 | Checkpoint history | Several changes; probe asks for the value at a named earlier point in the conversation, such as "before the second change" or "originally". | historical |
-| F3 | Change then lapse | Chains of changes ending with an explicit lapse with no successor; probe expects an explicit "none in effect" answer, not the last value. | expired |
-| F4 | Unresolved disagreement | Equal-authority sources disagree; no precedence is given. Probe expects both values plus an unresolved status. Variants add a later explicit precedence statement, after which the expected answer changes. | ambiguity |
-| F5 | Similar entities | Several entities with similar names and the same kinds of properties change independently; probes target one entity. Similarity must be natural, never spelling tricks aimed at an implementation. | current / historical |
-| F6 | Distance and pressure | The fact and updates are separated from the probe by irrelevant material exceeding a declared size; the irrelevant material makes no claims about obligated state. | current |
-| F7 | Mixed probe | One probe asks for current and historical values (and, where applicable, status) together in separate answer fields. | current + historical |
-| F8 | Provenance | Probe asks which source or message established the present value, among several sources that updated it. | provenance |
-| F9 | Controls | Retained single fact, never established, legitimate clarification, explicitly expired without any chain. These confirm baseline competence and keep baselines credible. | per task |
+| F2 | Checkpoint history | Several changes; probe asks for the value at a named earlier point in the conversation, such as "before the second change" or "originally". Includes historical questions asked after a lapse. | historical |
+| F3 | Change then lapse | Chains ending in an explicit lapse with no successor, balanced against matched tasks where the value is still in effect, was reinstated after a lapse, or was never established. Probe wording is identical across these cases. | expired |
+| F4 | Disagreement | Equal-authority sources disagree, balanced against matched tasks where precedence is stated explicitly (sometimes only later), so "unresolved" cannot be guessed. Probe wording is identical across cases. | ambiguity |
+| F5 | Similar entities | Several entities with similar names and the same kinds of properties change independently; probes target one entity. Similarity is natural, never spelling tricks. | current / historical |
+| F6 | Distance and pressure | The fact and updates are separated from the probe by irrelevant material. Some tasks stay within the declared context budget and some exceed it (section 5). The irrelevant material makes no claims about obligated state. | current |
+| F7 | Mixed probe | One probe asks for current and historical values (and, where applicable, status) together, in separate answer fields. | current + historical |
+| F8 | Provenance | Probe asks which source or message established the present value, among several sources that updated it. Every arm must have equal access to the same public source/message identifiers. | provenance |
+| F9 | Controls | Retained single fact, never established, legitimate clarification, explicitly expired without a chain. These confirm baseline competence. | per task |
 
-Within F1–F3, chain length N is drawn from a declared range and the order of change types varies. At least some chains must revisit an earlier value (A → B → A) so recency of first mention cannot stand in for currency.
+Additional sub-cases distributed across families: partial-property changes (one field of a compound value changes), scoped exceptions ("for the north site only"), negation and retraction of an earlier statement, and reinstatement after a lapse. In F1–F3, chain length N is drawn from a declared range and change types vary; some chains revisit an earlier value (A → B → A), so recency of first mention cannot stand in for currency. No exposed family names, branch names or labels appear in anything delivered to an arm.
 
 ## 4. Scoring
 
-Use the existing deterministic JSON answer contract: no model judge, no fuzzy matching (contract §5). Every answer field carries one dimension tag: `current`, `historical`, `expired`, `ambiguity`, `provenance`, or `control`.
+Use the existing deterministic JSON answer contract: no model judge, no fuzzy matching (contract §5). Every answer field carries one dimension tag: `current`, `historical`, `expired`, `ambiguity`, `provenance` or `control`. Ambiguity answers use separate fields for status and for the values, for example `{"status": "unresolved", "values": [...]}`. Status and the value set are scored as separate fields.
+
+Field units, frozen in the manifest: each answer field is one unit. A multi-valued field is correct only as the complete specified set. Malformed, unattempted and unavailable fields are not correct, and are reported with their reason codes, never zero-filled or silently dropped.
 
 Report per arm and repeat, never pooled across repeats:
 
 - the existing acceptance, first-attempt retention, RR and costs (contract §4, §6–§8), unchanged;
-- **per-dimension field accuracy**: correct fields / planned fields for each dimension tag, with planned, attempted and unavailable counts;
-- per-family results, so that one family's gains cannot hide another's losses.
+- **first-attempt dimension accuracy**: correct fields on the first scored answer probe / planned fields, per dimension;
+- **terminal dimension accuracy**: correct fields on the terminal answer after any authorized recovery / planned fields, per dimension, reported separately;
+- per-family and per-coverage-tag results, so one family's gains cannot hide another's losses.
 
-Ambiguity answers need an explicit structure, for example `{"status": "unresolved", "values": [...]}`. Multi-valued answers may need the versioned answer-predicate extension flagged in [corpus intake](CORPUS_INTAKE.md) §3 decision 2. That decision is open (section 8).
+Dimension accuracy is diagnostic partial credit. It never changes binary acceptance (contract §6). Multi-valued answers may need the versioned answer-predicate extension flagged in [corpus intake](CORPUS_INTAKE.md) §3 decision 2. That, and the manifest state/obligation representation, must be resolved before authoring.
 
-## 5. Power and baseline credibility
+## 5. Coverage, pressure and baseline credibility
 
-- **Separation target, recorded before any run:** the author predicts per family which arms should fail, and why, from the task structure alone. Predictions are frozen with the manifest. They are not used to drop or adjust tasks after observing results.
-- **No-memory arm:** F1–F8 deliver all obligated state before a reset or context boundary, so a reset-only arm cannot pass by luck. F9 controls are passable by a competent baseline.
-- **Full-history arm:** some F6 tasks exceed the declared context budget, so full history is unavailable for them by construction. Other tasks stay within budget, so full history remains a strong comparator.
-- **Naive and recall arms:** tasks must remain solvable in principle from a verbatim log; difficulty comes from distance, volume and change, not from information that only a structured store retains. A memory layer earns credit only by handling change correctly under pressure.
-- **Minimum size, proposed:** at least 6 tasks per family F1–F8 and at least 4 controls, about 50 tasks. The final counts are frozen in the manifest before execution (section 8).
+- **Coverage tags:** each task carries tags for chain depth, distance from the last relevant statement, entity similarity, ambiguity status and provenance need. Family counts are coverage targets, not statistical power. No precision or significance claim follows from them.
+- **Development and evaluation sets:** counts, chain lengths and pressure levels are chosen on a separately disclosed development set. The evaluation set is then authored and frozen untouched. No evaluation task is tuned to produce predicted winners.
+- **Separation predictions:** before any evaluation run, the author predicts per family which arms should fail, from task structure alone. Predictions are frozen with the manifest and never used to drop or adjust tasks.
+- **No-memory arm:** a reset cannot guarantee failure. Matched wording, balanced cases and unpredictable values (section 3) limit guessing, and the frequency of correct answers after a reset is measured and reported, not assumed zero.
+- **Context budget and overflow:** within-budget and over-budget tasks are separately identified within the same frozen design. Each arm's overflow behavior (truncation policy, bounded failure or declared nonparticipation) and its retrieval, storage and input ceilings are declared before the run. Every planned slot and its exposure status is preserved. A missing or nonparticipating comparator never establishes a winner (contract §8).
+- **Verbatim-retrievable cases:** some tasks fit within budget such that verbatim recall can supply every relevant old and new statement. This separates interpretation errors from retrieval failure.
+- **Proposed minimum size:** at least 6 evaluation tasks per family F1–F8 and at least 4 controls, about 50 tasks. The final counts are frozen in the manifest (section 8).
 
 ## 6. Authoring independence and freezing
 
-1. **Author:** preferably a person or model session independent of every evaluated system. A model author receives only this specification and the contract, with no system documentation, code or prior run evidence. Record the author, model and session in the authorship record (intake S2).
-2. **Held out:** nobody who changes an evaluated system's code or configuration inspects task text or answer keys before the run. Any post-freeze change creates a new corpus version (contract §8).
-3. **Freeze:** manifest, answer keys, branches, predictions and counts are hashed and committed before execution. Confirmatory use additionally needs the OpenTimestamps proofs in the [attestation decision](ATTESTATION_DECISION.md).
-4. **Storage:** task text and keys live outside public repositories (intake §5); only aggregate results and task family names are published.
-5. **Disclosure:** the author-system conflict and prior-exposure statements (intake S3–S4) travel with every result.
+1. **Authoring brief:** authors receive a neutral brief containing only the requirements in section 2 (without examples of system vocabulary) and the structure in sections 3–5, phrased system-agnostically. The brief excludes this document's motivation and prior results, all system names and documentation, code and run evidence. The conflict, governance and prohibited-term material stays in a separate governance record.
+2. **Author:** canonical status requires an author independent of every evaluated system, under the contract's governance (§2). Until then, the corpus is developer-authored and non-canonical, whoever or whatever drafts it. Record the author, any model and session, and the derivation (intake S2).
+3. **Review:** an independent review challenges not only forbidden words but also architecture-informed family selection, that is, whether the families themselves favor one design.
+4. **Held out:** nobody who changes an evaluated system's code or configuration inspects evaluation task text or answer keys before the run. Any post-freeze change creates a new corpus version (contract §8).
+5. **Freeze:** manifest, answer keys, branches, predictions, field units, overflow policies and counts are hashed and committed before execution. Confirmatory use additionally needs the OpenTimestamps proofs in the [attestation decision](ATTESTATION_DECISION.md).
+6. **Storage and reporting:** evaluation task text and answer keys live outside public repositories (intake §5). Results are still published at trial level with opaque task IDs, together with configurations, missingness reasons and IDs, component measurements and comparison diagnostics, as contract §8 requires. Aggregation never conceals failures or incomplete exposure.
+7. **Disclosure:** the author-system conflict and prior-exposure statements (intake S3–S4) travel with every result.
 
 ## 7. Prohibitions
 
 - No evaluated system's internal terms, identifiers or operation names in task text, probes or keys (requirement 11).
-- No tuning tasks against any arm's outcomes, no removing or replacing tasks after observing results, and no selective reporting.
-- No external calendar dates are required to answer probes in this corpus. "Earlier" and "current" refer to conversation order. Questions needing world-validity time are out of scope for this version.
-- No scheduled recap that restates obligated state unless it is marked as a recap (contract §4).
+- No tuning evaluation tasks against any arm's outcomes, no removing or replacing tasks after observing results, and no selective reporting.
+- No external calendar dates are required to answer probes in this release. "Earlier" and "current" refer to conversation order. The manifest still records the contract's distinction between valid time and event order (contract §3); questions needing world-validity time are out of scope.
+- No scheduled recap restating obligated state unless it is marked as a recap (contract §4).
 
 ## 8. Open decisions for the user
 
-1. Accept or change the families F1–F9 and their dimension tags.
-2. Counts per family, chain-length range N, F6 distractor volume and the declared context budget.
-3. The ambiguity and multi-valued answer format, and whether it needs the versioned answer-predicate extension.
-4. The authoring route (section 6.1): an independent person, or an isolated model session with a derivation log.
-5. Arms for the first run of this corpus (for example full history, reset-only, naive extracted facts, verbatim recall, and the memory configurations under study).
-6. Whether provenance (F8) is in the first release or deferred.
+1. Accept or change the families F1–F9, the sub-cases and the coverage tags.
+2. Counts per family, chain-length range N, F6 distractor volume, the declared context budget, and the development-set procedure.
+3. The ambiguity and multi-valued answer format, the answer-predicate extension, and the manifest state/obligation representation (must be resolved before authoring).
+4. The authoring route (section 6.2), recognizing that any developer-directed route stays non-canonical.
+5. Arms for the first run of this corpus.
+6. Whether provenance (F8) is in the first release.
+
+Model-proposed recommendations, from the design review and the drafter, not selected: keep all nine families and five comparator types (full history, reset-only, naive extracted facts, verbatim recall, and the memory configurations under study); include F8 if every arm gets the same public source/message identifiers; resolve item 3 before any authoring.
 
 Nothing here selects these values. When the user accepts the specification, record the acceptance in [provenance](PROVENANCE.md). Authoring begins only after that.
