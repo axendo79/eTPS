@@ -1,0 +1,38 @@
+# Governance-only scan list. Do not give this file to an author.
+projector
+candidate
+belief
+beliefs
+supersede
+supersession
+live
+retained
+nyx
+bridge
+eTPS run
+eTPS
+Gemini
+Gemma
+Skopos
+LM Studio
+OpenAI
+Anthropic
+Claude
+Codex
+Astra
+Fable
+memory architecture
+memory layer
+retrieval
+embedding
+vector store
+implementation
+calibration results
+conflict disclosure
+governance
+reviewer
+canonical
+non-canonical
+affiliation
+conflict
+attestation

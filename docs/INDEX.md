@@ -6,6 +6,7 @@
 - [STATUS](STATUS.md): implementation and evidence state. Read dated appendices chronologically; old session statements such as "no commits" and ZIP delivery are historical, not the current repository state.
 - [Offline runner](v0.2/OFFLINE_RUNNER.md): actual supported offline inputs, replay behavior and limitations.
 - [Corpus intake](v0.2/CORPUS_INTAKE.md): blocked original-workload intake and unset decisions; no replacement corpus is implied.
+- [Authoring pipeline](v0.2/README.md): neutral brief, strict authoring format, mapper, within-plan aggregation, reviewed freeze and isolated-session runbook; tooling and SYNTHETIC fixtures only.
 - [PROVENANCE](v0.2/PROVENANCE.md): authorship, authorization and explicit superseding decisions.
 - [Engineering/security audit, 2026-09-29](ENGINEERING_SECURITY_AUDIT_2026-09-29.md): preserved findings at the audited revision, not a claim that all findings remain open.
 - [Correctness repair handoff](V02_CORRECTNESS_REPAIR_2026-09-29.md): scope and evidence for the earlier bounded repairs. Later dated status/provenance sections record subsequent work.

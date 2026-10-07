@@ -126,6 +126,25 @@ source hashes and those warnings cannot stay identical across an implementation
 change. Arithmetic and classifications of old synthetic evidence remain exact.
 No existing export or manifest is rewritten or upgraded.
 
-State-record representation remains an independent unresolved decision; see
-[the unselected options](STATE_RECORD_OPTIONS.md). Set-v1 does not implement
-state truth, source precedence, valid time or applicability.
+State-record representation is settled for this pilot by the
+[maintainer rulings](STATE_RECORD_OPTIONS.md#maintainer-rulings-2026-10-06):
+an authoritative hash-bound sidecar with bounded intake and mandatory review.
+Set-v1 itself does not implement state truth, source precedence, valid time
+or applicability.
+
+## Authoring pipeline and aggregation (2026-10-06)
+
+The earlier repeat/heterogeneous-field STUCK items are resolved in the separate
+[corpus aggregation tool](CORPUS_AGGREGATION.md), using one immutable logical map
+per task and one hash-bound plan/repeat declaration. Omitted fields are reported
+unavailable. Existing scorer/report/replay outputs remain unchanged, including
+their historical `heterogeneous_field_plan` diagnostic. The [mapper](AUTHORING_MAPPER.md)
+emits set-v1 manifests, [freeze](CORPUS_FREEZE.md) binds all artifacts and reviewed
+keys, and the [runbook](AUTHORING_RUNBOOK.md) specifies isolated authoring.
+See the [pipeline index](README.md) for the neutral brief and complete format.
+
+The maintainer's [authoring rulings](PROVENANCE.md#maintainer-authoring-rulings-2026-10-06)
+disallow alternative correct objects; unordered content still uses set-v1.
+F9's narrow [missing-information query](STATE_RECORDS_V1.md#state-records-v11-exact-missing-information-answerability)
+uses exact typed scalar status and optional identifier fields. Set-v1 and
+the scorer receive no extension or change.
