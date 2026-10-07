@@ -79,7 +79,9 @@ def answer(value, sets, path):
     need(type(value) is dict and all(type(k) is str and k for k in value), "answer_shape", path, "expected answer object")
     for key, val in value.items():
         if key in sets:
-            need(type(val) is list and all(scalar(v) for v in val), "answer_shape", path, "expected scalar set array")
+            need(type(val) is list, "answer_shape", path, "expected scalar set array")
+            need(len(val) <= MAX_ITEMS, "safety_limit", path, "array admission ceiling")
+            need(all(scalar(v) for v in val), "answer_shape", path, "expected scalar set array")
             need(len(val) == len({(type(v).__name__, v) for v in val}), "answer_shape", path, "duplicate set element")
         else:
             need(scalar(val), "answer_shape", path, "expected scalar field")

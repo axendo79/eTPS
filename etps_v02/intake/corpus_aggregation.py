@@ -38,15 +38,30 @@ def observations(trial):
             if event["kind"] == "probe" and label["class"] in OUTCOMES]
 
 
+def preserved_reason(score):
+    """The invalidation reason the scorer's diagnostics recorded (evidence
+    invalidation already outranks an abort code there, per SET_ANSWERS)."""
+    diagnostic = (score or {}).get("dimension_accuracy") or {}
+    for phase in ("first_attempt", "terminal"):
+        dims = diagnostic.get(phase) or {}
+        for dimension in sorted(dims):
+            reasons = (dims[dimension] or {}).get("unavailable_reasons") or {}
+            if reasons:
+                return sorted(reasons)[0]
+    return None
+
+
 def phase_fields(manifest, trial, logical, phase):
-    observed = observations(trial)
-    event, outcome = observed[0 if phase == "first_attempt" else -1] if observed else (None, None)
     score = trial.get("score")
+    # An invalid measurement may stop before classification (e.g. an unmatched
+    # user payload); it stays a planned unavailable slot, never a shape error.
+    invalid = score is not None and not score["measurement_valid"]
+    observed = [] if invalid else observations(trial)
+    event, outcome = observed[0 if phase == "first_attempt" else -1] if observed else (None, None)
     node = manifest["nodes"][event["node"]] if event else None
     supplied = {name: query["dimension"] for name, query in logical.items() if node and name in node["expected"]}
     available = fields_for(manifest, node, event, outcome, supplied) if event else {}
-    invalid = score is not None and not score["measurement_valid"]
-    invalid_reason = (trial.get("reason_code") if trial["state"] == "aborted" and
+    invalid_reason = preserved_reason(score) or (trial.get("reason_code") if trial["state"] == "aborted" and
                       score and score.get("reason") == "unfinished_slot" else None) or (score.get("reason") if score else None)
     result = {}
     for name in logical:

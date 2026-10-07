@@ -259,6 +259,8 @@ def recover_source(files):
     try:
         index = decode(files["bundle.json"])
         raw = files["source.json"]
+        need(type(index) is dict and type(index.get("source_sha256")) is str and type(raw) is bytes,
+             "bundle_changed", "bundle.json", "malformed bundle index")
         need(sha(raw) == index["source_sha256"], "bundle_changed", "source.json", "source bytes changed")
         need(map_authoring(raw) == files, "bundle_changed", "bundle", "derived bytes changed or artifacts missing")
         return raw

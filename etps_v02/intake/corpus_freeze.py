@@ -184,12 +184,14 @@ def read_directory(directory):
     files, size = {}, 0
     for path in sorted(root.rglob("*")):
         need(not path.is_symlink() and not _is_junction(path), "artifact_path", str(path), "linked bundle paths refused")
-        if path.is_file():
-            need(len(files) < MAX_FILES, "safety_limit", str(root), "file admission ceiling")
-            raw = read_bounded(path, MAX_FILE_BYTES)
-            size += len(raw)
-            need(size <= MAX_BUNDLE_BYTES, "safety_limit", str(root), "bundle byte admission ceiling")
-            files[path.relative_to(root).as_posix()] = raw
+        if path.is_dir():
+            continue
+        need(path.is_file(), "artifact_path", str(path), "nonregular bundle entry refused")
+        need(len(files) < MAX_FILES, "safety_limit", str(root), "file admission ceiling")
+        raw = read_bounded(path, MAX_FILE_BYTES)
+        size += len(raw)
+        need(size <= MAX_BUNDLE_BYTES, "safety_limit", str(root), "bundle byte admission ceiling")
+        files[path.relative_to(root).as_posix()] = raw
     return files
 
 
