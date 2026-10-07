@@ -259,8 +259,13 @@ def transitions(records, graph):
                 check(transition == "establish" and version["status"] != "expired", "state_transition", path,
                       "first version must establish state")
             elif transition == "precedence":
+                # A claim is identified by its source message and typed value; the
+                # authority text is descriptive (maintainer ruling 2026-10-07).
+                selected = version["claims"][0]
                 check(previous["status"] == "unresolved" and version["status"] == "active" and
-                      version["claims"][0] in previous["claims"], "precedence_claim", path,
+                      any(claim["source"] == selected["source"] and
+                          scorer.answer_equal({"value": claim["value"]}, {"value": selected["value"]})
+                          for claim in previous["claims"]), "precedence_claim", path,
                       "precedence must select a previously recorded claim")
             elif transition == "lapse":
                 check(previous["status"] == "active" and version["status"] == "expired", "state_transition", path,
