@@ -8,6 +8,10 @@ diagnostics are implemented and covered by synthetic standard-library tests.
 Acceptance, first-attempt retention, RR and generation TPS remain separate;
 eTPS is a labeled experimental index. Legacy v0.1 modules remain preserved.
 
+The state-evolution authoring pipeline is merged in PR #25; see the
+[isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). No development
+or evaluation corpus has been authored yet.
+
 Local live work includes run 7 (three arms) and run 8 (five arms, three separate
 repeats), using google/gemma-4-e4b only. These are exploratory calibration
 observations, not benchmark results or evidence of general superiority.
@@ -257,7 +261,7 @@ Updated 2026-09-15. **An experimental byte scorer, offline runner and SQLite rep
 
 Run `python -m unittest discover -s tests -v` for synthetic checks. `python -m etps_v02.examples` reports fixture R/I/RR; TPS and experimental eTPS are unavailable because its evidence is synthetic. Pure arithmetic unit tests separately exercise dilution and cost-reversal formulas; they do not produce model performance claims.
 
-`etps_v02/workload.py`, `runner.py`, `persistence.py` and the package CLI now support exact-byte bundle import, offline scripted execution, fixed slot order, durable request/event journaling, explicit abort, replay and export. No network or model adapter exists. Every planned slot remains visible; interrupted slots cannot be silently rerun. These paths were tested with synthetic fixtures only, including separate-process replay. See [offline runner details](v0.2/OFFLINE_RUNNER.md). Offline wall time is unavailable, not estimated from harness speed.
+`etps_v02/workload.py`, `runner.py`, `persistence.py` and the package CLI now support exact-byte bundle import, offline scripted execution, fixed slot order, durable request/event journaling, explicit abort, replay and export. No network or model adapter exists (historical; superseded by the live exploratory adapter section below). Every planned slot remains visible; interrupted slots cannot be silently rerun. These paths were tested with synthetic fixtures only, including separate-process replay. See [offline runner details](v0.2/OFFLINE_RUNNER.md). Offline wall time is unavailable, not estimated from harness speed.
 
 ## Adopted revision
 

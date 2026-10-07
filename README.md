@@ -28,10 +28,11 @@ See [offline runner usage](docs/v0.2/OFFLINE_RUNNER.md) for exact-file import, s
 
 ## Current work order
 
-1. Run the synthetic replay tests and inspect exact byte-accounting results.
-2. Map the authored workload to the scorer, settle semantic coverage and budgets, and freeze external criteria and calibration counts.
-3. Review the implemented live adapter, workload mapping and enforced budgets against independent validity criteria; synthetic tests and local exploratory runs do not settle semantic validity.
-4. Run calibration under a committed manifest and complete attempt ledger; require independent timestamp proofs for confirmatory work.
+Follow the stages in the [isolated author-session runbook](docs/v0.2/AUTHORING_RUNBOOK.md):
+
+1. **Development set.** Use a fresh isolated author without evaluated-system implementation exposure, given only [AUTHORING_BRIEF.md](docs/v0.2/AUTHORING_BRIEF.md) and no repository access. Preserve original outputs and provenance in private custody, then perform admission, mapping and human review. Tune design settings only on the separately disclosed development set through separately authorized development executions; record absent evidence as absent. Freeze and verify the reviewed final development bundle before evaluation authoring.
+2. **Evaluation set.** Author the held-out corpus later, after final design settings and the development freeze are verified; do not author it while Nyx is under active development. Use a fresh isolated author given only the evaluation brief instance with frozen parameters. Keep evaluation text and keys in strict private custody, outside public repositories and away from anyone changing evaluated-system code or configuration. Apply the same admission, mapping and human review, then freeze untouched tasks, keys, field maps and predictions with the verified development parent before evaluation execution.
+3. **Freeze and later reporting.** Verify the frozen corpus before every use and freeze one plan and grouping declaration per repeat before execution. Calibration follows under a committed manifest and complete attempt ledger; confirmatory work requires completed independent external attestation. Report all planned, attempted, unavailable and unattempted slots, with separate first/final accuracy and acceptance, primary measurements and costs. Aggregate per arm within a single plan; never combine plans or repeats or tune against evaluation outcomes.
 
 No dependencies or model endpoint are needed for `python -m unittest discover -s tests -v` or `python -m etps_v02.examples`. The root Python programs remain legacy prototypes. Their self-tests and demonstrations must not be presented as validated benchmark runs.
 
