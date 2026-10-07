@@ -125,8 +125,11 @@ current value and no current claims. Reinstatement follows expired state, create
 a new active version and needs a fresh current obligation; it cannot reuse any
 older obligation ID. Unresolved versions have at least two claims from distinct
 source nodes and a null single-value projection. They stay unresolved across
-updates until a precedence version selects a previously recorded
-source/authority/value claim. The precedence event records resolution, but its
+updates until a precedence version selects a previously recorded claim. A claim
+is identified by its source node and typed value; its authority text is
+descriptive and need not match (maintainer ruling 2026-10-07). Precedence is
+admitted only from unresolved to active state; anything else is refused as
+`precedence_claim`. The precedence event records resolution, but its
 authority is not proven by the validator.
 
 Each obligation reference resolves exactly once across versions. Its executable

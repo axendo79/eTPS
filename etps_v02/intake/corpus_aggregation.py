@@ -5,8 +5,8 @@ from collections import Counter
 import json
 from pathlib import Path
 
-from ..dimension_accuracy import DIMENSIONS, fields_for
-from ..scorer import InvalidRecord, OUTCOMES, digest
+from ..dimension_accuracy import DIMENSIONS, abort_reason, fields_for
+from ..scorer import InvalidRecord, OUTCOMES, digest, score as score_record
 from ..workload import decode, encode, sha, validate_bundle
 from .authoring import field_map
 from .state_records import IntakeError, read_bounded
@@ -33,7 +33,9 @@ def observations(trial):
     if not scored or not trial.get("record"):
         return []
     events, labels = trial["record"]["events"], scored["classifications"]
-    need(len(events) == len(labels), "report_shape", trial["slot"], "classification/event count differs")
+    # An invalid measurement classifies only the prefix before it stopped.
+    need(len(events) == len(labels) or not scored["measurement_valid"] and len(labels) <= len(events),
+         "report_shape", trial["slot"], "classification/event count differs")
     return [(event, label["class"]) for event, label in zip(events, labels)
             if event["kind"] == "probe" and label["class"] in OUTCOMES]
 
@@ -51,18 +53,30 @@ def preserved_reason(score):
     return None
 
 
+def recomputed_reason(manifest, trial):
+    """The scorer's own reason for the recorded events, before an unfinished
+    slot overwrote it; diagnostics that would carry it are absent for
+    heterogeneous field plans."""
+    try:
+        return score_record(manifest, trial["record"])["reason"] if trial.get("record") else None
+    except InvalidRecord:
+        return None
+
+
 def phase_fields(manifest, trial, logical, phase):
     score = trial.get("score")
     # An invalid measurement may stop before classification (e.g. an unmatched
     # user payload); it stays a planned unavailable slot, never a shape error.
+    # Its classified answers still count as attempted (CORPUS_AGGREGATION).
     invalid = score is not None and not score["measurement_valid"]
-    observed = [] if invalid else observations(trial)
+    observed = observations(trial)
     event, outcome = observed[0 if phase == "first_attempt" else -1] if observed else (None, None)
     node = manifest["nodes"][event["node"]] if event else None
     supplied = {name: query["dimension"] for name, query in logical.items() if node and name in node["expected"]}
-    available = fields_for(manifest, node, event, outcome, supplied) if event else {}
-    invalid_reason = preserved_reason(score) or (trial.get("reason_code") if trial["state"] == "aborted" and
-                      score and score.get("reason") == "unfinished_slot" else None) or (score.get("reason") if score else None)
+    available = fields_for(manifest, node, event, outcome, supplied) if event and not invalid else {}
+    invalid_reason = preserved_reason(score) or (abort_reason(recomputed_reason(manifest, trial), trial.get("reason_code"))
+                      if trial["state"] == "aborted" and score and score.get("reason") == "unfinished_slot" else None) or (
+                      score.get("reason") if score else None)
     result = {}
     for name in logical:
         attempted = int(name in supplied)

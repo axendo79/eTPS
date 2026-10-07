@@ -261,9 +261,10 @@ def transitions(records, graph):
             elif transition == "precedence":
                 # A claim is identified by its source message and typed value; the
                 # authority text is descriptive (maintainer ruling 2026-10-07).
+                check(previous["status"] == "unresolved" and version["status"] == "active", "precedence_claim",
+                      path, "precedence must resolve a recorded disagreement into active state")
                 selected = version["claims"][0]
-                check(previous["status"] == "unresolved" and version["status"] == "active" and
-                      any(claim["source"] == selected["source"] and
+                check(any(claim["source"] == selected["source"] and
                           scorer.answer_equal({"value": claim["value"]}, {"value": selected["value"]})
                           for claim in previous["claims"]), "precedence_claim", path,
                       "precedence must select a previously recorded claim")
