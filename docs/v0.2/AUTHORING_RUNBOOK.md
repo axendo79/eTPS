@@ -104,6 +104,8 @@ development evidence exists, do not pretend tuning has happened: record it absen
 
 ### 2. Evaluation set
 
+For the first state-evolution evaluation release, held-out evaluation-set authoring begins only after the candidate Nyx implementation and comparison-arm configurations are pinned. A candidate is pinned when its commit hash and configuration are recorded in the evaluation manifest. Development-set authoring and testing may proceed earlier. Evaluation-set custody and access restrictions remain mandatory. Subsequent Nyx development requires a separately pinned candidate for evaluation.
+
 Use a fresh isolated session with only the evaluation brief instance, containing
 the neutral frozen parameters selected above. Preserve that brief's exact bytes.
 Author a new set with distinct task IDs; target about six tasks per F1–F8 plus
