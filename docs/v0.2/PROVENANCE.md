@@ -1,5 +1,37 @@
 # eTPS v0.2 provenance
 
+## Review-tools authorization and authorship (2026-10-10)
+
+The user explicitly authorized the complete local review-tools prompt, a branch
+from main 94ff867 named v02-review-tools, test-first SYNTHETIC implementation,
+documentation, full-suite execution and local commits. Authorization excludes
+push, PR, merge, private-workspace access, real corpus text, scoring/admission
+changes, authoring-format changes and changes to AUTHORING_BRIEF.md.
+
+Codex authored the advisory lint, offline review sheet/export, review-record
+assembler, shared factual views, new SYNTHETIC fixture builders and regressions,
+usage documentation and handoff. The human-review runbook received one added
+section; all existing rule text remains intact. Existing authoring, mapper,
+freeze gates, scoring and baseline tests remain unchanged. The software records
+literal observations and reviewer declarations; it cannot establish semantic
+validity, author independence, correct review or attestation.
+
+The source-byte SHA-256 plus task ID binds browser checklist state. Assembly
+requires every task/check and refuses every listed defect, binds all other
+artifacts, and invokes the unchanged freeze admission on a temporary copy.
+Simulated checklists and synthetic development/evaluation freeze acceptance
+are software evidence only. There was no real author session, task/key/prediction
+authoring, private corpus inspection, human approval, model execution or
+remote publication. The existing eTPS author/Nyx system-development affiliation
+remains disclosed; this tooling does not remove the conflict.
+
+Local Windows Python 3.14 verification runs 448 tests: 447 pass and the existing
+POSIX FIFO test skips. All 419 baseline tests are preserved; 29 new methods
+cover the three tools, with the embedded JavaScript executed using the already
+installed Node runtime. The [handoff](review-tools-run.md) records test-first
+failures, commits, scope checks and limits. The branch stays checked out and
+unpushed.
+
 ## Maintainer authoring rulings (2026-10-06)
 
 The maintainer supplied and accepted these four authoring rulings:

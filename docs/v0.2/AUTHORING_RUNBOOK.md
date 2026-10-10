@@ -184,6 +184,29 @@ evidence. Write a closed `review.json` with cross-check true only after review,
 empty defects only after every defect is resolved, and exact SHA-256 for every
 other artifact. A mismatch invalidates release even when an execution would score.
 
+### Maintainer review tools
+
+The authorized human custodian can run these private, advisory tools alone; for
+held-out evaluation, no agent may read the corpus through them. Run
+[authoring_lint](AUTHORING_LINT.md), then generate the self-contained
+[review_sheet](REVIEW_SHEET.md), inspect every task against all rules above, and
+download the named reviewer's checklist, notes and defects as review-input-v1.
+Retain those exact outputs in the complete private bundle before assembly.
+
+~~~powershell
+& $TaskPython -B -m etps_v02.intake.authoring_lint ORIGINAL.json > PRIVATE_LINT.json
+& $TaskPython -B -m etps_v02.intake.review_sheet ORIGINAL.json NEW_PRIVATE_SHEET.html
+& $TaskPython -B -m etps_v02.intake.review_record REVIEW_INPUT.json PRIVATE_BUNDLE NEW_REVIEW.json
+~~~
+
+[review_record](REVIEW_RECORD.md) refuses changed source hashes, incomplete
+checklists or any defect, binds every other artifact, and runs the unchanged
+freeze admission gate in a temporary copy. Point TEMP/TMP at a private temporary
+directory outside the bundle. Its output must be a new path outside the bundle;
+the custodian retains its exact bytes as review.json in a new complete release
+bundle before the existing freeze/verify commands below. Lint findings do not
+decide defects, and no software pass replaces human review or challenge review.
+
 ## Freeze and later reporting
 
 Place the exact brief, `authorship.json`, `settings.json`, reviewed original/
