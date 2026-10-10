@@ -83,7 +83,10 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
         identities += [("probe", p["id"]) for p in task["probes"]]
         identities += [("record", r["id"]) for r in task["state_history"]]
         styles = sorted({prefix_pattern(i) for _, i in identities})
-        patterns[task["id"]] = sorted(set(styles + [prefix_pattern(task["id"])]))
+        # A separatorless task ID (d1t01) has no prefix style of its own, so it
+        # must not register as a competing "<unprefixed>" style.
+        own = prefix_pattern(task["id"])
+        patterns[task["id"]] = sorted(set(styles + ([own] if own != "<unprefixed>" else [])))
         if len(styles) > 1:
             for kind, identity in identities:
                 add("id_style_mixed", task, message=identity if kind == "message" else None,

@@ -94,6 +94,15 @@ class AuthoringLintTests(unittest.TestCase):
         rows = self.findings(doc, "id_style_mixed")
         self.assertTrue(any(r["record_id"] == "DIFFERENT-record" for r in rows))
 
+    def test_separatorless_task_ids_are_not_a_competing_style(self):
+        # A consistent document whose task IDs have no separator (t1 with
+        # t1-m01 children) must not be reported as mixed at document scope.
+        doc = synthetic_two_task_document()
+        for index, task in enumerate(doc["tasks"]):
+            old, new = task["id"], f"t{index + 1}"
+            doc["tasks"][index] = json.loads(encode(task).decode("utf-8").replace(old, new))
+        self.assertEqual(self.findings(doc, "id_style_mixed"), [])
+
     def test_evidence_positions_count_characters_and_sources_not_utf8_bytes(self):
         doc = synthetic_review_document()
         task = doc["tasks"][0]
