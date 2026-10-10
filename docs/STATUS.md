@@ -12,6 +12,14 @@ The state-evolution authoring pipeline is merged in PR #25; see the
 [isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). No development
 or evaluation corpus has been authored yet.
 
+Local maintainer review tools on v02-review-tools add advisory authoring lint,
+an offline source-hash-bound HTML checklist/export, and review.json assembly
+validated through the unchanged freeze gate in a temporary copy. See the
+[human review procedure](v0.2/AUTHORING_RUNBOOK.md#maintainer-review-tools) and
+[review-tools handoff](v0.2/review-tools-run.md). Synthetic validation passes
+448 tests (447 passing, one pre-existing Windows FIFO skip); no real corpus,
+human review, model run or remote publication is claimed.
+
 Local live work includes run 7 (three arms) and run 8 (five arms, three separate
 repeats), using google/gemma-4-e4b only. These are exploratory calibration
 observations, not benchmark results or evidence of general superiority.
