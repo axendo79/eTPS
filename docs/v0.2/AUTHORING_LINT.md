@@ -27,7 +27,7 @@ snippet (up to 240 characters). Codes and precise observation rules:
 | `status_word_leak` | A declared label or configured annotation phrase occurs with Unicode word boundaries, case-insensitively and with flexible whitespace. Ordinary uses can be false positives. |
 | `question_reference_in_filler` | A configured question-reference phrase occurs in any conversation message, including a state source. The code name does not assert that the message is filler. |
 | `id_style_mixed` | Message/probe/record IDs have differing prefix patterns within a task, or task-ID/content patterns differ across the document. A prefix is everything through the final hyphen, underscore or dot; digit runs become #; IDs without separators are unprefixed. This convention is advisory and never changes IDs or admission. |
-| `evidence_position` | For context_pressure=over only, each field lists the selected version's transition and claim source messages, character start/end, start/total fraction and characters from source start to probe. No version means no positioned source; absence cannot be localized to a message. |
+| `evidence_position` | For family F8 or context_pressure=over, each field lists the selected version's transition and claim source messages, character start/end, start/total fraction and characters from source start to probe. No version means no positioned source; absence cannot be localized to a message. |
 | `key_restatement_window_counts` | Per-probe number of examined messages, their IDs, literal field/member/message hits and source-exempted hits. These are counts, not a difficulty score. |
 
 The default window is 2. A scheduled probe follows its position message, which

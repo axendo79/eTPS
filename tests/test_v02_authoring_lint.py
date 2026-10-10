@@ -107,6 +107,8 @@ class AuthoringLintTests(unittest.TestCase):
         self.assertEqual(answer["sources"][0]["message_id"], "SYNTHETIC-m0")
         task["coverage_tags"]["context_pressure"] = "within"
         self.assertEqual(self.findings(doc, "evidence_position"), [])
+        task["family"] = "F8"
+        self.assertEqual(len(self.findings(doc, "evidence_position")), len(task["field_map"]))
 
     def test_multiple_claim_sources_and_checkpoint_versions_remain_distinct(self):
         doc = synthetic_document(("SYNTHETIC_FIRST", ("unresolved", None,

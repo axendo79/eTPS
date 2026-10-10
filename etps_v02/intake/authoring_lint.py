@@ -124,7 +124,7 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
                         add("answer_restated_before_probe", task, message=message["id"], probe=probe["id"],
                             evidence=snippet(message["text"], span), field=field, expected_value=value,
                             kind=query["kind"], match_characters=list(span))
-                if task["coverage_tags"]["context_pressure"] == "over":
+                if task["family"] == "F8" or task["coverage_tags"]["context_pressure"] == "over":
                     total = sum(len(m["text"]) for m in task["conversation"])
                     offsets, offset = {}, 0
                     for message in task["conversation"]:
