@@ -69,8 +69,8 @@ Exact local outputs are retained in ignored `scratch/tmp/`: `baseline-tests.txt`
 `brief-v2-red.txt`, `brief-denylist-red.txt`, `normalized-red.txt`,
 `brief-v2-first-pass.txt`, `brief-v2-additional-red.txt`, `brief-v2-pass.txt`,
 `normalized-pass.txt`, `brief-denylist-pass.txt` and `legacy-lint-pass.txt`.
-They contain synthetic software output only. Final full-suite/commit records
-are appended after verification.
+They contain synthetic software output only. Full-suite and commit records
+follow below.
 
 ## STUCK-DECISION
 
@@ -110,3 +110,22 @@ V1 brief checkout SHA-256:
 All **134 local Markdown links** across the affected maintainer docs resolve.
 Scope audit output: `scratch/tmp/scope-verification.txt`. `git diff --check`
 passes. Main still reports `94ff86720769bb001430e7739596972c231c2cf0` on `main`.
+
+After the final status/provenance/brief wording edits, **24 affected documentation
+and brief methods pass** (3 denylist, 2 index/provenance, 2 runbook and 17 v2).
+Output: `scratch/tmp/final-doc-checks.txt`. The only later code edit was a comment
+clarifying the already-tested source exemptions; no functional change followed
+the passing full suite, so the suite was not repeated without a new reason.
+
+## Local commits and delivery
+
+| Commit | Content |
+|---|---|
+| `fd0fa6d0b415fcd650dd78c8cc5f80dd8f7e19d2` | Build items 1–5: brief, version admission/schema/propagation, advisory lint, diagnostic scorer, tests/docs and initial evidence record. |
+| Documentation commit containing this final record, subject `Record brief v2 verification and local delivery` | Build item 6: final test/scope/commit evidence. Resolve its exact ID with `git log -1 --format=%H` on the delivered branch. |
+
+The worktree and `v02-brief-v2` branch are left in place, locally committed and
+unpushed. The main checkout remains pinned. The temporary logs remain ignored;
+no private proposal bytes, corpus artifact or answer key is committed. The
+pending choices above require specification/review decisions before relevant
+real authoring/execution, not further guessing by this implementation.
