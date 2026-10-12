@@ -9,8 +9,24 @@ Acceptance, first-attempt retention, RR and generation TPS remain separate;
 eTPS is a labeled experimental index. Legacy v0.1 modules remain preserved.
 
 The state-evolution authoring pipeline is merged in PR #25; see the
-[isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). No development
-or evaluation corpus has been authored yet.
+[isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). This checkout contains
+SYNTHETIC tooling fixtures. This implementation task neither inspects nor authors
+private development or evaluation corpora.
+
+Local `v02-brief-v2` work from unmerged `v02-review-tools` adds the neutral
+[authoring brief v2](v0.2/AUTHORING_BRIEF_V2.md), dual-version authoring admission
+with v2-only pinned-ID refusal, version propagation through mapping/freeze,
+field-answer-form lint and a three-message v2 hygiene window. Human review now
+uses lint v2. The [normalized diagnostic scorer](v0.2/NORMALIZED_SCORE.md) produces
+paired strict/normalized answer reports without changing strict acceptance,
+runner, replay, RR or TPS. V1 brief bytes and frozen-release admission remain
+preserved. See the [handoff](v0.2/brief-v2-run.md) for pending STUCK-DECISION items.
+
+Windows Python 3.14 verification runs **474 tests: 473 pass and the existing FIFO
+test skips**, against a 449-test baseline with one skip. Only the required
+existing denylist test was extended; all other baseline test files are preserved.
+This is Codex-authored SYNTHETIC software evidence, not a corpus/model run,
+independent review or benchmark claim. Local commits only; no push, PR or merge.
 
 Local maintainer review tools on v02-review-tools add advisory authoring lint,
 an offline source-hash-bound HTML checklist/export, and review.json assembly

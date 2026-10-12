@@ -8,6 +8,9 @@
 - [Offline runner](v0.2/OFFLINE_RUNNER.md): actual supported offline inputs, replay behavior and limitations.
 - [Corpus intake](v0.2/CORPUS_INTAKE.md): blocked original-workload intake and unset decisions; no replacement corpus is implied.
 - [Authoring pipeline](v0.2/README.md): neutral brief, strict authoring format, mapper, within-plan aggregation, reviewed freeze and isolated-session runbook; tooling and SYNTHETIC fixtures only.
+- [BRIEF_V2](v0.2/AUTHORING_BRIEF_V2.md): current neutral authoring rules, explicit answer forms, pinned IDs and conversation/context hygiene.
+- [Normalized diagnostic score](v0.2/NORMALIZED_SCORE.md): paired strict/normalized answer reports; strict acceptance remains authoritative.
+- [Brief-v2 handoff](v0.2/brief-v2-run.md): local test-first evidence, commits and STUCK-DECISION items.
 - [PROVENANCE](v0.2/PROVENANCE.md): authorship, authorization and explicit superseding decisions.
 - [Engineering/security audit, 2026-09-29](ENGINEERING_SECURITY_AUDIT_2026-09-29.md): preserved findings at the audited revision, not a claim that all findings remain open.
 - [Correctness repair handoff](V02_CORRECTNESS_REPAIR_2026-09-29.md): scope and evidence for the earlier bounded repairs. Later dated status/provenance sections record subsequent work.
@@ -16,6 +19,7 @@
 
 ## Historical or superseded in part
 
+- [Authoring brief v1](v0.2/AUTHORING_BRIEF.md): historical, byte-unchanged; still accepted for frozen releases.
 - [CLAUSE_REVIEW](v0.2/CLAUSE_REVIEW.md): draft-2/draft-3 analysis. Token-boundary requirements are superseded by draft 4's primary UTF-8 byte accounting; historical paper cases are not new corpus tasks.
 - [ACCEPTANCE_TIMING_REVIEW](v0.2/ACCEPTANCE_TIMING_REVIEW.md): historical proposed acceptance/timing gates. Use the current contract and runner documentation to distinguish adopted policy from implemented checks.
 - [COUNTEREXAMPLES](v0.2/COUNTEREXAMPLES.md): retains historical rows and revisions. Old token-based rows cannot be relabeled as byte measurements or empirical results.

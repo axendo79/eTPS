@@ -1,5 +1,33 @@
 # eTPS v0.2 provenance
 
+## Brief-v2 authorization and authorship (2026-10-12)
+
+The user authorized the complete brief-v2 prompt: an isolated worktree and branch
+`v02-brief-v2` from unmerged `origin/v02-review-tools`, test-first SYNTHETIC code,
+tests/docs, full-suite execution and local commits. The approved binding proposal
+was the sole authorized private-workspace read. Main remained pinned; no other
+private content/corpus, model execution, push, PR or merge was accessed/performed.
+Temporary artifacts and TEMP/TMP stayed in this worktree's ignored scratch/tmp.
+
+Codex authored the full neutral v2 brief, dual-version admission/schema support,
+v2-only ID refusal, mapper/freeze version propagation, advisory answer-form and
+hygiene checks, pure paired normalized diagnostic score, synthetic fixtures/tests
+and documentation. V1's condition-design paragraph is omitted in v2 under the
+prompt's explicit neutrality instruction; anonymous A–F prediction rules remain.
+AUTHORING_BRIEF.md v1 and strict scorer/runner/replay/legacy bytes are unchanged.
+The existing denylist test is extended for v2; other baseline tests are preserved.
+No new authoring refusal beyond v2 ID style resolves the flagged semantic/
+representation issues in the [handoff](brief-v2-run.md). The normalized scorer
+does not enter acceptance; its metadata/grammar/report integration choices are
+explicitly documented as pending, not adopted experimental settings.
+
+Windows Python 3.14 baseline: 449 tests run, 448 pass and one existing FIFO skip.
+Final suite: 474 run, 473 pass and the same skip. These are software checks only,
+not actual authoring/review, model outcomes, corpus validity or attestation.
+There is no retrospective rescore or new model-setting/pilot condition. The
+eTPS author/Nyx developer affiliation remains disclosed; Nyx must be allowed
+to lose. Local branch/worktree remain unpushed for review.
+
 ## Review-tools authorization and authorship (2026-10-10)
 
 The user explicitly authorized the complete local review-tools prompt, a branch

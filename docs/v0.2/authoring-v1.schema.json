@@ -8,7 +8,7 @@
       "const": "authoring-v1"
     },
     "brief_version": {
-      "const": "authoring-brief-v1"
+      "enum": ["authoring-brief-v1", "authoring-brief-v2"]
     },
     "dataset": {
       "enum": [

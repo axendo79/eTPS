@@ -139,7 +139,8 @@ def admission(files, dataset):
     need(type(review["defects"]) is list and not review["defects"], "review_defect", "review.defects", "any unresolved defect blocks freeze/release")
     need(review["artifacts"] == {name: sha(raw) for name, raw in files.items() if name != "review.json"},
          "review_binding", "review.artifacts", "review must bind every other exact artifact")
-    need(b"authoring-brief-v1" in files["authoring-brief.md"], "brief_version", "authoring-brief.md", "declared brief version missing")
+    need(index["brief_version"].encode("utf-8") in files["authoring-brief.md"],
+         "brief_version", "authoring-brief.md", "declared brief version missing")
     return index
 
 

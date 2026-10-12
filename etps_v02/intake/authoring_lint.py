@@ -5,11 +5,11 @@ import re
 import sys
 
 from ..workload import encode, sha
-from .authoring import MAX_BYTES
+from .authoring import BRIEF_V2, MAX_BYTES, exact_answer
 from .state_records import IntakeError, read_bounded
 from ._review_support import document, field_sources, field_version, probe_context
 
-VERSION = "authoring-lint-v1"
+VERSION = "authoring-lint-v2"
 DEFAULT_STATUS_PHRASES = ("expires here", "new active version", "fresh version", "status label")
 DEFAULT_QUESTION_PHRASES = ("the question that follows", "the next question", "the following question",
     "the upcoming question", "the subsequent question", "the question below", "the question to follow")
@@ -52,15 +52,64 @@ def prefix_pattern(identifier):
     return re.sub(r"\d+", "#", match[1]) + "<suffix>" if match else "<unprefixed>"
 
 
-def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None):
-    if type(window) is not int or window < 0:
+def field_clauses(wording, field, fields):
+    """Literal field-scoped clauses, not a natural-language interpretation."""
+    names = "|".join(re.escape(name) for name in sorted(fields, key=lambda n: (-len(n), n)))
+    clauses = re.split(r"[.;!?\n]+|(?=\b(?:For|Return|Report|Provide|Give)\s+(?:field\s+)?(?:"
+                       + names + r")(?!\w))", wording)
+    return [clause for clause in clauses if word_match(clause, field)]
+
+
+def missing_answer_forms(probe, field, query, record):
+    expected = probe["expected"][field]
+    is_set = field in probe["set_fields"]
+    values = expected if is_set else [expected]
+    status = query["kind"] == "status" or (query["kind"] == "missing_information" and query["projection"] == "status")
+    identifier = query["kind"] == "provenance" or (query["kind"] == "missing_information" and query["projection"] == "identifier")
+    forms = set()
+    if is_set:
+        forms.add("array")
+        if not values:
+            forms.add("empty_array_when_none")
+    for value in values:
+        forms.add("null_when_none" if value is None else "status_words" if status else
+                  "bare_id" if identifier else "number" if type(value) is int else "exact_text")
+    labels = set(record["status_labels"].values())
+    if query["kind"] == "missing_information" and status:
+        labels.add("missing_information")
+    clauses = field_clauses(probe["wording"], field, probe["field_map"])
+
+    def states(clause, form):
+        if form == "number":
+            return bool(re.search(r"\bbare\s+JSON\s+numbers?\b", clause, re.I))
+        if form == "exact_text":
+            return bool(re.search(r"\bexact(?:ly)?\b", clause, re.I) and
+                        re.search(r"\b(?:text|written|conversation)\b", clause, re.I))
+        if form == "bare_id":
+            return bool(re.search(r"\bbare\s+(?:IDs?|identifiers?)\b", clause, re.I))
+        if form == "status_words":
+            return bool(re.search(r"\b(?:allowed|one\s+of)\b", clause, re.I)) and all(word_match(clause, label) for label in labels)
+        none = bool(re.search(r"\b(?:nothing\s+applies|none|no\s+(?:values?|items?|sources?|information)\s+(?:appl(?:y|ies)|exists?)|never\s+set|cancelled|canceled)\b", clause, re.I))
+        if form == "null_when_none":
+            return bool(word_match(clause, "null")) and none
+        if form == "array":
+            return bool(word_match(clause, "array"))
+        return bool(word_match(clause, "empty") and word_match(clause, "array")) and none
+
+    return sorted(form for form in forms if not any(states(clause, form) for clause in clauses))
+
+
+def lint_authoring(raw, *, window=None, status_phrases=None, question_phrases=None):
+    if window is not None and (type(window) is not int or window < 0):
         raise IntakeError("lint_config", "window", "expected nonnegative integer")
-    status_phrases = DEFAULT_STATUS_PHRASES if status_phrases is None else status_phrases
+    doc, findings = document(raw), []
+    v2 = doc["brief_version"] == BRIEF_V2
+    window = (3 if v2 else 2) if window is None else window
+    status_phrases = DEFAULT_STATUS_PHRASES + (("never established",) if v2 else ()) if status_phrases is None else status_phrases
     question_phrases = DEFAULT_QUESTION_PHRASES if question_phrases is None else question_phrases
     for name, phrases in (("status_phrases", status_phrases), ("question_phrases", question_phrases)):
         if type(phrases) not in (list, tuple) or any(type(p) is not str or not p.strip() for p in phrases):
             raise IntakeError("lint_config", name, "expected nonempty literal phrases")
-    doc, findings = document(raw), []
 
     def add(code, task, *, message=None, probe=None, evidence="", **facts):
         findings.append({"code": code, "level": "info" if code in ("evidence_position", "key_restatement_window_counts") else "advisory",
@@ -99,7 +148,8 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
             hits, exempt = 0, 0
             for field, query in sorted(probe["field_map"].items()):
                 record, version = field_version(task, probe, query)
-                if query["kind"] in ("status", "missing_information"):
+                is_status = query["kind"] == "status" or (query["kind"] == "missing_information" and query["projection"] == "status")
+                if is_status:
                     allowed = set(record["status_labels"].values())
                     if query["kind"] == "missing_information":
                         allowed.add("missing_information")
@@ -107,12 +157,25 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
                     if missing:
                         add("status_vocabulary_missing", task, probe=probe["id"], evidence=snippet(probe["wording"]),
                             field=field, allowed_labels=sorted(allowed), missing_labels=missing)
+                missing_forms = missing_answer_forms(probe, field, query, record)
+                if missing_forms:
+                    add("answer_form_missing", task, probe=probe["id"], evidence=snippet(probe["wording"]),
+                        field=field, kind=query["kind"], missing_forms=missing_forms)
+                if v2 and query["kind"] == "missing_information" and not word_match(probe["wording"], query["missing_item"]):
+                    add("missing_item_not_named", task, probe=probe["id"], evidence=snippet(probe["wording"]),
+                        field=field, missing_item=query["missing_item"])
                 expected = probe["expected"][field]
+                if v2 and query["kind"] == "values":
+                    in_force = ([] if version is None or version["status"] == "expired" else
+                                [version["value"]] if version["status"] == "active" else
+                                [s["value"] for s in version["sources"]])
+                    if not exact_answer({field: expected}, {field: in_force}, [field]):
+                        add("values_not_in_force", task, probe=probe["id"], evidence=snippet(probe["wording"]),
+                            field=field, expected_values=expected, declared_values_in_force=in_force)
                 values = expected if field in probe["set_fields"] else [expected]
                 for value in values:
-                    # Exempt the selected version's establishing message and
-                    # matching claim sources. Provenance IDs are always reported,
-                    # including their public message prefixes, as requested.
+                    # V1 keeps establishment/matching-source exemptions. V2
+                    # reports those hits too; provenance IDs are always reported.
                     sources = {version["message"]} if version else set()
                     if version:
                         sources.update(s["message"] for s in version["sources"] if normalized(s["value"]) == normalized(value))
@@ -120,13 +183,22 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
                         span = normalized_match(message["text"], value)
                         if not span:
                             continue
-                        if query["kind"] != "provenance" and message["id"] in sources:
+                        if not v2 and query["kind"] != "provenance" and message["id"] in sources:
                             exempt += 1
                             continue
                         hits += 1
                         add("answer_restated_before_probe", task, message=message["id"], probe=probe["id"],
                             evidence=snippet(message["text"], span), field=field, expected_value=value,
                             kind=query["kind"], match_characters=list(span))
+                if v2 and query["kind"] != "provenance":
+                    for source in field_sources(task, probe, query):
+                        for message in messages:
+                            span = normalized_match(message["text"], source["id"])
+                            if span:
+                                hits += 1
+                                add("answer_restated_before_probe", task, message=message["id"], probe=probe["id"],
+                                    evidence=snippet(message["text"], span), field=field, expected_value=source["id"],
+                                    kind=query["kind"], restatement="source_id", match_characters=list(span))
                 if task["family"] == "F8" or task["coverage_tags"]["context_pressure"] == "over":
                     total = sum(len(m["text"]) for m in task["conversation"])
                     offsets, offset = {}, 0
@@ -142,11 +214,23 @@ def lint_authoring(raw, *, window=2, status_phrases=None, question_phrases=None)
                     add("evidence_position", task, probe=probe["id"], evidence=snippet(probe["wording"]), field=field,
                         sources=sources, total_characters=total, probe_character=point,
                         position_basis="conversation_characters_plus_linked_corrections", kind=query["kind"])
+                    if v2 and task["coverage_tags"]["context_pressure"] == "over":
+                        positions = {m["id"]: i for i, m in enumerate(task["conversation"])}
+                        outside = [s["message_id"] for s in sources if s["start_fraction"] > 0.1 or
+                                   positions[s["message_id"]] / len(task["conversation"]) > 0.1]
+                        if outside:
+                            add("evidence_outside_first_tenth", task, probe=probe["id"], evidence=snippet(probe["wording"]),
+                                field=field, source_message_ids=outside, basis="message_and_character_start")
             add("key_restatement_window_counts", task, probe=probe["id"], evidence=snippet(probe["wording"]),
                 window_message_ids=[m["id"] for m in messages], window_messages=len(messages),
                 restatement_hits=hits, establishing_source_hits_exempted=exempt)
+        if v2:
+            add("context_pressure_unverified", task, evidence=task["coverage_tags"]["context_pressure"],
+                messages=len(task["conversation"]), characters=sum(len(m["text"]) for m in task["conversation"]),
+                required_budget_fraction="<0.5" if task["coverage_tags"]["context_pressure"] == "within" else ">=2",
+                detail="Authoring format has no token budget/counter receipt; human review must verify before freeze.")
     all_patterns = sorted({p for styles in patterns.values() for p in styles})
-    if len(all_patterns) > 1:
+    if not v2 and len(all_patterns) > 1:
         for task in doc["tasks"]:
             add("id_style_mixed", task, probe=task["probes"][0]["id"], evidence=task["id"], record_id=None,
                 scope="document", patterns=all_patterns, task_patterns=patterns[task["id"]])
@@ -162,7 +246,7 @@ def report_bytes(raw, **options):
 
 
 def add_options(parser):
-    parser.add_argument("--window", type=int, default=2, help="preceding delivered messages, including the position message (default: 2)")
+    parser.add_argument("--window", type=int, default=None, help="preceding delivered messages, including the position message (default: v1=2, v2=3)")
     parser.add_argument("--status-phrase", action="append", dest="status_phrases", help="replace default annotation phrases; repeat for each literal phrase")
     parser.add_argument("--question-phrase", action="append", dest="question_phrases", help="replace default question-reference phrases; repeat for each literal phrase")
 
