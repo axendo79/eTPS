@@ -1,5 +1,33 @@
 # eTPS v0.2 provenance
 
+## Brief-v2 amendment authorization and rulings (2026-10-14)
+
+The user authorized the amendment prompt in full: changes, SYNTHETIC test-first
+verification, full-suite execution and a local commit on the existing
+`v02-brief-v2` worktree from `9ed3890`. The specifically authorized private reads
+were the maintainer rulings and evaluation-prep draft; Addendum 7 is binding.
+No private corpus or launch folder was accessed. All writes and TEMP/TMP remain
+inside this worktree; the pinned main checkout was not accessed. No model run,
+push or remote publication was performed.
+
+The maintainer adopted S1 correction IDs `<task>-c001`, S3 message-position
+evidence within the first 10% rounded up and maintainer token-counter verification
+at freeze recorded in settings.json, S4 correction exemption from rule 6, and
+S6 keeping the normalized diagnostic as built. Rule 9's minimum becomes 1.5x.
+Codex authored the narrow v2 admission/lint changes, synthetic fixture/regressions
+and affected documentation. V1 admission and brief bytes, strict scoring,
+runner/replay and normalized-score implementation remain unchanged. The
+[handoff addendum](brief-v2-run.md#maintainer-rulings-addendum-2026-10-14) records
+test evidence; this is software verification, not corpus validity, independent
+review or a benchmark result. The author/Nyx affiliation remains disclosed and
+Nyx must be allowed to lose. The local commit remains unpushed.
+
+Windows Python 3.14 verification runs 478 tests: 477 pass and the existing
+Windows FIFO test skips. Four new SYNTHETIC methods extend the 474-test baseline;
+the amended focused suite first recorded 16 failures across 21 tests, then all
+21 passed. Scope verification preserves 93 protected files and byte-identical
+baseline reports for three v1 lint fixtures. No real corpus evidence is implied.
+
 ## Brief-v2 authorization and authorship (2026-10-12)
 
 The user authorized the complete brief-v2 prompt: an isolated worktree and branch

@@ -312,13 +312,14 @@ def validate_authoring(raw):
 
 
 def validate_v2_ids(task, path):
-    """A8 pins five declared categories; correction style is not specified."""
+    """Brief v2 pins six declared categories, including corrections."""
     def check(identifier, letter, source):
         pattern = re.escape(task["id"]) + "-" + letter + r"[0-9]{3}"
         need(re.fullmatch(pattern, identifier) is not None and not identifier.endswith("000"),
              "id_style", source, f"expected {task['id']}-{letter}001 style (001 through 999)")
 
-    for collection, letter in (("conversation", "m"), ("probes", "q"), ("state_history", "p")):
+    for collection, letter in (("conversation", "m"), ("probes", "q"), ("state_history", "p"),
+                               ("recoveries", "c")):
         for i, item in enumerate(task[collection]):
             ip = f"{path}.{collection}[{i}]"
             check(item["id"], letter, ip + ".id")

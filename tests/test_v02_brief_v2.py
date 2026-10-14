@@ -30,21 +30,43 @@ class BriefV2AdmissionTests(unittest.TestCase):
                 self.assertEqual(validate_authoring(raw), doc)
                 self.assertEqual(raw, encode(doc))
 
-    def test_v2_pins_each_of_five_id_categories_v1_stays_compatible(self):
+    def test_v2_pins_each_of_six_id_categories_v1_stays_compatible(self):
         doc = synthetic_v2(synthetic_document())
         task = doc["tasks"][0]
-        for old in (task["conversation"][0]["id"], task["probes"][0]["id"],
-                    task["state_history"][0]["id"], task["state_history"][0]["versions"][0]["id"],
-                    task["state_history"][0]["versions"][0]["requirements"][0]["id"]):
+        recovery_doc = synthetic_v2(synthetic_recovery())
+        for source, old in [(doc, identity) for identity in
+                    (task["conversation"][0]["id"], task["probes"][0]["id"],
+                     task["state_history"][0]["id"], task["state_history"][0]["versions"][0]["id"],
+                     task["state_history"][0]["versions"][0]["requirements"][0]["id"])] + [
+                    (recovery_doc, recovery_doc["tasks"][0]["recoveries"][0]["id"])]:
             for new in (old[:-3] + "1", old[:-3] + "000", old[:-3] + "1000", old.upper(), "OTHER-m001"):
                 with self.subTest(old=old, new=new):
-                    bad = synthetic_rename(doc, old, new)
+                    bad = synthetic_rename(source, old, new)
+                    for recovery in bad["tasks"][0]["recoveries"]:
+                        # Keep the synthetic span valid when its ID prefix changes.
+                        text = recovery["text"].encode("utf-8")
+                        recovery["spans"][0][:2] = [text.index(b"SYNTHETIC_A"), len(text)]
                     with self.assertRaises(AuthoringError) as caught:
                         validate_authoring(encode(bad))
                     self.assertEqual(caught.exception.code, "id_style")
                     self.assertIn("source.tasks[0]", caught.exception.path)
+                    if source is recovery_doc:
+                        self.assertEqual(caught.exception.path, "source.tasks[0].recoveries[0].id")
                     bad["brief_version"] = "authoring-brief-v1"
                     validate_authoring(encode(bad))
+
+    def test_correction_ids_preserve_spans_references_and_mapper_round_trip(self):
+        doc = synthetic_v2(synthetic_recovery())
+        task = doc["tasks"][0]
+        recovery = task["recoveries"][0]
+        self.assertEqual(recovery["id"], task["id"] + "-c001")
+        begin, end, _ = recovery["spans"][0]
+        self.assertEqual(recovery["text"].encode("utf-8")[begin:end], b"SYNTHETIC_A")
+        raw = encode(doc)
+        self.assertEqual(validate_authoring(raw), doc)
+        self.assertEqual(recover_source(map_authoring(raw)), raw)
+        same_width = synthetic_rename(doc, recovery["id"], task["id"] + "-c999")
+        self.assertEqual(validate_authoring(encode(same_width)), same_width)
 
     def test_v2_does_not_add_hygiene_or_pressure_refusals(self):
         doc = synthetic_v2(synthetic_review_document(giveaways=True))
@@ -161,12 +183,45 @@ class BriefV2LintTests(unittest.TestCase):
         self.assertEqual({r["field"] for r in self.rows(v2, "answer_restated_before_probe")},
                          {"answer", "old", "status", "values", "source"})
 
-    def test_v2_retry_wording_has_own_forms_and_correction_window(self):
+    def test_v2_retry_wording_has_own_forms_and_exempts_correction_position(self):
         doc = synthetic_v2(synthetic_recovery())
         rows = self.rows(doc)
         self.assertEqual({r["probe_id"] for r in rows}, {p["id"] for p in doc["tasks"][0]["probes"]})
-        self.assertTrue(any(r["message_id"] == "SYNTHETIC-recovery" for r in
+        task = doc["tasks"][0]
+        correction = task["recoveries"][0]
+        correction["text"] += " Source: " + task["conversation"][0]["id"]
+        self.assertFalse(any(r["message_id"] == correction["id"] for r in
+                             self.rows(doc, "answer_restated_before_probe")))
+        retry = task["probes"][1]
+        counts = next(r for r in self.rows(doc, "key_restatement_window_counts", window=1)
+                      if r["probe_id"] == retry["id"])
+        self.assertEqual(counts["window_message_ids"], [])
+        self.assertEqual(counts["restatement_hits"], 0)
+        # A retry remains subject to ordinary-message hygiene.
+        self.assertTrue(any(r["probe_id"] == retry["id"] and
+                            r["message_id"] == task["conversation"][0]["id"] for r in
                             self.rows(doc, "answer_restated_before_probe")))
+
+    def test_correction_exemption_does_not_extend_the_three_message_window(self):
+        doc = synthetic_v2(synthetic_recovery())
+        task = doc["tasks"][0]
+        for i in range(2, 6):
+            mid = task["id"] + f"-m{i:03d}"
+            task["conversation"].append({"id": mid, "text": f"[{mid}] SYNTHETIC filler.", "recap": False})
+        task["probes"][0]["position"] = task["conversation"][-1]["id"]
+        task["conversation"][-3]["text"] += " SYNTHETIC_A"
+        retry = task["probes"][1]
+        hits = self.rows(doc, "answer_restated_before_probe")
+        self.assertTrue(any(r["probe_id"] == task["probes"][0]["id"] for r in hits))
+        self.assertFalse(any(r["probe_id"] == retry["id"] for r in hits))
+        counts = next(r for r in self.rows(doc, "key_restatement_window_counts")
+                      if r["probe_id"] == retry["id"])
+        self.assertEqual(counts["window_message_ids"], [m["id"] for m in task["conversation"][-2:]])
+        task["conversation"][-2]["text"] += " SYNTHETIC_A " + task["conversation"][0]["id"]
+        hits = [r for r in self.rows(doc, "answer_restated_before_probe") if r["probe_id"] == retry["id"]]
+        self.assertTrue(hits)
+        self.assertEqual({r["message_id"] for r in hits}, {task["conversation"][-2]["id"]})
+        self.assertTrue(any(r.get("restatement") == "source_id" for r in hits))
 
     def test_cli_defaults_to_three_for_v2_and_report_is_advisory(self):
         with tempfile.TemporaryDirectory(prefix="SYNTHETIC-v2-") as temp:
@@ -198,19 +253,59 @@ class BriefV2LintTests(unittest.TestCase):
     def test_values_meaning_and_pressure_remain_advisory_without_budget_inference(self):
         doc = synthetic_v2(synthetic_review_document())
         task = doc["tasks"][0]
-        # Move the established evidence beyond the first tenth in both bases.
+        # Move the established evidence beyond the first tenth of messages.
         task["conversation"][0], task["conversation"][2] = task["conversation"][2], task["conversation"][0]
         self.assertTrue(self.rows(doc, "evidence_outside_first_tenth"))
         pressure = self.rows(doc, "context_pressure_unverified")[0]
         self.assertEqual(pressure["messages"], 5)
         self.assertEqual(pressure["characters"], sum(len(m["text"]) for m in task["conversation"]))
-        self.assertEqual(pressure["required_budget_fraction"], ">=2")
+        self.assertEqual(pressure["required_budget_fraction"], ">=1.5")
+        self.assertIn("maintainer", pressure["detail"])
+        self.assertIn("settings.json", pressure["detail"])
         task["coverage_tags"]["context_pressure"] = "within"
         self.assertEqual(self.rows(doc, "evidence_outside_first_tenth"), [])
         self.assertEqual(self.rows(doc, "context_pressure_unverified")[0]["required_budget_fraction"], "<0.5")
         task["probes"][0]["expected"]["values"] = ["SYNTHETIC_PAST"]
         self.assertTrue(self.rows(doc, "values_not_in_force"))
         self.assertEqual(validate_authoring(encode(doc)), doc)
+
+    def test_first_tenth_uses_message_position_with_rounded_up_boundary(self):
+        for total, position, outside in ((9, 0, False), (9, 1, True), (10, 1, True),
+                                         (11, 1, False), (11, 2, True), (20, 2, True)):
+            with self.subTest(messages=total, evidence_index=position):
+                doc = synthetic_v2(synthetic_review_document())
+                task = doc["tasks"][0]
+                for i in range(6, total + 1):
+                    mid = task["id"] + f"-m{i:03d}"
+                    task["conversation"].append({"id": mid, "text": f"[{mid}] SYNTHETIC filler.", "recap": False})
+                evidence = task["conversation"].pop(0)
+                task["conversation"].insert(position, evidence)
+                task["probes"][0]["position"] = task["conversation"][-1]["id"]
+                cutoff = (total + 9) // 10
+                rows = self.rows(doc, "evidence_position")
+                self.assertTrue(rows)
+                for row in rows:
+                    self.assertEqual(row["position_basis"], "conversation_message_position")
+                    self.assertEqual(row["total_messages"], total)
+                    self.assertEqual(row["first_tenth_messages"], cutoff)
+                    self.assertEqual(row["sources"][0]["message_index"], position)
+                    self.assertEqual(row["sources"][0]["message_position"], position + 1)
+                warnings = self.rows(doc, "evidence_outside_first_tenth")
+                self.assertEqual(bool(warnings), outside)
+                self.assertTrue(all(r["basis"] == "conversation_message_position" for r in warnings))
+
+    def test_character_distance_does_not_override_early_message_position(self):
+        doc = synthetic_v2(synthetic_review_document())
+        task = doc["tasks"][0]
+        for i in range(6, 12):
+            mid = task["id"] + f"-m{i:03d}"
+            task["conversation"].append({"id": mid, "text": f"[{mid}] SYNTHETIC filler.", "recap": False})
+        task["conversation"][0], task["conversation"][1] = task["conversation"][1], task["conversation"][0]
+        task["conversation"][0]["text"] += " SYNTHETIC unrelated padding" * 500
+        task["probes"][0]["position"] = task["conversation"][-1]["id"]
+        rows = self.rows(doc, "evidence_position")
+        self.assertTrue(all(r["sources"][0]["start_fraction"] > 0.1 for r in rows))
+        self.assertEqual(self.rows(doc, "evidence_outside_first_tenth"), [])
 
 
 class BriefV2DocsTests(unittest.TestCase):
@@ -219,8 +314,9 @@ class BriefV2DocsTests(unittest.TestCase):
         for term in ("bare JSON numbers", "exactly as written", "bare ID", "allowed status words",
                      "values in force", "declared item ID", "Describe events", "3 messages",
                      "upcoming question", "<task>-m001", "<task>-q001", "<task>-p001",
-                     "<task>-v001", "<task>-r001", "first 10%", "at least 2x", "under 50%",
-                     "messages and characters", "token counter"):
+                     "<task>-v001", "<task>-r001", "<task>-c001", "first 10%", "at least 1.5x", "under 50%",
+                     "messages and characters", "token counter", "message position", "rounded up",
+                     "Correction (recovery) messages are exempt", "maintainer", "settings.json"):
             self.assertIn(term, brief)
         # v1's neutral condition descriptions are kept verbatim (maintainer, 2026-10-14):
         # authors need them to write structural predictions; they name no system.

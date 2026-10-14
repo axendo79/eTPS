@@ -20,11 +20,17 @@ field-answer-form lint and a three-message v2 hygiene window. Human review now
 uses lint v2. The [normalized diagnostic scorer](v0.2/NORMALIZED_SCORE.md) produces
 paired strict/normalized answer reports without changing strict acceptance,
 runner, replay, RR or TPS. V1 brief bytes and frozen-release admission remain
-preserved. See the [handoff](v0.2/brief-v2-run.md) for pending STUCK-DECISION items.
+preserved. The maintainer's 2026-10-14 Addendum 7 settles S1/S3/S4/S6: correction
+IDs use `<task>-c001`, first-tenth evidence uses message position rounded up,
+the maintainer verifies sizes with the token counter at freeze in settings.json,
+and correction messages are exempt from rule 6. The normalized diagnostic stays
+as built; beyond-budget conversations require at least 1.5x the context budget.
+See the [handoff addendum](v0.2/brief-v2-run.md#maintainer-rulings-addendum-2026-10-14)
+for current rulings and verification; the original decision list is historical.
 
-Windows Python 3.14 verification runs **474 tests: 473 pass and the existing FIFO
-test skips**, against a 449-test baseline with one skip. Only the required
-existing denylist test was extended; all other baseline test files are preserved.
+Windows Python 3.14 verification runs **478 tests: 477 pass and the existing FIFO
+test skips**. The 2026-10-14 amendment adds four SYNTHETIC methods to the 474-test
+baseline and updates v2 fixture/regression expectations. V1 tests are preserved.
 This is Codex-authored SYNTHETIC software evidence, not a corpus/model run,
 independent review or benchmark claim. Local commits only; no push, PR or merge.
 

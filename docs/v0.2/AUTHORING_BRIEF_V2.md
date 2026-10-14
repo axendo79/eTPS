@@ -83,18 +83,22 @@ Brief v2 question and conversation rules:
 6. No message within the 3 messages before a question may restate or confirm the
    tested value or its source. The message after which the question is asked
    counts among those three; an establishing/source message is no exception.
+   Correction (recovery) messages are exempt from this rule.
 7. No filler may refer to an upcoming question.
 8. Pin one ID style, with the task's literal ID replacing `<task>`:
    `<task>-m001` for messages, `<task>-q001` for questions, `<task>-p001` for
-   propositions, `<task>-v001` for versions and `<task>-r001` for requirements.
+   propositions, `<task>-v001` for versions, `<task>-r001` for requirements and
+   `<task>-c001` for corrections.
    Use three decimal digits from 001 through 999 in each named category.
    Keep all references and public prefixes byte-exact with these identifiers.
-9. For beyond-budget tasks, place the tested evidence within the first 10% of
-   the conversation, and make the conversation exceed the context budget by
-   at least 2x. Within-budget tasks stay under 50% of the budget. State sizes in
-   messages and characters in the neutral parameter appendix, and verify them
-   with the token counter before freeze. Record the declared context budget and
-   counting convention there; do not estimate tokens from characters.
+9. For beyond-budget tasks, place the tested evidence by message position within
+   the first 10% of conversation messages, rounded up. Use one-based positions:
+   for 11 messages, evidence must be in message 1 or 2. Make the conversation
+   at least 1.5x the context budget. Within-budget tasks stay under 50% of the
+   budget. State sizes in messages and characters in the neutral parameter
+   appendix. The maintainer verifies sizes with the token counter at freeze and
+   records them in `settings.json`, with the declared context budget and counting
+   convention. Do not estimate tokens from characters.
 
 Use one fixed answer object per question. Alternative correct objects are
 disallowed; unordered multi-value content uses the designated complete-set form.

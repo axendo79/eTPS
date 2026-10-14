@@ -1,5 +1,8 @@
 # Brief v2 implementation handoff
 
+The [2026-10-14 addendum](#maintainer-rulings-addendum-2026-10-14) supersedes
+the historical S1, S3, S4 and S6 decisions recorded below.
+
 Codex-authored implementation and SYNTHETIC software checks under the user's
 local authorization, 2026-10-12. No real task/key/prediction, model execution,
 human corpus review or empirical result was produced. The approved proposal's
@@ -129,3 +132,33 @@ unpushed. The main checkout remains pinned. The temporary logs remain ignored;
 no private proposal bytes, corpus artifact or answer key is committed. The
 pending choices above require specification/review decisions before relevant
 real authoring/execution, not further guessing by this implementation.
+
+## Maintainer rulings addendum, 2026-10-14
+
+The maintainer approved evaluation-prep recommendations in **Addendum 7**:
+S1 pins the sixth ID category, `<task>-c001`, for corrections (v2 only).
+S3 makes the first 10% a message-position rule, rounded up; the maintainer
+verifies sizes with the token counter at freeze and records them in settings.json.
+S4 exempts correction messages from rule 6, including retry correction positions;
+ordinary messages remain checked within the original three-message window.
+S6 keeps the normalized diagnostic as built: a pure paired report, explicit
+provenance/missing-item ID fields and element-by-element set normalization.
+Rule 9's beyond-budget minimum is now **1.5x**, replacing 2x.
+
+Codex applied these rulings test-first using SYNTHETIC data only. The focused
+run first had 16 failures across 21 tests, then all 21 passed. Four new methods
+cover correction-ID/span/mapper preservation, exemption-window boundaries,
+rounded message-position cutoffs and character-distance independence. Historical
+v1 admission/brief and strict scoring/runner/replay/normalized scorer are unchanged.
+No private corpus or launch folder was read, and no model run or push occurred.
+
+Full suite with the requested Windows Python 3.14 interpreter and worktree
+scratch/tmp TEMP/TMP: **478 tests in 72.635 seconds, 477 pass and the existing
+Windows FIFO test skips**. Output: `scratch/tmp/brief-v2-amend-full-suite.txt`;
+focused logs: `brief-v2-amend-red.txt` and `brief-v2-amend-green.txt` in the same
+directory. Scope checks confirm 93 protected files match baseline bytes under
+their LF/CRLF checkout conventions, three SYNTHETIC v1 lint reports are
+byte-identical to baseline, and 59 local Markdown links resolve. After the final
+evidence/status edits, all nine affected documentation/brief checks pass; output:
+`scratch/tmp/brief-v2-amend-final-docs.txt`. `git diff --check` passes. This amendment
+is locally committed on `v02-brief-v2` and left unpushed.

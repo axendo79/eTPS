@@ -195,16 +195,21 @@ Use the default window for rule-6 review; a configurable shorter window is only
 a diagnostic. Check every field's exact number/text/ID/null form, allowed status
 words, the meaning of `values`, and the declared missing-item ID in each question,
 including retries. Describe events in conversation text, with no status labels,
-near-probe restatement/confirmation or upcoming-question filler cues.
+near-probe restatement/confirmation or upcoming-question filler cues. Correction
+(recovery) messages are exempt from rule 6, including retry correction positions;
+other nearby messages still undergo the check.
 
-Verify over-budget evidence lies in the first 10% and the conversation is at least
-2x the context budget; within-budget conversations must stay under 50%. Record
-message/character sizes and the exact token-counter receipt before freeze. Lint
+Verify over-budget evidence lies in the first 10% of conversation messages,
+rounded up, by message position, and the conversation is at least 1.5x the context
+budget; within-budget conversations must stay under 50%. The maintainer verifies
+message/character sizes with the token counter at freeze and records the sizes,
+budget, counting convention and receipt in `settings.json`. Lint
 reports source starts and counts but has no declared token budget or tokenizer;
 its `context_pressure_unverified` advisory requires human verification. Follow
 the unresolved representation choices in the [handoff](brief-v2-run.md); do not
-invent a new format or refusal to resolve them. V2 ID style is the sole new
-authoring refusal. V1 continues to use a two-message diagnostic window and its
+invent a new format or refusal to resolve them. The 2026-10-14 Addendum 7 in that
+handoff settles S1, S3, S4 and S6. V2 ID style is the sole new authoring refusal,
+including `<task>-c001` for corrections. V1 continues to use a two-message diagnostic window and its
 source exemptions for compatibility.
 
 Declare any [normalized diagnostic score](NORMALIZED_SCORE.md) version and ID/set

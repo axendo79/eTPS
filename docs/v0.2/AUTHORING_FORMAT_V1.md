@@ -23,10 +23,10 @@ Messages and questions must start with their exact public `[id] ` prefix.
 The format version stays `authoring-v1`; `brief_version` accepts
 `authoring-brief-v2` and historical `authoring-brief-v1` for frozen releases.
 V2 alone adds reason-coded `id_style` refusal: message/question/proposition/
-version/requirement IDs use the task's literal prefix and `m`/`q`/`p`/`v`/`r`
+version/requirement/correction IDs use the task's literal prefix and `m`/`q`/`p`/`v`/`r`/`c`
 plus three decimal digits 001–999. The rule pins spelling, not contiguous
-numbering. Correction ID style is not specified by proposal A8 and remains under
-the existing ID rules pending STUCK-DECISION. Mapper metadata and the freeze's
+numbering. The maintainer's 2026-10-14 Addendum 7 pins correction IDs as
+`<task>-c001`; historical v1 admission is unchanged. Mapper metadata and the freeze's
 existing brief-marker check propagate the declared brief version; every other
 admission/review gate remains intact. Question/hygiene/pressure checks stay
 [advisory](AUTHORING_LINT.md) with human review; they add no refusal.

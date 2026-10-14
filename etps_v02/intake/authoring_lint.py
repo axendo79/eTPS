@@ -118,6 +118,7 @@ def lint_authoring(raw, *, window=None, status_phrases=None, question_phrases=No
 
     patterns = {}
     for task in doc["tasks"]:
+        correction_ids = {r["id"] for r in task["recoveries"]}
         labels = {v for r in task["state_history"] for v in r["status_labels"].values()}
         for message in task["conversation"]:
             for phrase in sorted(labels | set(status_phrases)):
@@ -145,6 +146,10 @@ def lint_authoring(raw, *, window=None, status_phrases=None, question_phrases=No
         for probe in task["probes"]:
             context = probe_context(task, probe)
             messages = context[-window:] if window else []
+            # Corrections still occupy delivered-message positions, but rule 6
+            # exempts their text. Do not extend the window to earlier messages.
+            if v2:
+                messages = [m for m in messages if m["id"] not in correction_ids]
             hits, exempt = 0, 0
             for field, query in sorted(probe["field_map"].items()):
                 record, version = field_version(task, probe, query)
@@ -201,34 +206,38 @@ def lint_authoring(raw, *, window=None, status_phrases=None, question_phrases=No
                                     kind=query["kind"], restatement="source_id", match_characters=list(span))
                 if task["family"] == "F8" or task["coverage_tags"]["context_pressure"] == "over":
                     total = sum(len(m["text"]) for m in task["conversation"])
+                    positions = {m["id"]: i for i, m in enumerate(task["conversation"])}
+                    first_tenth = (len(task["conversation"]) + 9) // 10
                     offsets, offset = {}, 0
                     for message in task["conversation"]:
                         offsets[message["id"]] = offset
                         offset += len(message["text"])
                     point = sum(len(m["text"]) for m in context) if context else None
                     sources = [{"message_id": m["id"], "start_character": offsets[m["id"]],
+                        **({"message_index": positions[m["id"]], "message_position": positions[m["id"]] + 1} if v2 else {}),
                         "end_character": offsets[m["id"]] + len(m["text"]),
                         "start_fraction": offsets[m["id"]] / total,
                         "characters_to_probe": point - offsets[m["id"]] if point is not None else None,
                         "evidence": snippet(m["text"])} for m in field_sources(task, probe, query)]
                     add("evidence_position", task, probe=probe["id"], evidence=snippet(probe["wording"]), field=field,
                         sources=sources, total_characters=total, probe_character=point,
-                        position_basis="conversation_characters_plus_linked_corrections", kind=query["kind"])
+                        position_basis="conversation_message_position" if v2 else "conversation_characters_plus_linked_corrections",
+                        **({"total_messages": len(task["conversation"]), "first_tenth_messages": first_tenth,
+                            "character_position_basis": "conversation_characters_plus_linked_corrections"} if v2 else {}),
+                        kind=query["kind"])
                     if v2 and task["coverage_tags"]["context_pressure"] == "over":
-                        positions = {m["id"]: i for i, m in enumerate(task["conversation"])}
-                        outside = [s["message_id"] for s in sources if s["start_fraction"] > 0.1 or
-                                   positions[s["message_id"]] / len(task["conversation"]) > 0.1]
+                        outside = [s["message_id"] for s in sources if s["message_position"] > first_tenth]
                         if outside:
                             add("evidence_outside_first_tenth", task, probe=probe["id"], evidence=snippet(probe["wording"]),
-                                field=field, source_message_ids=outside, basis="message_and_character_start")
+                                field=field, source_message_ids=outside, basis="conversation_message_position")
             add("key_restatement_window_counts", task, probe=probe["id"], evidence=snippet(probe["wording"]),
                 window_message_ids=[m["id"] for m in messages], window_messages=len(messages),
                 restatement_hits=hits, establishing_source_hits_exempted=exempt)
         if v2:
             add("context_pressure_unverified", task, evidence=task["coverage_tags"]["context_pressure"],
                 messages=len(task["conversation"]), characters=sum(len(m["text"]) for m in task["conversation"]),
-                required_budget_fraction="<0.5" if task["coverage_tags"]["context_pressure"] == "within" else ">=2",
-                detail="Authoring format has no token budget/counter receipt; human review must verify before freeze.")
+                required_budget_fraction="<0.5" if task["coverage_tags"]["context_pressure"] == "within" else ">=1.5",
+                detail="Authoring format has no token budget/counter receipt; maintainer must verify sizes with the token counter at freeze and record them in settings.json.")
     all_patterns = sorted({p for styles in patterns.values() for p in styles})
     if not v2 and len(all_patterns) > 1:
         for task in doc["tasks"]:

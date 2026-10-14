@@ -24,24 +24,28 @@ snippet (up to 240 characters). Codes and precise observation rules:
 |---|---|
 | `answer_form_missing` | For each probe field, a field-scoped wording clause lacks its expected bare JSON number, exact text, bare ID, null-when-none or allowed status vocabulary form. Sets also require an array statement and each member type's form; empty sets require an empty-array-when-none statement. Determined from query kind/projection and expected value types, never a model judge. |
 | `status_vocabulary_missing` | For each status field or missing_information status projection, probe wording lacks a standalone declared status label. Labels are the record's status_labels **values**, with missing_information added for that projection. Identifier projections do not require status words. |
-| `answer_restated_before_probe` | A scalar or individual set member occurs after casefold and removal of whitespace in the preceding N delivered messages. Null searches for literal null; integers use decimal spelling; empty strings are not searched. V2 also checks selected source/transition IDs for non-provenance fields, marked restatement=source_id, and has no source exemptions. V1 preserves establishment and matching-source exemptions except for provenance IDs. Public ID prefixes can count as literal source mentions. |
+| `answer_restated_before_probe` | A scalar or individual set member occurs after casefold and removal of whitespace in the preceding N delivered messages. Null searches for literal null; integers use decimal spelling; empty strings are not searched. V2 also checks selected source/transition IDs for non-provenance fields, marked restatement=source_id, and has no source exemptions. V2 correction messages are exempt, including retry correction positions. V1 preserves establishment and matching-source exemptions except for provenance IDs. Public ID prefixes can count as literal source mentions. |
 | `status_word_leak` | A declared label or configured annotation phrase occurs with Unicode word boundaries, case-insensitively and with flexible whitespace. Ordinary uses can be false positives. |
 | `question_reference_in_filler` | A configured question-reference phrase occurs in any conversation message, including a state source. The code name does not assert that the message is filler. |
-| `id_style_mixed` | V1 message/probe/record IDs have differing prefix patterns within a task, or task-ID/content patterns differ across the document. A prefix is everything through the final hyphen, underscore or dot; digit runs become #; IDs without separators are unprefixed. V2 pins five ID categories at admission; its arbitrary literal task prefix does not create a competing document style. |
-| `evidence_position` | For family F8 or context_pressure=over, each field lists the selected version's transition and claim source messages, character start/end, start/total fraction and characters from source start to probe. No version means no positioned source; absence cannot be localized to a message. |
+| `id_style_mixed` | V1 message/probe/record IDs have differing prefix patterns within a task, or task-ID/content patterns differ across the document. A prefix is everything through the final hyphen, underscore or dot; digit runs become #; IDs without separators are unprefixed. V2 pins six ID categories at admission, including corrections; its arbitrary literal task prefix does not create a competing document style. |
+| `evidence_position` | For family F8 or context_pressure=over, each field lists the selected version's transition and claim source messages. V2 reports message position as primary: zero-based message_index, one-based message_position, total_messages and first_tenth_messages (10% rounded up). Character start/end, start/total fraction and characters from source start to probe remain supplementary; v1 retains its character-based report. No version means no positioned source; absence cannot be localized to a message. |
 | `key_restatement_window_counts` | Per-probe number of examined messages, their IDs, literal field/member/message hits and source-exempted hits. These are counts, not a difficulty score. |
 | `missing_item_not_named` | V2 missing_information wording does not literally name its declared missing_item ID. Advisory only. |
 | `values_not_in_force` | V2 values query's expected set disagrees with the selected declared state: all unresolved claim values, the one active value, or empty when expired/never established. This checks annotations, not source truth. Advisory only. |
-| `evidence_outside_first_tenth` | An over-budget v2 field has an annotated tested source/transition starting after 10% by message index or conversation characters. Exact evidence span and counting basis still require human review. |
-| `context_pressure_unverified` | Each v2 task reports conversation messages/characters and its required token-budget fraction (<0.5 within, >=2 over). No token budget/counter receipt exists in authoring-v1, so this is an explicit human-review advisory rather than a fabricated token estimate. |
+| `evidence_outside_first_tenth` | An over-budget v2 field has an annotated tested source/transition whose one-based message position exceeds the first 10% of conversation messages, rounded up. Character fraction does not determine this finding. Human review still verifies the evidence designation. |
+| `context_pressure_unverified` | Each v2 task reports conversation messages/characters and its required token-budget fraction (<0.5 within, >=1.5 over). No token budget/counter receipt exists in authoring-v1; the maintainer verifies sizes with the token counter at freeze and records them in settings.json. The lint fabricates no token estimate. |
 
 The default window is 2 for brief v1 and 3 for brief v2. A scheduled probe follows its position message, which
 counts in the window. Retry windows follow the single linked failure's
-conversation prefix plus its correction(s); recovery text is therefore visible
-as a restatement. Cyclic/unanchored declarations have an empty context and a null
+conversation prefix plus its correction(s). V2 skips correction text after taking
+the window, without extending it to earlier messages; other nearby messages still
+undergo the check. V1 continues to report recovery restatements.
+Cyclic/unanchored declarations have an empty context and a null
 probe character position; this tool does not replace mapper graph checks.
 
-Evidence positions count Python Unicode characters in exact conversation text,
+V2's primary evidence-position basis counts only ordered conversation messages;
+probe wording and linked corrections do not change the first-tenth cutoff.
+Supplementary character positions count Python Unicode characters in exact conversation text,
 including public IDs, with no added separators, probe wording, transport wrappers
 or token estimates. A retry position additionally includes linked correction
 characters. Historical fields select the checkpoint version; other fields select
@@ -69,10 +73,11 @@ positive; instructions that merely mention rather than command a form can be a
 false negative. Human review decides; the lint never understands prose intent.
 No answer-form finding adds an authoring refusal.
 
-**STUCK-DECISION:** Budget receipt placement/counting convention, historical
-competition representation, correction-ID style and normalized diagnostic
-integration remain explicit choices in the [brief-v2 handoff](brief-v2-run.md).
-No new format fields or refusal gates resolve those choices here.
+The maintainer's 2026-10-14 Addendum 7 settles message-position basis, size
+verification in settings.json, correction-ID style, correction exemption and
+keeping the normalized diagnostic as built. See the [brief-v2 handoff](brief-v2-run.md)
+for the rulings and historical decision list. No authoring-format fields or
+scoring rules change; broader representation/integration would need separate work.
 
 Reports contain private text and keys. For evaluation, the authorized human
 custodian runs the tool alone and retains outputs in private custody under the
