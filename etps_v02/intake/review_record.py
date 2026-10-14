@@ -30,6 +30,10 @@ def closed(value, fields, path):
 
 def declared_text(value, path):
     need(type(value) is str and bool(value.strip()), "review_input_type", path, "nonblank declaration required")
+    try:
+        value.encode("utf-8")
+    except UnicodeError as exc:
+        raise ReviewError("review_input_utf8", path, "declaration must encode as UTF-8") from exc
 
 
 def checked_input(raw, files):

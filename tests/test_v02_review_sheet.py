@@ -12,6 +12,7 @@ import unittest
 from authoring_fixtures import synthetic_recovery
 from review_tools_fixtures import synthetic_review_document, synthetic_two_task_document
 from etps_v02.intake import review_sheet
+from etps_v02.intake.review_record import checked_input
 from etps_v02.intake._review_support import CHECKS
 from etps_v02.workload import encode, sha
 
@@ -106,9 +107,25 @@ class ReviewSheetTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("node"), "optional Node for executing embedded offline sheet script")
     def test_script_download_export_restoration_hash_isolation_and_storage_failure(self):
-        html = review_sheet.render_sheet(encode(synthetic_two_task_document()))
+        self.run_script_export(synthetic_two_task_document())
+
+    @unittest.skipUnless(shutil.which("node"), "optional Node for executing embedded offline sheet script")
+    def test_script_control_task_ids_round_trip_export_and_restore(self):
+        doc = synthetic_two_task_document()
+        doc["tasks"][0]["id"] = "SYNTHETIC\rtask"
+        doc["tasks"][1]["id"] = "SYNTHETIC-controls-" + "".join(chr(i) for i in range(32)) + '\x7f\x85 caf\u00e9 \U0001f984 " & <'
+        exported = self.run_script_export(doc, defects=())
+        checked, _ = checked_input(encode(exported), {"source.json": encode(doc)})
+        self.assertEqual([t["task_id"] for t in checked["tasks"]], [t["id"] for t in doc["tasks"]])
+
+    def run_script_export(self, doc, *, defects=("SYNTHETIC defect one", "SYNTHETIC defect two")):
+        html = review_sheet.render_sheet(encode(doc))
         data = re.search(r'<script id="review-data" type="application/json">(.*?)</script>', html, re.S)[1]
         script = re.search(r'<script id="review-script">(.*?)</script>', html, re.S)[1]
+        # Model HTML input preprocessing before reading the rendered attributes:
+        # CR/CRLF becomes LF and literal NUL becomes the replacement character.
+        parser = SheetParser(html.replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "\ufffd"))
+        task_attributes = [a["data-task-id"] for tag, a in parser.tags if tag == "section" and "data-task-id" in a]
         # Execute the actual browser script using a tiny DOM/storage/download
         # harness, rather than testing a second implementation of export logic.
         harness = r'''
@@ -126,7 +143,7 @@ function open(meta, unavailable=false) {
   const sections = meta.task_ids.map((id, i) => {
     const checks = Object.keys(meta.checks).map((key, j) => Object.assign(element(`c${i}-${j}`), {dataset:{check:key}}));
     const notes = element(`notes${i}`);
-    return {dataset:{taskId:id}, querySelectorAll(){return checks;}, querySelector(){return notes;}};
+    return {dataset:{taskId:payload.task_attributes[i]}, querySelectorAll(){return checks;}, querySelector(){return notes;}};
   });
   const context = {console, JSON, Date, encodeURIComponent, Blob: class {constructor(parts){savedBlob=parts.join('');}},
     URL:{createObjectURL(){return 'blob:SYNTHETIC';},revokeObjectURL(){}},
@@ -143,15 +160,16 @@ const meta = JSON.parse(payload.data);
 const first = open(meta);
 first.element('reviewer').value='SYNTHETIC human simulation';
 first.element('review-date').value='SYNTHETIC date';
-first.element('defects').value='SYNTHETIC defect one\nSYNTHETIC defect two'.replace('\\n','\n');
+first.element('defects').value=payload.defects.join('\n');
 for (const s of first.sections) { for(const c of s.querySelectorAll()) c.checked=true; s.querySelector().value='SYNTHETIC notes'; }
 const result = first.export();
 assert.equal(result.version, 'review-input-v1');
 assert.equal(result.source_sha256, meta.source_sha256);
 assert.equal(result.tasks.length,2);
+assert.deepEqual(result.tasks.map(t=>t.task_id), meta.task_ids);
 assert.ok(result.tasks.every(t=>Object.values(t.checks).every(v=>v===true)));
 assert.ok(result.tasks.every(t=>t.notes==='SYNTHETIC notes'));
-assert.deepEqual(result.defects,['SYNTHETIC defect one','SYNTHETIC defect two']);
+assert.deepEqual(result.defects,payload.defects);
 const restored=open(meta);
 assert.ok(restored.sections.every(s=>s.querySelectorAll().every(c=>c.checked)));
 assert.equal(restored.element('defects').value,first.element('defects').value);
@@ -162,13 +180,15 @@ const noStorage=open(meta,true);
 noStorage.element('reviewer').value='SYNTHETIC offline reviewer'; noStorage.element('review-date').value='SYNTHETIC date';
 assert.equal(noStorage.export().tasks[0].checks.conversation_supports_answers,false);
 assert.match(noStorage.element('review-status').textContent,/storage/i);
+process.stdout.write(JSON.stringify(result));
 '''
         with tempfile.TemporaryDirectory(prefix="etps-SYNTHETIC-js-") as temp:
             runner, fixture = Path(temp) / "SYNTHETIC.js", Path(temp) / "SYNTHETIC.json"
             runner.write_text(harness, encoding="utf-8")
-            fixture.write_text(json.dumps({"script": script, "data": data}), encoding="utf-8")
+            fixture.write_text(json.dumps({"script": script, "data": data, "task_attributes": task_attributes, "defects": defects}), encoding="utf-8")
             result = subprocess.run([shutil.which("node"), str(runner), str(fixture)], capture_output=True)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return json.loads(result.stdout)
 
 
 if __name__ == "__main__":
