@@ -214,7 +214,7 @@ class BriefV2LintTests(unittest.TestCase):
 
 
 class BriefV2DocsTests(unittest.TestCase):
-    def test_v2_has_all_nine_rules_without_condition_designs(self):
+    def test_v2_has_all_nine_rules_and_v1_condition_descriptions(self):
         brief = (ROOT / "docs/v0.2/AUTHORING_BRIEF_V2.md").read_text(encoding="utf-8")
         for term in ("bare JSON numbers", "exactly as written", "bare ID", "allowed status words",
                      "values in force", "declared item ID", "Describe events", "3 messages",
@@ -222,8 +222,15 @@ class BriefV2DocsTests(unittest.TestCase):
                      "<task>-v001", "<task>-r001", "first 10%", "at least 2x", "under 50%",
                      "messages and characters", "token counter"):
             self.assertIn(term, brief)
-        self.assertNotIn("A receives", brief)
-        self.assertNotIn("B receives", brief)
+        # v1's neutral condition descriptions are kept verbatim (maintainer, 2026-10-14):
+        # authors need them to write structural predictions; they name no system.
+        for phrase in ("A receives the complete earlier conversation", "B receives only the question",
+                       "C receives isolated earlier factual statements",
+                       "D receives exact earlier conversation passages",
+                       "E and F are two additional\nconditions whose behavior is unspecified here"):
+            self.assertIn(phrase, brief)
+        # Historical competing sets are not representable; v2 forbids asking them.
+        self.assertIn("Do not ask which values competed", brief)
 
     def test_indices_runbook_and_diagnostic_documentation(self):
         for name in ("docs/INDEX.md", "docs/v0.2/README.md", "docs/v0.2/AUTHORING_RUNBOOK.md"):

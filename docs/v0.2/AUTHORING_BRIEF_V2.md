@@ -66,11 +66,16 @@ Brief v2 question and conversation rules:
    not status words. Keep status vocabulary in questions and annotations.
 3. Field names must mean what their keys mean. `values` means the values in force:
    all competing values while unresolved, the single value when active, and an
-   empty array when expired or never established. To ask about past competition,
-   use `at-checkpoint` rather than changing the meaning of `values`. Arrays contain
-   the complete unordered set; state the form of each element in the question.
+   empty array when expired or never established. Do not ask which values competed
+   at an earlier point: the format has no historical-set field. Ask about past
+   values only with scalar `at-checkpoint` fields. Do not frame a question about
+   current state in terms of a past state (for example "disagreement status" after
+   a resolution); name the current thing being asked. Arrays contain the complete
+   unordered set; state the form of each element in the question.
 4. Missing-information questions name the declared item ID that must be returned
-   by any identifier field. It is the separate required-item proposition's ID.
+   by any identifier field. It is the separate required-item proposition's ID. The
+   question itself states that `missing_information` is the status to use when a
+   required item has never been supplied.
 5. Describe events, not their status. Do not put "expires here", "new active
    version", "never established", or status labels in conversation text. Describe
    the concrete change, withdrawal, disagreement or stated precedence in ordinary
@@ -114,8 +119,11 @@ drop, or replace evaluation tasks based on answering outcomes. Freeze prediction
 before any evaluation execution; predictions never select tasks for inclusion.
 
 For every task, record structural separation predictions with reasons. Use
-anonymous condition IDs A–F, without describing answering methods. Predict
-failure only from the task's structure and the stated information available.
+anonymous condition IDs A–F: A receives the complete earlier conversation;
+B receives only the question; C receives isolated earlier factual statements;
+D receives exact earlier conversation passages; E and F are two additional
+conditions whose behavior is unspecified here. Predict failure only from the
+task's structure and the stated information available.
 Use null when a condition
 cannot be predicted from that information, with a reason. Include every condition
 once and summarize predictions by family. Never assume a question-only answer
