@@ -12,8 +12,10 @@ Temporary artifacts and TEMP/TMP stayed in this worktree's ignored scratch/tmp.
 Codex authored the full neutral v2 brief, dual-version admission/schema support,
 v2-only ID refusal, mapper/freeze version propagation, advisory answer-form and
 hygiene checks, pure paired normalized diagnostic score, synthetic fixtures/tests
-and documentation. V1's condition-design paragraph is omitted in v2 under the
-prompt's explicit neutrality instruction; anonymous A–F prediction rules remain.
+and documentation. Codex initially omitted v1's condition-description paragraph
+under a prompt instruction that the maintainer's session later identified as
+mistaken; commit 3acd993 (Claude) restored v1's neutral A–D descriptions verbatim,
+because authors need them for structural predictions and they name no system.
 AUTHORING_BRIEF.md v1 and strict scorer/runner/replay/legacy bytes are unchanged.
 The existing denylist test is extended for v2; other baseline tests are preserved.
 No new authoring refusal beyond v2 ID style resolves the flagged semantic/
