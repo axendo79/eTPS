@@ -141,6 +141,44 @@ class ReviewRecordTests(unittest.TestCase):
             with self.assertRaises(review_record.ReviewError):
                 review_record.assemble_review(duplicate, bundle, output)
 
+    def test_lone_surrogates_refuse_at_input_parsing(self):
+        for field in ("reviewer", "date"):
+            for value in ("\ud800", "\udfff", "SYNTHETIC\ud800 declaration"):
+                with self.subTest(field=field, value=repr(value)):
+                    files, review = self.fixture()
+                    review[field] = value
+                    raw = json.dumps(review, ensure_ascii=True).encode("utf-8")
+                    with self.assertRaises(review_record.ReviewError) as caught:
+                        review_record.checked_input(raw, files)
+                    self.assertEqual(caught.exception.code, "review_input_utf8")
+                    self.assertEqual(caught.exception.path, "review-input." + field)
+        files, review = self.fixture()
+        review["reviewer"] = "SYNTHETIC caf\u00e9 \U0001f984 reviewer"
+        review["date"] = "SYNTHETIC \u65e5 date"
+        checked, _ = review_record.checked_input(encode(review), files)
+        self.assertEqual(checked, review)
+
+    def test_cli_lone_surrogates_return_json_refusal_without_output(self):
+        files, review = self.fixture()
+        with tempfile.TemporaryDirectory(prefix="etps-SYNTHETIC-unicode-cli-") as temp:
+            bundle, output, input_path = Path(temp) / "bundle", Path(temp) / "SYNTHETIC-review.json", Path(temp) / "SYNTHETIC-input.json"
+            write_bundle(bundle, files)
+            args = [sys.executable, "-B", "-m", "etps_v02.intake.review_record", str(input_path), str(bundle), str(output)]
+            for field in ("reviewer", "date"):
+                for value in ("\ud800", "\udfff"):
+                    with self.subTest(field=field, value=repr(value)):
+                        invalid = dict(review, **{field: value})
+                        input_path.write_bytes(json.dumps(invalid, ensure_ascii=True).encode("utf-8"))
+                        result = subprocess.run(args, capture_output=True)
+                        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                        status = json.loads(result.stdout)
+                        self.assertEqual(status["status"], "rejected")
+                        self.assertEqual(status["code"], "review_input_utf8")
+                        self.assertEqual(status["path"], "review-input." + field)
+                        self.assertEqual(result.stderr, b"")
+                        self.assertFalse(output.exists())
+            self.assertEqual(corpus_freeze.read_directory(bundle), files)
+
     def test_existing_bundle_review_defects_also_block(self):
         files, review = self.fixture()
         files["review.json"] = encode({"defects": ["SYNTHETIC earlier defect"]})

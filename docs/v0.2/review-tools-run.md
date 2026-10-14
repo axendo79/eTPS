@@ -125,3 +125,29 @@ unusable output, which must be preserved as a failure; create a new path.
 None. No requested behavior required a scoring, admission, authoring-format or
 brief change. Human semantic decisions and independent challenge review remain
 with their existing authorized reviewers; these tools do not make those decisions.
+
+## PR #28 P3 repairs, 2026-10-14
+
+From audited head `1c68ea2`, Codex implemented the two user-authorized findings
+in `D:\eTPS-wt-review-tools` on `v02-review-tools`. Non-UTF-8 reviewer/date
+declarations now raise `ReviewError` (an `IntakeError` subclass) during parsing
+with stable code `review_input_utf8` and the field path. The CLI emits JSON
+refusal, exits 2 and creates no output. Admitted task IDs are HTML-escaped ASCII
+JSON strings in the data attribute; the actual sheet script decodes them for
+storage keys and exports, retaining CR, NUL and other control characters.
+
+Before production changes, three new methods recorded 11 subtest failures,
+including CLI tracebacks and exported IDs changed by HTML preprocessing.
+The JavaScript harness now reads rendered attributes with modeled CR/NUL
+preprocessing, verifies exact identity and restoration, and supplies the exported
+JSON to review-input parsing. C0 controls, DEL, a C1 control, Unicode letters,
+a supplementary character and HTML-sensitive characters are covered.
+
+The requested full-path Windows Python 3.14 command, with TEMP/TMP in this
+worktree's ignored scratch/tmp, runs **452 tests in 55.151 seconds: 451 pass,
+one existing FIFO skip**. Logs: `scratch/tmp/p3-review-before.txt` and
+`scratch/tmp/p3-review-full-suite.txt`. `git diff --check` passes; production
+changes are limited to review_record.py and review_sheet.py. Strict scoring and
+authoring/mapper/freeze admission remain unchanged. No real corpus, private
+workspace, model run or remote publication was used. The local commit is
+unpushed; its subject is `Fix review declaration Unicode refusals and task-ID export`.

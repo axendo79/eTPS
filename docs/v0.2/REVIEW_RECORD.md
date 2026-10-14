@@ -17,7 +17,10 @@ means refusal. semantics_verified remains false.
 
 The export is strict UTF-8 JSON with closed review-input-v1 fields, exactly one
 entry per source task, the five exact checklist keys, boolean true for every
-check, string notes, nonblank reviewer/date and an explicit empty defects array.
+check, string notes, nonblank UTF-8-encodable reviewer/date and an explicit empty
+defects array. Escaped lone surrogates in declarations are refused during input
+parsing with `review_input_utf8` and the field path; the CLI returns JSON status
+and exit 2 without creating an output.
 It refuses missing/extra/duplicate tasks, missing/extra checks, false checks,
 integer 1 in place of true, malformed/duplicate-key JSON, unknown versions/fields,
 or a SHA-256 differing from the bundle's exact source.json bytes. Every listed
@@ -58,7 +61,7 @@ bindings correct because the review itself is excluded from that map. Do not add
 other files after assembly. The normal freeze/verify checks remain mandatory.
 
 Refusal codes added here include review_input_json, review_input_fields,
-review_input_type, review_input_version, source_binding, review_tasks,
+review_input_type, review_input_utf8, review_input_version, source_binding, review_tasks,
 review_unchecked, review_defect, output_path, temporary_path, output_exists, output_changed and
 bundle_changed. Existing freeze/admission refusal codes propagate unchanged.
 This is identity/declared-review enforcement, not independent attestation or

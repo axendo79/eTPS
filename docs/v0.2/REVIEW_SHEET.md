@@ -19,7 +19,10 @@ It supports the same window and phrase options as [authoring_lint](AUTHORING_LIN
 Open the file locally in a browser. No network, external scripts, styles or
 fonts are used. A content security policy denies network connections. Light/dark
 colors follow the browser preference. Text/IDs are escaped before HTML insertion;
-embedded metadata escapes script-closing characters.
+embedded metadata escapes script-closing characters. Task identity is stored as
+an HTML-escaped ASCII JSON string in the data attribute and decoded by the sheet
+script before storage/export. CR, NUL and other control characters therefore
+round-trip as the exact admitted task ID; no new ID admission rule is added.
 
 Per task, the main view shows the first message, every declared version/claim
 source, probe positions and lint-flagged messages. Other consecutive messages

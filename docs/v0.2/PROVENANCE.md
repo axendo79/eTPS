@@ -90,6 +90,27 @@ installed Node runtime. The [handoff](review-tools-run.md) records test-first
 failures, commits, scope checks and limits. The branch stays checked out and
 unpushed.
 
+## PR #28 P3 repair authorization and evidence (2026-10-14)
+
+The user authorized a new `D:\eTPS-wt-review-tools` worktree on the existing
+`v02-review-tools` branch, local commits for the two review-tool audit findings,
+and a later merge into `v02-brief-v2`. Codex authored the narrow input-parsing
+UTF-8 refusal, ASCII-JSON task-ID attribute encoding/JavaScript decoding,
+SYNTHETIC regressions and affected documentation. Strict scoring, authoring,
+mapper and freeze admission are unchanged. No private workspace or real corpus
+was read; no model run, push or remote publication occurred. Creating the
+worktree used the authorized Git command; the pinned main checkout was not edited.
+
+The three new methods ran before the fixes and recorded 11 subtest failures:
+missing parse-time refusals, CLI tracebacks, and HTML-normalized exported IDs.
+The final full suite runs 452 tests in 55.151 seconds: 451 pass and the existing
+Windows FIFO test skips. The installed Node runtime executes the actual sheet
+script using rendered attributes after modeled HTML CR/NUL preprocessing,
+checks storage restoration/export, and passes its export to review-input parsing.
+TEMP/TMP and logs stay in this worktree's ignored scratch/tmp. These are
+model-authored software checks, not independent review or corpus validity.
+The author/Nyx affiliation remains disclosed; Nyx must be allowed to lose.
+
 ## Maintainer authoring rulings (2026-10-06)
 
 The maintainer supplied and accepted these four authoring rulings:

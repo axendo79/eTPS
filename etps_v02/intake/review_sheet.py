@@ -64,20 +64,23 @@ function save(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); }
   catch (_) { warnStorage(); }
 }
+function taskId(section) {
+  return JSON.parse(section.dataset.taskId);
+}
 function taskState(section) {
   const checks = {};
   for (const box of section.querySelectorAll('input[data-check]')) checks[box.dataset.check] = box.checked === true;
-  return {task_id: section.dataset.taskId, checks, notes: section.querySelector('textarea[data-notes]').value};
+  return {task_id: taskId(section), checks, notes: section.querySelector('textarea[data-notes]').value};
 }
 for (const section of sections) {
-  const saved = load(storageKey(section.dataset.taskId));
+  const saved = load(storageKey(taskId(section)));
   for (const box of section.querySelectorAll('input[data-check]')) {
     box.checked = !!(saved && saved.checks && saved.checks[box.dataset.check] === true);
-    box.addEventListener('change', () => save(storageKey(section.dataset.taskId), taskState(section)));
+    box.addEventListener('change', () => save(storageKey(taskId(section)), taskState(section)));
   }
   const notes = section.querySelector('textarea[data-notes]');
   notes.value = saved && typeof saved.notes === 'string' ? saved.notes : '';
-  notes.addEventListener('input', () => save(storageKey(section.dataset.taskId), taskState(section)));
+  notes.addEventListener('input', () => save(storageKey(taskId(section)), taskState(section)));
 }
 const infoKey = 'review-input-v1:' + meta.source_sha256 + ':reviewer';
 const reviewer = document.getElementById('reviewer');
@@ -190,7 +193,8 @@ def render_sheet(raw, **lint_options):
             for version in record["versions"]:
                 key_ids.add(version["message"])
                 key_ids.update(s["message"] for s in version["sources"])
-        parts.append('<section class="task" data-task-id="' + escaped(task["id"]) + '"><h2>' + escaped(task["id"]) + " · " + escaped(task["family"]) + "</h2>")
+        # ASCII JSON keeps HTML preprocessing from changing task identity.
+        parts.append('<section class="task" data-task-id="' + escaped(json.dumps(task["id"], ensure_ascii=True)) + '"><h2>' + escaped(task["id"]) + " · " + escaped(task["family"]) + "</h2>")
         parts.append("<h3>Coverage tags</h3>" + pretty(task["coverage_tags"]) + "<h3>Key messages and probes</h3>")
         filler = 0
         for message in task["conversation"]:

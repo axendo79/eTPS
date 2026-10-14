@@ -38,8 +38,10 @@ Local maintainer review tools on v02-review-tools add advisory authoring lint,
 an offline source-hash-bound HTML checklist/export, and review.json assembly
 validated through the unchanged freeze gate in a temporary copy. See the
 [human review procedure](v0.2/AUTHORING_RUNBOOK.md#maintainer-review-tools) and
-[review-tools handoff](v0.2/review-tools-run.md). Synthetic validation passes
-448 tests (447 passing, one pre-existing Windows FIFO skip); no real corpus,
+[review-tools handoff](v0.2/review-tools-run.md). The 2026-10-14 P3 fixes refuse
+non-UTF-8 reviewer/date declarations with structured JSON and preserve task-ID
+control characters through HTML checklist export. Synthetic validation runs
+452 tests (451 passing, one pre-existing Windows FIFO skip); no real corpus,
 human review, model run or remote publication is claimed.
 
 Local live work includes run 7 (three arms) and run 8 (five arms, three separate
