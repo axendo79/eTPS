@@ -162,3 +162,36 @@ byte-identical to baseline, and 59 local Markdown links resolve. After the final
 evidence/status edits, all nine affected documentation/brief checks pass; output:
 `scratch/tmp/brief-v2-amend-final-docs.txt`. `git diff --check` passes. This amendment
 is locally committed on `v02-brief-v2` and left unpushed.
+
+## P3 repair and integration addendum, 2026-10-14
+
+The user authorized all three audit repairs and their local commits. Review-tool
+fix `680679b86eb95d32d97b0d46f2e97b0aa399abbc` was committed on
+`v02-review-tools` after its full suite ran **452 tests: 451 pass, one existing
+FIFO skip**. Merge `1b87d1ac090471bb530acf1505abc01b20c80475` integrates it
+into `v02-brief-v2` without conflicts, preserving maintainer amendment `ebdc014`.
+See the [review-tool repair evidence](review-tools-run.md#pr-28-p3-repairs-2026-10-14).
+
+The normalized diagnostic now requires an alphabetic unit token via
+`str.isalpha()` while retaining the existing ASCII decimal/fraction/exponent
+grammar. Superscripts, fractions, Roman numerals and non-ASCII decimal digits
+cannot yield a diagnostic integer match. Both scalar and set-member paths are
+tested; documented number spellings and alphabetic units still pass. A string
+containing a numeric symbol still matches the same expected string exactly.
+
+Before the fix, the ten-method diagnostic suite recorded 12 subtest failures;
+afterward all ten passed. The requested full-path Windows Python 3.14 command,
+with TEMP/TMP in `D:\eTPS-wt-brief-v2\scratch\tmp`, runs **483 tests in 50.181
+seconds: 482 pass, one existing Windows FIFO skip**. Logs are ignored:
+`scratch/tmp/p3-normalized-before.txt`, `p3-normalized-after.txt` and
+`p3-brief-full-suite.txt`. No production changes followed this passing suite.
+Four affected documentation checks pass after the final evidence updates;
+output is `scratch/tmp/p3-final-docs.txt`. `git diff --check` passes.
+
+Production changes relative to `ebdc014` are limited to review_record.py,
+review_sheet.py and normalized_score.py. Strict scoring, authoring/mapper/freeze
+admission, runner/replay and v1 brief remain unchanged. This is Codex-authored
+SYNTHETIC software evidence; no private workspace or real corpus was accessed,
+no model run occurred, and the pinned main checkout was not edited. Both local
+branches remain unpushed. The diagnostic-fix commit subject is
+`Require alphabetic units in normalized numeric diagnostics`.

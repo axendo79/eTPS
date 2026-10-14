@@ -23,16 +23,21 @@ runner, replay, RR or TPS. V1 brief bytes and frozen-release admission remain
 preserved. The maintainer's 2026-10-14 Addendum 7 settles S1/S3/S4/S6: correction
 IDs use `<task>-c001`, first-tenth evidence uses message position rounded up,
 the maintainer verifies sizes with the token counter at freeze in settings.json,
-and correction messages are exempt from rule 6. The normalized diagnostic stays
-as built; beyond-budget conversations require at least 1.5x the context budget.
+and correction messages are exempt from rule 6. The normalized diagnostic retains
+its separate reporting role; beyond-budget conversations require at least 1.5x
+the context budget.
 See the [handoff addendum](v0.2/brief-v2-run.md#maintainer-rulings-addendum-2026-10-14)
 for current rulings and verification; the original decision list is historical.
 
-Windows Python 3.14 verification runs **478 tests: 477 pass and the existing FIFO
-test skips**. The 2026-10-14 amendment adds four SYNTHETIC methods to the 474-test
-baseline and updates v2 fixture/regression expectations. V1 tests are preserved.
+Windows Python 3.14 P3-fix verification runs **483 tests: 482 pass and the existing
+FIFO test skips**. The review-tool fixes are merged locally; normalized numeric
+units now require alphabetic characters, retaining ASCII number digits.
+Five new SYNTHETIC methods cover the three P3 findings. The earlier 2026-10-14
+amendment ran 478 tests and added four methods to the 474-test baseline.
+V1 tests are preserved.
 This is Codex-authored SYNTHETIC software evidence, not a corpus/model run,
-independent review or benchmark claim. Local commits only; no push, PR or merge.
+independent review or benchmark claim. Local commits and the authorized branch
+merge only; no push, PR or remote publication.
 
 Local maintainer review tools on v02-review-tools add advisory authoring lint,
 an offline source-hash-bound HTML checklist/export, and review.json assembly

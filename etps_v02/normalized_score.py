@@ -28,7 +28,8 @@ def comparable(value, target, *, identifier=False):
     if type(value) is str:
         if type(target) is int:
             match = NUMBER_UNIT.fullmatch(value.strip())
-            if match:
+            # Unicode word characters also include superscripts and fractions.
+            if match and match[2].isalpha():
                 try:
                     if Decimal(match[1]) == target:
                         return target

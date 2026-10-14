@@ -40,6 +40,26 @@ class NormalizedScoreTests(unittest.TestCase):
         self.score({"quantity": "7000 g"}, {"quantity": 7}, 0, 0)
         self.score({"quantity": "7 kg"}, {"quantity": "7"}, 0, 0)
 
+    def test_unicode_numerics_are_not_ascii_numbers_or_alphabetic_units(self):
+        cases = (("7\u00b2", 7), ("7\u00b3", 7), ("7\u00bd", 7), ("7\u2166", 7),
+                 ("7kg\u00b2", 7), ("7e\u00b2", 7), ("\u0663", 3), ("\u0663 kg", 3),
+                 ("\u0667 kg", 7), ("7.\u0660 kg", 7), ("7e\u0660 kg", 7), ("\uff17 kg", 7))
+        for value, target in cases:
+            for is_set in (False, True):
+                with self.subTest(value=value, is_set=is_set):
+                    if is_set:
+                        self.score({"values": [value]}, {"values": [target]}, 0, 0, set_fields=("values",))
+                    else:
+                        self.score({"quantity": value}, {"quantity": target}, 0, 0)
+        self.score({"quantity": "7\u00b2"}, {"quantity": "7\u00b2"}, 1, 1)
+
+    def test_documented_ascii_numbers_and_alphabetic_units_still_normalize(self):
+        for value in ("7kg", "7 kg", " 7 KG ", "7.0 kg", "7e0 kg", "+7 kg",
+                      "7 \u03bcg", "7 \u043a\u0433", "7 \u7c73"):
+            with self.subTest(value=value):
+                self.score({"quantity": value}, {"quantity": 7}, 0, 1)
+                self.score({"values": [value]}, {"values": [7]}, 0, 1, set_fields=("values",))
+
     def test_no_key_aliases_extra_missing_keys_null_coercion_or_fuzzy_matching(self):
         for answer, expected in (({"Text": "SYNTHETIC"}, {"text": "SYNTHETIC"}),
                                  ({"alias": "SYNTHETIC"}, {"text": "SYNTHETIC"}),

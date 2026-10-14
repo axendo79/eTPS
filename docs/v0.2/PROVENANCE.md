@@ -1,5 +1,31 @@
 # eTPS v0.2 provenance
 
+## PR #29 P3 repair and local integration (2026-10-14)
+
+The user authorized merging the locally repaired `v02-review-tools` into
+`v02-brief-v2`, then committing the narrow normalized-score audit repair.
+Merge `1b87d1ac090471bb530acf1505abc01b20c80475` brings in review-tool fix
+`680679b86eb95d32d97b0d46f2e97b0aa399abbc` and preserves the newer maintainer
+amendment at `ebdc014`. No conflicts occurred. Codex authored the unit-token
+alphabetic check, two new SYNTHETIC diagnostic methods and affected documentation.
+The existing number grammar retains ASCII digits; Unicode numeric symbols
+cannot be discarded as units. This repairs the documented diagnostic grammar
+without changing strict scoring, admission, runner, replay, RR or TPS.
+
+The ten-method diagnostic suite recorded 12 subtest failures before the fix,
+then all ten passed. Scalar/set regressions cover superscripts, fractions,
+Roman numerals and non-ASCII decimal digits; documented ASCII number spellings
+and alphabetic Unicode units remain accepted. The integrated full suite runs
+483 tests in 50.181 seconds: 482 pass and the existing Windows FIFO test skips.
+Both full suites use the requested Windows Python 3.14 interpreter and each
+worktree's ignored scratch/tmp for TEMP/TMP and logs. These are model-authored
+software checks, not independent review, a corpus/model run or benchmark evidence.
+
+The main checkout remains pinned; no private workspace or real corpus was read,
+and no model run, push or remote publication occurred. Existing evidence is not
+rescored. Both branches remain locally committed and unpushed. The eTPS author/
+Nyx affiliation remains disclosed, and Nyx must be allowed to lose.
+
 ## Brief-v2 amendment authorization and rulings (2026-10-14)
 
 The user authorized the amendment prompt in full: changes, SYNTHETIC test-first

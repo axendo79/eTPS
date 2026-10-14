@@ -35,7 +35,11 @@ Only these transformations apply to values; keys remain exact:
 - For integer expected values, read a full numeric string with a trailing unit
   as a number. The implemented core spelling is a signed ASCII decimal, optional
   fraction/exponent, optional intervening whitespace, and one alphabetic unit
-  token. Decimal comparison is exact: `7.0 kg` matches 7, `7.1 kg` does not.
+  token (every character must satisfy Python's `str.isalpha()`). All number,
+  fraction and exponent digits must be ASCII `0`–`9`. Superscripts, fractions
+  and other Unicode numerics are neither number digits nor alphabetic units:
+  `7²`, `٣` and `7½` do not normalize to integers. Decimal comparison is exact:
+  `7.0 kg` matches 7, `7.1 kg` does not.
   There is no unit conversion or numerical tolerance. A unitless string stays
   a string; d10-v1 is a different existing acceptance policy.
 
