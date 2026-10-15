@@ -52,6 +52,14 @@ are separate; partial field credit does not change task acceptance.
 
 Brief v2 question and conversation rules:
 
+For a new release explicitly using answer contract `h3-compressed-v1`, apply
+the four ordinary status words and field rules below. Releases without that
+opt-in keep their original declared labels and keys; never rewrite a frozen
+release. This answer-contract version is separate from the brief version.
+In the opted-in form, scalar and set member types are explicitly integer or
+exact string; exclude active literal-null facts. A scalar is JSON null when
+expired, unestablished or unresolved, because no unique value is in force.
+
 1. Every question states the exact answer form for every field in its own wording,
    including retry questions. Return numbers as bare JSON numbers (integers in
    this format), text values exactly as written in the conversation, and message
@@ -61,9 +69,20 @@ Brief v2 question and conversation rules:
    Keep strict JSON object syntax: a bare ID is the string value without an added
    public `[id]` wrapper or descriptive words, still quoted as JSON requires.
 2. Every status field's question lists the allowed status words, using the
-   proposition's exact declared labels. For the missing-information status
-   projection, include `missing_information`. Identifier projections ask for IDs,
-   not status words. Keep status vocabulary in questions and annotations.
+   proposition's exact declared labels. In `h3-compressed-v1`, ordinary labels
+   are exactly `active` (one value in force, including after explicit settlement),
+   `expired` (explicitly withdrawn/lapsed without replacement), `unestablished`
+   (never established by the asked point), and `unresolved` (incompatible supplied
+   claims still compete without explicit applicable settlement). Recency alone
+   does not settle disagreement. A settled value is `active`; `resolved` is a
+   coverage/history word, never an ordinary answer. Follow the stated events:
+   unchanged state persists, lapse gives expired, reinstatement gives active,
+   and explicit precedence settles unresolved claims. Later events do not change
+   checkpoint answers. Missing information and personal uncertainty are not
+   disagreement. For the designated missing-information status projection,
+   list only `missing_information`, without the ordinary vocabulary. Identifier
+   projections ask for IDs, not status words. Keep status vocabulary in questions
+   and annotations.
 3. Field names must mean what their keys mean. `values` means the values in force:
    all competing values while unresolved, the single value when active, and an
    empty array when expired or never established. Do not ask which values competed
@@ -72,6 +91,11 @@ Brief v2 question and conversation rules:
    current state in terms of a past state (for example "disagreement status" after
    a resolution); name the current thing being asked. Arrays contain the complete
    unordered set; state the form of each element in the question.
+   In `h3-compressed-v1`, set members are the declared integers or exact strings,
+   without nulls or duplicates. Provenance names the public source claim for the
+   unique active value, or JSON null without one; after precedence, name the
+   selected earlier claim rather than the later decision message. Other requested
+   IDs require an explicit null condition, or an explicit prohibition of null.
 4. Missing-information questions name the declared item ID that must be returned
    by any identifier field. It is the separate required-item proposition's ID. The
    question itself states that `missing_information` is the status to use when a

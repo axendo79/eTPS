@@ -36,7 +36,7 @@ class ConformanceTests(unittest.TestCase):
             self.assertNotIn(canary, raw)
 
     def test_valid_synthetic_states_and_retry_are_read_only(self):
-        for case in ("active", "expired", "unresolved", "settled", "missing", "retry"):
+        for case in ("active", "expired", "unestablished", "unresolved", "settled", "missing", "retry"):
             with self.subTest(case=case):
                 bundle, _, _ = self.fixture(case)
                 before = {p.name: p.read_bytes() for p in bundle.parent.iterdir()}
@@ -154,6 +154,54 @@ class ConformanceTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2)
             self.assertEqual(result.stderr, b"")
             self.assert_content_free(json.loads(result.stdout), "CANARY_VALUE", "CANARY_SOURCE", "CANARY_MISSING_PATH", "CANARY_FLAG", "CANARY_ARG", "CANARY_EXTRA")
+
+    def test_only_named_files_and_file_size_boundaries(self):
+        bundle, index, _ = self.fixture()
+        (bundle.parent / "CANARY_UNRELATED.json").write_bytes(b'CANARY_IGNORED_MALFORMED')
+        self.assertEqual(conformance.check_bundle(bundle)["violation_count"], 0)
+        for name, ceiling, rule in ((index["tasks"][0]["keys"], 16 * 1024 * 1024, "R1-STRUCTURE"),
+                                     ("question-contract.json", 8 * 1024 * 1024, "R1-INPUT")):
+            path = bundle.parent / name
+            with path.open("wb") as stream:
+                stream.truncate(ceiling + 1)
+            report = conformance.check_bundle(bundle)
+            self.assertIn(rule, self.rules(report))
+            self.assert_content_free(report, "CANARY_UNRELATED", "CANARY_IGNORED_MALFORMED")
+
+    def test_bad_state_labels_status_projection_and_missing_item_projection(self):
+        bundle, index, _ = self.fixture()
+        self.mutate(bundle, index["tasks"][0], "keys", lambda d: next(iter(d.values())).update(status="expired"))
+        self.assertIn("R1-STATUS-PROJECTION", self.rules(conformance.check_bundle(bundle)))
+        self.mutate(bundle, index["tasks"][0], "sidecar", lambda d: d["records"][0]["versions"][0].update(status="CANARY_STATE"))
+        report = conformance.check_bundle(bundle)
+        self.assertIn("R1-STATE-LABEL", self.rules(report))
+        self.assert_content_free(report, "CANARY_STATE")
+        bundle, index, _ = self.fixture("missing")
+        self.mutate(bundle, index["tasks"][0], "keys", lambda d: next(iter(d.values())).update(missing_item=None))
+        self.assertTrue({"R1-ID-PROJECTION", "R1-TYPED-NULL"} <= self.rules(conformance.check_bundle(bundle)))
+
+    def test_duplicate_json_empty_tasks_and_unsafe_filename_forms(self):
+        bundle, _, _ = self.fixture()
+        for raw in (b'{"CANARY_DUPLICATE":1,"CANARY_DUPLICATE":2}', b'{"CANARY_NAN":NaN}'):
+            bundle.write_bytes(raw)
+            report = conformance.check_bundle(bundle)
+            self.assertEqual(self.rules(report), {"R1-INPUT"})
+            self.assert_content_free(report, "CANARY_DUPLICATE", "CANARY_NAN")
+        for name in ("../CANARY_PATH", "nested/CANARY_PATH", "nested\\CANARY_PATH", "C:CANARY_STREAM", ".."):
+            bundle, index, declaration = self.fixture()
+            index["tasks"][0]["keys"] = name
+            bundle.write_bytes(encode(index))
+            declaration["bundle_sha256"] = sha(bundle.read_bytes())
+            (bundle.parent / "question-contract.json").write_bytes(encode(declaration))
+            report = conformance.check_bundle(bundle)
+            self.assertIn("R1-STRUCTURE", self.rules(report))
+            self.assert_content_free(report, "CANARY_PATH", "CANARY_STREAM")
+        bundle, index, declaration = self.fixture()
+        index["tasks"] = []
+        bundle.write_bytes(encode(index))
+        declaration["bundle_sha256"] = sha(bundle.read_bytes())
+        (bundle.parent / "question-contract.json").write_bytes(encode(declaration))
+        self.assertIn("R1-INPUT", self.rules(conformance.check_bundle(bundle)))
 
 
 if __name__ == "__main__":

@@ -2,6 +2,14 @@
 
 ## Current state
 
+New releases can explicitly adopt the [answer contract](v0.2/ANSWER_CONTRACT.md)
+`h3-compressed-v1` under declaration schema `etps-question-contract-v1`.
+The public descriptor renderer and standalone content-free conformance CLI are
+implemented with SYNTHETIC checks; authoring lint recognizes the adopted H3
+wording and keeps designated missing-information vocabulary separate. Legacy
+releases and strict scoring, d10 tolerance, fence extraction, runner and replay
+remain unchanged. This is diagnostic tooling, not corpus or model validation.
+
 The experimental v0.2 byte scorer, offline/live/manual runners, SQLite journal,
 replay/export, answer tolerance, reset/delivery policies and processing-cost
 diagnostics are implemented and covered by synthetic standard-library tests.

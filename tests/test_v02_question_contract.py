@@ -123,6 +123,15 @@ class QuestionContractTests(unittest.TestCase):
         self.assertEqual(classify_probe(manifest, probe, {"status": "ok", "answer": {"count": "7"}}), "correct")
         self.assertEqual(project_reply(b'```json\n{"count":"7"}\n```', "typed-v1", "fence-v1")[0], {"count": "7"})
 
+    def test_documented_slots_are_exact_and_brief_has_the_same_status_rules(self):
+        root = Path(__file__).resolve().parents[1]
+        text = (root / "docs/v0.2/ANSWER_CONTRACT.md").read_text(encoding="utf-8")
+        for slot in contract.TEMPLATES.values():
+            self.assertIn("> " + slot, text)
+        brief = (root / "docs/v0.2/AUTHORING_BRIEF_V2.md").read_text(encoding="utf-8")
+        for term in ("h3-compressed-v1", "`active`", "`expired`", "`unestablished`", "`unresolved`", "list only `missing_information`"):
+            self.assertIn(term, brief)
+
 
 if __name__ == "__main__":
     unittest.main()

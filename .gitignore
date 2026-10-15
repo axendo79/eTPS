@@ -233,3 +233,5 @@ corpus-private/
 
 # Local synthetic QA scratch files and test temporary directories
 /scratch/tmp/
+/scratch/EVIDENCE.md
+/scratch/PR_DESCRIPTION.md

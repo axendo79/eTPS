@@ -23,6 +23,12 @@ def write_contract_fixture(root, case="active"):
             ("active", "SYNTHETIC_A", [("SYNTHETIC-m0", "SYNTHETIC_A")], "precedence")))
     else:
         doc = synthetic_document(("SYNTHETIC_A",))
+    if case == "unestablished":
+        task = doc["tasks"][0]
+        task["state_history"][0]["versions"] = []
+        probe = task["probes"][0]
+        probe.update(requirements=[], expected={"answer": None, "old": None,
+            "status": "unestablished", "values": [], "source": None})
     files = map_authoring(encode(doc))
     for name, raw in files.items():
         (root / name).write_bytes(raw)

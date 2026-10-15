@@ -1,5 +1,32 @@
 # eTPS v0.2 provenance
 
+## Adopted prospective answer contract (2026-10-15)
+
+The maintainer adopted four ordinary status labels, a separate designated
+missing-information form and compressed H3 wording for future opted-in releases.
+The retained d10 digit-string tolerance, fence extraction and probe reply reserve
+are acceptance/budget policies rather than preferred answer forms. A separate
+rendering-compaction ruling preserves source IDs/positions, candidate status and
+checkpoint evidence; this public task does not modify any memory renderer.
+
+The user authorized the isolated `v02-answer-contract` worktree, local commits,
+public-safe rule/code inspection, SYNTHETIC test-first fixtures and affected
+documentation. Codex ported the public declaration/renderer and content-free
+conformance diagnostic, with generic v0.2 schema names and no corpus-specific
+release restrictions. Release immutability remains a freeze/review requirement;
+the diagnostic cannot infer release history from an identifier. Lint recognizes
+the adopted field wording and does not demand ordinary labels for a designated
+missing-information status. The authoring brief stays neutral and self-contained.
+
+Only the permitted rule sections, wording, format/checker support code and
+synthetic tests were inspected. No development/evaluation corpus, private keys
+or model results were opened or added. No scoring, runner, replay or extraction
+code changed. The profile-author/Nyx system-development affiliation remains
+disclosed; Nyx must be allowed to lose. These model-authored checks are software
+evidence only, not independent semantic review or benchmark validation. No model
+run, push or remote publication was performed. Local raw logs and per-run
+environment/commit/command/exit metadata are retained in ignored scratch evidence.
+
 ## PR #29 P3 repair and local integration (2026-10-14)
 
 The user authorized merging the locally repaired `v02-review-tools` into

@@ -23,7 +23,7 @@ snippet (up to 240 characters). Codes and precise observation rules:
 | Code | Observation |
 |---|---|
 | `answer_form_missing` | For each probe field, a field-scoped wording clause lacks its expected bare JSON number, exact text, bare ID, null-when-none or allowed status vocabulary form. Sets also require an array statement and each member type's form; empty sets require an empty-array-when-none statement. Determined from query kind/projection and expected value types, never a model judge. |
-| `status_vocabulary_missing` | For each status field or missing_information status projection, probe wording lacks a standalone declared status label. Labels are the record's status_labels **values**, with missing_information added for that projection. Identifier projections do not require status words. |
+| `status_vocabulary_missing` | For an ordinary status field, probe wording lacks a standalone record status_labels **value**. A designated missing_information status projection requires only missing_information, without ordinary labels. Identifier projections do not require status words. |
 | `answer_restated_before_probe` | A scalar or individual set member occurs after casefold and removal of whitespace in the preceding N delivered messages. Null searches for literal null; integers use decimal spelling; empty strings are not searched. V2 also checks selected source/transition IDs for non-provenance fields, marked restatement=source_id, and has no source exemptions. V2 correction messages are exempt, including retry correction positions. V1 preserves establishment and matching-source exemptions except for provenance IDs. Public ID prefixes can count as literal source mentions. |
 | `status_word_leak` | A declared label or configured annotation phrase occurs with Unicode word boundaries, case-insensitively and with flexible whitespace. Ordinary uses can be false positives. |
 | `question_reference_in_filler` | A configured question-reference phrase occurs in any conversation message, including a state source. The code name does not assert that the message is filler. |
@@ -66,9 +66,16 @@ Answer-form detection is a literal advisory. It splits sentence/semicolon clause
 and capitalized For/Return/Report/Provide/Give field instructions, then checks
 field names at word boundaries. Shared clauses can name several fields; one
 field's separate clause cannot satisfy another field. The core phrases are
-`bare JSON number(s)`, `exact`/`exactly` with `text`/`written`/`conversation`,
-`bare ID(s)`/`identifier(s)`, `null` with an absence condition, and `allowed`/
-`one of` plus all declared status words. Valid alternative wording can be a false
+`bare JSON number(s)` or `JSON integer(s)`, `exact`/`exactly` with
+`text`/`written`/`conversation`/`JSON string`, `bare ID(s)`/`identifier(s)`
+or an ID as a JSON string with no/without brackets, `null` with an absence
+condition, and `allowed`/`one of`/`use only` plus the applicable status words.
+The designated form also recognizes `use "missing_information" only`.
+Field-labelled `name:` blocks retain subsequent sentences and semicolon rules
+through the next field label or paragraph boundary. This recognizes the adopted
+[compressed H3](ANSWER_CONTRACT.md) scalar null conditions, source null without
+a unique active claim, set member types and `[] if expired/unestablished` form
+without borrowing a different field's rules. Valid alternative wording can be a false
 positive; instructions that merely mention rather than command a form can be a
 false negative. Human review decides; the lint never understands prose intent.
 No answer-form finding adds an authoring refusal.
@@ -83,3 +90,6 @@ Reports contain private text and keys. For evaluation, the authorized human
 custodian runs the tool alone and retains outputs in private custody under the
 [runbook](AUTHORING_RUNBOOK.md). Software findings neither grant access nor
 replace the human cross-check or independent challenge review.
+For a report limited to rule IDs, task IDs, field names and counts, use the
+separate opt-in `python -B -m etps_v02.conformance` diagnostic described in the
+answer contract. Advisory lint reports retain their existing private evidence.

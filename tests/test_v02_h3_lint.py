@@ -5,13 +5,14 @@ from authoring_fixtures import synthetic_document
 from authoring_rulings_fixtures import synthetic_missing_unit
 from etps_v02.intake.authoring_lint import lint_authoring, missing_answer_forms
 from etps_v02.workload import encode
+from etps_v02.question_contract import render
 
 
 class H3LintTests(unittest.TestCase):
     def forms(self, wording, value, *, kind="current", field="answer", is_set=False):
         query = {"kind": kind}
         probe = {"expected": {field: value}, "set_fields": [field] if is_set else [],
-                 "wording": wording, "field_map": {field: query}}
+                 "wording": wording, "field_map": {field: query, "other": {"kind": "current"}}}
         record = {"status_labels": {s: s for s in ("active", "expired", "unestablished", "unresolved")}}
         return missing_answer_forms(probe, field, query, record)
 
@@ -53,6 +54,18 @@ class H3LintTests(unittest.TestCase):
         doc["tasks"][0]["probes"][0]["wording"] = '[SYNTHETIC-p0] status: use only active expired unresolved.'
         rows = lint_authoring(encode(doc))["findings"]
         self.assertTrue(any(r["code"] == "status_vocabulary_missing" and "unestablished" in r["missing_labels"] for r in rows))
+
+    def test_full_rendered_questions_keep_nonempty_set_member_forms_scoped(self):
+        doc = synthetic_document(("SYNTHETIC_A", ("expired", None, [], "lapse")))
+        fields = {
+            "answer": {"kind": "scalar", "value_type": "string", "point": "now"},
+            "old": {"kind": "scalar", "value_type": "string", "point": "just after public message SYNTHETIC-m0"},
+            "status": {"kind": "status", "scope": "SYNTHETIC entity, property, north", "point": "now"},
+            "values": {"kind": "set", "value_type": "string"}, "source": {"kind": "source"}}
+        for probe in doc["tasks"][0]["probes"]:
+            probe["wording"] = render({"core": probe["wording"], "fields": fields})
+        findings = lint_authoring(encode(doc))["findings"]
+        self.assertEqual([r for r in findings if r["code"] in ("answer_form_missing", "status_vocabulary_missing")], [])
 
 
 if __name__ == "__main__":

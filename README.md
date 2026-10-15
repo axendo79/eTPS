@@ -17,6 +17,7 @@ Acceptance is binary at the trial boundary under a frozen recovery policy. Succe
 ## Read the design
 
 - [Measurement contract — draft 4](docs/v0.2/MEASUREMENT_CONTRACT.md): current consolidated definitions and explicitly marked proposals.
+- [Opt-in answer contract](docs/v0.2/ANSWER_CONTRACT.md): adopted status vocabulary, compressed H3 slots, public declaration schema and content-free conformance CLI.
 - [Architecture](ARCHITECTURE.md): existing modules versus proposed measurement flow.
 - [Status and next steps](docs/STATUS.md): settled decisions, open details and release prerequisites.
 - [Clause review](docs/v0.2/CLAUSE_REVIEW.md): span matching, author conflicts and comparison boundaries.

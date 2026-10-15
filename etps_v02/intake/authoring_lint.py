@@ -57,7 +57,23 @@ def field_clauses(wording, field, fields):
     names = "|".join(re.escape(name) for name in sorted(fields, key=lambda n: (-len(n), n)))
     clauses = re.split(r"[.;!?\n]+|(?=\b(?:For|Return|Report|Provide|Give)\s+(?:field\s+)?(?:"
                        + names + r")(?!\w))", wording)
-    return [clause for clause in clauses if word_match(clause, field)]
+    result = [clause for clause in clauses if word_match(clause, field)]
+    # H3 uses field-labelled paragraphs whose null/member rules can follow a
+    # semicolon or another sentence. Keep those rules with their own field,
+    # stopping at the next field label or paragraph boundary.
+    labels = list(re.finditer(r"(?<!\w)(" + names + r")\s*:", wording))
+    for i, match in enumerate(labels):
+        if match[1] != field:
+            continue
+        end = labels[i + 1].start() if i + 1 < len(labels) else len(wording)
+        result.append(wording[match.start():end].split("\n\n", 1)[0])
+    return result
+
+
+def status_labels(query, record):
+    if query["kind"] == "missing_information" and query["projection"] == "status":
+        return {"missing_information"}
+    return set(record["status_labels"].values())
 
 
 def missing_answer_forms(probe, field, query, record):
@@ -74,27 +90,32 @@ def missing_answer_forms(probe, field, query, record):
     for value in values:
         forms.add("null_when_none" if value is None else "status_words" if status else
                   "bare_id" if identifier else "number" if type(value) is int else "exact_text")
-    labels = set(record["status_labels"].values())
-    if query["kind"] == "missing_information" and status:
-        labels.add("missing_information")
+    labels = status_labels(query, record)
     clauses = field_clauses(probe["wording"], field, probe["field_map"])
 
     def states(clause, form):
         if form == "number":
-            return bool(re.search(r"\bbare\s+JSON\s+numbers?\b", clause, re.I))
+            return bool(re.search(r"\b(?:bare\s+JSON\s+numbers?|JSON\s+integers?)\b", clause, re.I))
         if form == "exact_text":
             return bool(re.search(r"\bexact(?:ly)?\b", clause, re.I) and
-                        re.search(r"\b(?:text|written|conversation)\b", clause, re.I))
+                        re.search(r"\b(?:text|written|conversation|JSON\s+string)\b", clause, re.I))
         if form == "bare_id":
-            return bool(re.search(r"\bbare\s+(?:IDs?|identifiers?)\b", clause, re.I))
+            return bool(re.search(r"\bbare\s+(?:IDs?|identifiers?)\b", clause, re.I) or
+                        (re.search(r"\bID\b", clause, re.I) and
+                         re.search(r"\bJSON\s+string\b", clause, re.I) and
+                         re.search(r"\b(?:no|without)\s+brackets\b", clause, re.I)))
         if form == "status_words":
-            return bool(re.search(r"\b(?:allowed|one\s+of)\b", clause, re.I)) and all(word_match(clause, label) for label in labels)
+            return bool(re.search(r"\b(?:allowed|one\s+of|use\s+only)\b", clause, re.I) or
+                        (labels == {"missing_information"} and
+                         re.search(r'\buse\s+"missing_information"\s+only\b', clause, re.I))) and all(word_match(clause, label) for label in labels)
         none = bool(re.search(r"\b(?:nothing\s+applies|none|no\s+(?:values?|items?|sources?|information)\s+(?:appl(?:y|ies)|exists?)|never\s+set|cancelled|canceled)\b", clause, re.I))
         if form == "null_when_none":
-            return bool(word_match(clause, "null")) and none
+            return bool(word_match(clause, "null")) and (none or bool(re.search(
+                r"\b(?:if\s+(?:expired|unestablished|unresolved)|(?:without|no)\s+(?:a\s+)?unique\s+(?:active\s+)?(?:claim|value))\b", clause, re.I)))
         if form == "array":
             return bool(word_match(clause, "array"))
-        return bool(word_match(clause, "empty") and word_match(clause, "array")) and none
+        return ((bool(word_match(clause, "empty") and word_match(clause, "array")) and none) or
+                bool(re.search(r"\[\]\s+if\s+expired\s*/\s*unestablished\b", clause, re.I)))
 
     return sorted(form for form in forms if not any(states(clause, form) for clause in clauses))
 
@@ -155,9 +176,7 @@ def lint_authoring(raw, *, window=None, status_phrases=None, question_phrases=No
                 record, version = field_version(task, probe, query)
                 is_status = query["kind"] == "status" or (query["kind"] == "missing_information" and query["projection"] == "status")
                 if is_status:
-                    allowed = set(record["status_labels"].values())
-                    if query["kind"] == "missing_information":
-                        allowed.add("missing_information")
+                    allowed = status_labels(query, record)
                     missing = sorted(label for label in allowed if not word_match(probe["wording"], label))
                     if missing:
                         add("status_vocabulary_missing", task, probe=probe["id"], evidence=snippet(probe["wording"]),

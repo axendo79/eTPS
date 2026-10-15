@@ -60,4 +60,11 @@ The implemented offline controller consumes predeclared response bytes, journals
 
 ## Scope boundaries
 
+The standalone [opt-in answer contract](docs/v0.2/ANSWER_CONTRACT.md) supplies
+public descriptor validation, compressed H3 rendering and a content-free
+conformance CLI for mapper bundles. It is an implemented authoring diagnostic,
+separate from scorer, runner and replay. It reads only bounded named artifacts;
+its report contains rule IDs, task IDs, field names and counts. Applying new
+wording in an execution still requires a new release/derivation and freeze.
+
 Nyx is one possible treatment, not an internal dependency or source of benchmark ground truth. No Nyx-specific scoring dimension is authorized. Account systems, leaderboard infrastructure, website features and SEIT are not prerequisites for measurement validity. Real traces must test whether answer keys probe state meaning rather than wording; consistency among these documents is not empirical evidence.
