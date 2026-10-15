@@ -55,6 +55,32 @@ class H3LintTests(unittest.TestCase):
         rows = lint_authoring(encode(doc))["findings"]
         self.assertTrue(any(r["code"] == "status_vocabulary_missing" and "unestablished" in r["missing_labels"] for r in rows))
 
+    def test_colon_block_stops_at_for_field_instruction(self):
+        self.assertEqual(self.forms("answer: give the value. For other use a JSON integer.", 7), ["number"])
+
+    def test_colon_blocks_respect_all_instruction_boundaries_and_mirrors(self):
+        cases = (
+            ("give the value", "use a JSON integer", 7, "current", "answer", False, ["number"]),
+            ("give the value", "use an exact JSON string", "SYNTHETIC", "current", "answer", False, ["exact_text"]),
+            ("use null", "use JSON null if expired", None, "current", "answer", False, ["null_when_none"]),
+            ("message ID as a JSON string", "use bare IDs", "SYNTHETIC-m0", "provenance", "source", False, ["bare_id"]),
+            ("use a JSON array", "use an empty array if none", [], "values", "values", True, ["empty_array_when_none"]),
+        )
+        for verb in ("For", "Return", "Report", "Provide", "Give"):
+            for qualifier in ("", "field "):
+                for missing, supplied, value, kind, field, is_set, expected in cases:
+                    for separator in (". ", "; ", " "):
+                        with self.subTest(verb=verb, qualifier=qualifier, field=field,
+                                          value=value, separator=separator):
+                            wording = f"{field}: {missing}{separator}{verb} {qualifier}other {supplied}."
+                            self.assertEqual(self.forms(wording, value, kind=kind, field=field, is_set=is_set), expected)
+                            # The target's own instruction works on either side of the boundary.
+                            for wording in (
+                                f"other: {missing}{separator}{verb} {qualifier}{field} {supplied}.",
+                                f"{field}: {supplied}{separator}{verb} {qualifier}other {missing}.",
+                            ):
+                                self.assertEqual(self.forms(wording, value, kind=kind, field=field, is_set=is_set), [])
+
     def test_full_rendered_questions_keep_nonempty_set_member_forms_scoped(self):
         doc = synthetic_document(("SYNTHETIC_A", ("expired", None, [], "lapse")))
         fields = {

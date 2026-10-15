@@ -72,7 +72,8 @@ or an ID as a JSON string with no/without brackets, `null` with an absence
 condition, and `allowed`/`one of`/`use only` plus the applicable status words.
 The designated form also recognizes `use "missing_information" only`.
 Field-labelled `name:` blocks retain subsequent sentences and semicolon rules
-through the next field label or paragraph boundary. This recognizes the adopted
+through the next field label, capitalized For/Return/Report/Provide/Give field
+instruction, or paragraph boundary. This recognizes the adopted
 [compressed H3](ANSWER_CONTRACT.md) scalar null conditions, source null without
 a unique active claim, set member types and `[] if expired/unestablished` form
 without borrowing a different field's rules. Valid alternative wording can be a false

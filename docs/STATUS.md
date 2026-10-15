@@ -10,6 +10,15 @@ wording and keeps designated missing-information vocabulary separate. Legacy
 releases and strict scoring, d10 tolerance, fence extraction, runner and replay
 remain unchanged. This is diagnostic tooling, not corpus or model validation.
 
+PR #30 review fixes preserve junction refusal on Python 3.11 through a shared
+`os.lstat` reparse-point fallback and stop labelled lint blocks at the existing
+field-instruction boundaries. Seven new SYNTHETIC regressions fail before the
+fixes and pass afterward; adopted H3 wording checks still pass. Windows Python
+3.14.2 runs 517 tests: 516 pass and the existing FIFO test skips, exit 0.
+`py -0p` lists only Python 3.14.2; no local Python 3.11 execution is claimed.
+The missing-API path is simulated. Raw logs and exact run metadata remain in
+the worktree's ignored `scratch/EVIDENCE.md` and `scratch/tmp/`.
+
 The experimental v0.2 byte scorer, offline/live/manual runners, SQLite journal,
 replay/export, answer tolerance, reset/delivery policies and processing-cost
 diagnostics are implemented and covered by synthetic standard-library tests.

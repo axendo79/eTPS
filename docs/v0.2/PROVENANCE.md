@@ -1,5 +1,19 @@
 # eTPS v0.2 provenance
 
+## PR #30 review repairs (2026-10-15)
+
+The user authorized both audit fixes, fail-before SYNTHETIC tests, full-suite
+verification and local commits on `v02-answer-contract`. Codex authored the
+shared Python 3.11 junction/reparse fallback, lint field-boundary repair and
+seven new test methods. The full Windows Python 3.14.2 suite runs 517 tests:
+516 pass, one existing FIFO skip, exit 0. `py -0p` lists only Python 3.14.2;
+Python 3.11 compatibility is exercised through a simulated unavailable API,
+not a local 3.11 interpreter run. Logs and per-run commit, command, exit and
+environment metadata are appended to ignored `scratch/EVIDENCE.md`.
+These are model-authored software checks, not independent review or corpus
+validation. No private corpus material, model run, push or remote publication
+was involved; work and temporary files stayed in the authorized worktree.
+
 ## Adopted prospective answer contract (2026-10-15)
 
 The maintainer adopted four ordinary status labels, a separate designated

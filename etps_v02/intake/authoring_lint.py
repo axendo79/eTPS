@@ -55,18 +55,18 @@ def prefix_pattern(identifier):
 def field_clauses(wording, field, fields):
     """Literal field-scoped clauses, not a natural-language interpretation."""
     names = "|".join(re.escape(name) for name in sorted(fields, key=lambda n: (-len(n), n)))
-    clauses = re.split(r"[.;!?\n]+|(?=\b(?:For|Return|Report|Provide|Give)\s+(?:field\s+)?(?:"
-                       + names + r")(?!\w))", wording)
+    instruction = r"\b(?:For|Return|Report|Provide|Give)\s+(?:field\s+)?(?:" + names + r")(?!\w)"
+    clauses = re.split(r"[.;!?\n]+|(?=" + instruction + r")", wording)
     result = [clause for clause in clauses if word_match(clause, field)]
     # H3 uses field-labelled paragraphs whose null/member rules can follow a
     # semicolon or another sentence. Keep those rules with their own field,
-    # stopping at the next field label or paragraph boundary.
+    # stopping at the next field label, instruction or paragraph boundary.
     labels = list(re.finditer(r"(?<!\w)(" + names + r")\s*:", wording))
     for i, match in enumerate(labels):
         if match[1] != field:
             continue
         end = labels[i + 1].start() if i + 1 < len(labels) else len(wording)
-        result.append(wording[match.start():end].split("\n\n", 1)[0])
+        result.append(re.split(r"\n\n|" + instruction, wording[match.start():end], maxsplit=1)[0])
     return result
 
 
