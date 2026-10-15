@@ -14,6 +14,9 @@ no real corpus task, development task, key or prediction.
 | [Corpus aggregation](CORPUS_AGGREGATION.md) | Per-arm/family/tag diagnostics within one hash-bound plan/repeat. |
 | [Corpus freeze](CORPUS_FREEZE.md) | Full artifact inventory, declared review gates, exact-byte change refusal and separate dev/eval records. |
 | [Author-session runbook](AUTHORING_RUNBOOK.md) | Isolation, S2–S4 disclosures, private custody, development then held-out evaluation and human review. |
+| [Advisory authoring lint](AUTHORING_LINT.md) | Literal vocabulary, restatement, ID-pattern and character-position observations; no admission or quality decisions. |
+| [Human review sheet](REVIEW_SHEET.md) | Self-contained offline HTML with source-hash-bound checklists, notes and review-input-v1 downloads. |
+| [Review record assembly](REVIEW_RECORD.md) | Complete checklists and empty defects to exact-artifact review.json, tested against the existing freeze gate in a temporary copy. |
 | [Run handoff](authoring-pipeline-run.md) | Per-task commits, test-first evidence, totals, STUCK items and final task table. |
 
 Follow the [accepted corpus specification](STATE_EVOLUTION_CORPUS_SPEC.md),

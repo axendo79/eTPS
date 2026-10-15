@@ -1,5 +1,58 @@
 # eTPS v0.2 provenance
 
+## Review-tools authorization and authorship (2026-10-10)
+
+The user explicitly authorized the complete local review-tools prompt, a branch
+from main 94ff867 named v02-review-tools, test-first SYNTHETIC implementation,
+documentation, full-suite execution and local commits. Authorization excludes
+push, PR, merge, private-workspace access, real corpus text, scoring/admission
+changes, authoring-format changes and changes to AUTHORING_BRIEF.md.
+
+Codex authored the advisory lint, offline review sheet/export, review-record
+assembler, shared factual views, new SYNTHETIC fixture builders and regressions,
+usage documentation and handoff. The human-review runbook received one added
+section; all existing rule text remains intact. Existing authoring, mapper,
+freeze gates, scoring and baseline tests remain unchanged. The software records
+literal observations and reviewer declarations; it cannot establish semantic
+validity, author independence, correct review or attestation.
+
+The source-byte SHA-256 plus task ID binds browser checklist state. Assembly
+requires every task/check and refuses every listed defect, binds all other
+artifacts, and invokes the unchanged freeze admission on a temporary copy.
+Simulated checklists and synthetic development/evaluation freeze acceptance
+are software evidence only. There was no real author session, task/key/prediction
+authoring, private corpus inspection, human approval, model execution or
+remote publication. The existing eTPS author/Nyx system-development affiliation
+remains disclosed; this tooling does not remove the conflict.
+
+Local Windows Python 3.14 verification runs 448 tests: 447 pass and the existing
+POSIX FIFO test skips. All 419 baseline tests are preserved; 29 new methods
+cover the three tools, with the embedded JavaScript executed using the already
+installed Node runtime. The [handoff](review-tools-run.md) records test-first
+failures, commits, scope checks and limits. The branch stays checked out and
+unpushed.
+
+## PR #28 P3 repair authorization and evidence (2026-10-14)
+
+The user authorized a new `D:\eTPS-wt-review-tools` worktree on the existing
+`v02-review-tools` branch, local commits for the two review-tool audit findings,
+and a later merge into `v02-brief-v2`. Codex authored the narrow input-parsing
+UTF-8 refusal, ASCII-JSON task-ID attribute encoding/JavaScript decoding,
+SYNTHETIC regressions and affected documentation. Strict scoring, authoring,
+mapper and freeze admission are unchanged. No private workspace or real corpus
+was read; no model run, push or remote publication occurred. Creating the
+worktree used the authorized Git command; the pinned main checkout was not edited.
+
+The three new methods ran before the fixes and recorded 11 subtest failures:
+missing parse-time refusals, CLI tracebacks, and HTML-normalized exported IDs.
+The final full suite runs 452 tests in 55.151 seconds: 451 pass and the existing
+Windows FIFO test skips. The installed Node runtime executes the actual sheet
+script using rendered attributes after modeled HTML CR/NUL preprocessing,
+checks storage restoration/export, and passes its export to review-input parsing.
+TEMP/TMP and logs stay in this worktree's ignored scratch/tmp. These are
+model-authored software checks, not independent review or corpus validity.
+The author/Nyx affiliation remains disclosed; Nyx must be allowed to lose.
+
 ## Maintainer authoring rulings (2026-10-06)
 
 The maintainer supplied and accepted these four authoring rulings:

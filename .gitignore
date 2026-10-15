@@ -230,3 +230,6 @@ corpus-private/
 .env
 .env.*
 !.env.example
+
+# Local synthetic QA scratch files and test temporary directories
+/scratch/tmp/
