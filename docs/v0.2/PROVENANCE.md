@@ -1,5 +1,89 @@
 # eTPS v0.2 provenance
 
+## PR #29 P3 repair and local integration (2026-10-14)
+
+The user authorized merging the locally repaired `v02-review-tools` into
+`v02-brief-v2`, then committing the narrow normalized-score audit repair.
+Merge `1b87d1ac090471bb530acf1505abc01b20c80475` brings in review-tool fix
+`680679b86eb95d32d97b0d46f2e97b0aa399abbc` and preserves the newer maintainer
+amendment at `ebdc014`. No conflicts occurred. Codex authored the unit-token
+alphabetic check, two new SYNTHETIC diagnostic methods and affected documentation.
+The existing number grammar retains ASCII digits; Unicode numeric symbols
+cannot be discarded as units. This repairs the documented diagnostic grammar
+without changing strict scoring, admission, runner, replay, RR or TPS.
+
+The ten-method diagnostic suite recorded 12 subtest failures before the fix,
+then all ten passed. Scalar/set regressions cover superscripts, fractions,
+Roman numerals and non-ASCII decimal digits; documented ASCII number spellings
+and alphabetic Unicode units remain accepted. The integrated full suite runs
+483 tests in 50.181 seconds: 482 pass and the existing Windows FIFO test skips.
+Both full suites use the requested Windows Python 3.14 interpreter and each
+worktree's ignored scratch/tmp for TEMP/TMP and logs. These are model-authored
+software checks, not independent review, a corpus/model run or benchmark evidence.
+
+The main checkout remains pinned; no private workspace or real corpus was read,
+and no model run, push or remote publication occurred. Existing evidence is not
+rescored. Both branches remain locally committed and unpushed. The eTPS author/
+Nyx affiliation remains disclosed, and Nyx must be allowed to lose.
+
+## Brief-v2 amendment authorization and rulings (2026-10-14)
+
+The user authorized the amendment prompt in full: changes, SYNTHETIC test-first
+verification, full-suite execution and a local commit on the existing
+`v02-brief-v2` worktree from `9ed3890`. The specifically authorized private reads
+were the maintainer rulings and evaluation-prep draft; Addendum 7 is binding.
+No private corpus or launch folder was accessed. All writes and TEMP/TMP remain
+inside this worktree; the pinned main checkout was not accessed. No model run,
+push or remote publication was performed.
+
+The maintainer adopted S1 correction IDs `<task>-c001`, S3 message-position
+evidence within the first 10% rounded up and maintainer token-counter verification
+at freeze recorded in settings.json, S4 correction exemption from rule 6, and
+S6 keeping the normalized diagnostic as built. Rule 9's minimum becomes 1.5x.
+Codex authored the narrow v2 admission/lint changes, synthetic fixture/regressions
+and affected documentation. V1 admission and brief bytes, strict scoring,
+runner/replay and normalized-score implementation remain unchanged. The
+[handoff addendum](brief-v2-run.md#maintainer-rulings-addendum-2026-10-14) records
+test evidence; this is software verification, not corpus validity, independent
+review or a benchmark result. The author/Nyx affiliation remains disclosed and
+Nyx must be allowed to lose. The local commit remains unpushed.
+
+Windows Python 3.14 verification runs 478 tests: 477 pass and the existing
+Windows FIFO test skips. Four new SYNTHETIC methods extend the 474-test baseline;
+the amended focused suite first recorded 16 failures across 21 tests, then all
+21 passed. Scope verification preserves 93 protected files and byte-identical
+baseline reports for three v1 lint fixtures. No real corpus evidence is implied.
+
+## Brief-v2 authorization and authorship (2026-10-12)
+
+The user authorized the complete brief-v2 prompt: an isolated worktree and branch
+`v02-brief-v2` from unmerged `origin/v02-review-tools`, test-first SYNTHETIC code,
+tests/docs, full-suite execution and local commits. The approved binding proposal
+was the sole authorized private-workspace read. Main remained pinned; no other
+private content/corpus, model execution, push, PR or merge was accessed/performed.
+Temporary artifacts and TEMP/TMP stayed in this worktree's ignored scratch/tmp.
+
+Codex authored the full neutral v2 brief, dual-version admission/schema support,
+v2-only ID refusal, mapper/freeze version propagation, advisory answer-form and
+hygiene checks, pure paired normalized diagnostic score, synthetic fixtures/tests
+and documentation. Codex initially omitted v1's condition-description paragraph
+under a prompt instruction that the maintainer's session later identified as
+mistaken; commit 3acd993 (Claude) restored v1's neutral A–D descriptions verbatim,
+because authors need them for structural predictions and they name no system.
+AUTHORING_BRIEF.md v1 and strict scorer/runner/replay/legacy bytes are unchanged.
+The existing denylist test is extended for v2; other baseline tests are preserved.
+No new authoring refusal beyond v2 ID style resolves the flagged semantic/
+representation issues in the [handoff](brief-v2-run.md). The normalized scorer
+does not enter acceptance; its metadata/grammar/report integration choices are
+explicitly documented as pending, not adopted experimental settings.
+
+Windows Python 3.14 baseline: 449 tests run, 448 pass and one existing FIFO skip.
+Final suite: 474 run, 473 pass and the same skip. These are software checks only,
+not actual authoring/review, model outcomes, corpus validity or attestation.
+There is no retrospective rescore or new model-setting/pilot condition. The
+eTPS author/Nyx developer affiliation remains disclosed; Nyx must be allowed
+to lose. Local branch/worktree remain unpushed for review.
+
 ## Review-tools authorization and authorship (2026-10-10)
 
 The user explicitly authorized the complete local review-tools prompt, a branch

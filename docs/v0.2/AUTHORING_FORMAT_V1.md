@@ -1,7 +1,7 @@
 # authoring-v1 admission
 
 Codex-authored tooling under local user authorization. No corpus content.
-The isolated author receives only [AUTHORING_BRIEF.md](AUTHORING_BRIEF.md),
+The isolated author receives only [AUTHORING_BRIEF_V2.md](AUTHORING_BRIEF_V2.md),
 which includes every format field. The [JSON Schema](authoring-v1.schema.json)
 describes structural shape; `etps_v02.intake.authoring` additionally checks
 references, immutable field maps, typed sets, routes, public IDs and byte spans.
@@ -19,6 +19,17 @@ duplicate keys, nonfinite numbers, invalid UTF-8 and nonportable surrogate strin
 Values are typed scalars or explicitly designated complete sets, without fuzzy
 matching. IDs beginning with `$` or containing `:` are reserved for derived nodes.
 Messages and questions must start with their exact public `[id] ` prefix.
+
+The format version stays `authoring-v1`; `brief_version` accepts
+`authoring-brief-v2` and historical `authoring-brief-v1` for frozen releases.
+V2 alone adds reason-coded `id_style` refusal: message/question/proposition/
+version/requirement/correction IDs use the task's literal prefix and `m`/`q`/`p`/`v`/`r`/`c`
+plus three decimal digits 001–999. The rule pins spelling, not contiguous
+numbering. The maintainer's 2026-10-14 Addendum 7 pins correction IDs as
+`<task>-c001`; historical v1 admission is unchanged. Mapper metadata and the freeze's
+existing brief-marker check propagate the declared brief version; every other
+admission/review gate remains intact. Question/hygiene/pressure checks stay
+[advisory](AUTHORING_LINT.md) with human review; they add no refusal.
 
 Version arrays preserve author order; previous/next links and contiguous numbers
 are a mechanical derivation. Requirement boundaries, authority, applicability,
@@ -46,7 +57,7 @@ Refusal codes: `invalid_json`, `safety_limit`, `required_fields`, `closed_fields
 `field_type`, `format_version`, `brief_version`, `duplicate_id`, `coverage_tag`,
 `reference`, `position`, `field_map`, `answer_shape`, `unknown_overlap`, `route`,
 `span`, `prediction`, `public_identifier`, `history_order`, `delayed_obligation`,
-`multi_failure_recovery`, `alternative_answers`, `missing_information_answer`. File-read failures
+`multi_failure_recovery`, `alternative_answers`, `missing_information_answer`, `id_style` (v2 only). File-read failures
 use `file_unavailable` from the bounded intake reader. The first failure includes
 a source path and detail. All refusal groups have trivial SYNTHETIC fixtures.
 

@@ -1,6 +1,7 @@
 # Isolated author-session runbook
 
-This is the maintainer's procedure. The author receives only AUTHORING_BRIEF.md,
+This is the maintainer's procedure. For new work the author receives only
+[AUTHORING_BRIEF_V2.md](AUTHORING_BRIEF_V2.md),
 including its complete `authoring-v1` format. Do not send this runbook, the corpus
 specification, implementation, denylist, prior results, governance material or
 repository to that session. Codex authored tooling and SYNTHETIC software fixtures
@@ -20,7 +21,7 @@ No author session or corpus execution is performed by these instructions.
    shell, or repository tools. Use a session with **no repository access**, not a
    coding session attached to this workspace. If isolation cannot be established,
    record the problem and do not author the real corpus there.
-3. The sole task message is the complete text of `AUTHORING_BRIEF.md`. Attach or
+3. The sole task message is the complete text of `AUTHORING_BRIEF_V2.md`. Attach or
    paste only that document, preserving its version and saving the exact bytes
    supplied. Do not include filenames/paths to code, arm/system names, examples
    from earlier tasks, expected winners or results. Record provider/model identifier
@@ -31,11 +32,13 @@ No author session or corpus execution is performed by these instructions.
    chain-length range, distractor/pressure settings and context budget. Initially
    request development proposals; after development, insert only the frozen
    settings in the evaluation instance. Choose no numeric values in this tooling
-   session. Keep the base instructions at `authoring-brief-v1`; distinguish instance
+   session. Keep new base instructions at `authoring-brief-v2`; distinguish instance
    bytes by SHA-256 and corpus release. A change to rules rather than selected
    parameters requires a new brief version and separately tested validator support.
    Run the separate denylist scan on every instance before giving it to the author.
    The appendix contains no results, evaluated-system behavior or governance text.
+   Historical frozen releases keep their exact v1 instance: those authors received
+   only AUTHORING_BRIEF.md. That file remains unchanged and v1 remains admitted.
 5. Preserve public message identifiers for every arm. Freeze the maintainer-only
    A–F mapping to the six specified conditions with the arm/configuration records.
    E/F may have null predictions with structural reasons; never provide internal
@@ -186,6 +189,34 @@ other artifact. A mismatch invalidates release even when an execution would scor
 
 ### Maintainer review tools
 
+**BRIEF_V2:** Human review now uses `authoring-lint-v2`, including the field-scoped
+`answer_form_missing` advisory and the default three-message window for v2.
+Use the default window for rule-6 review; a configurable shorter window is only
+a diagnostic. Check every field's exact number/text/ID/null form, allowed status
+words, the meaning of `values`, and the declared missing-item ID in each question,
+including retries. Describe events in conversation text, with no status labels,
+near-probe restatement/confirmation or upcoming-question filler cues. Correction
+(recovery) messages are exempt from rule 6, including retry correction positions;
+other nearby messages still undergo the check.
+
+Verify over-budget evidence lies in the first 10% of conversation messages,
+rounded up, by message position, and the conversation is at least 1.5x the context
+budget; within-budget conversations must stay under 50%. The maintainer verifies
+message/character sizes with the token counter at freeze and records the sizes,
+budget, counting convention and receipt in `settings.json`. Lint
+reports source starts and counts but has no declared token budget or tokenizer;
+its `context_pressure_unverified` advisory requires human verification. Follow
+the unresolved representation choices in the [handoff](brief-v2-run.md); do not
+invent a new format or refusal to resolve them. The 2026-10-14 Addendum 7 in that
+handoff settles S1, S3, S4 and S6. V2 ID style is the sole new authoring refusal,
+including `<task>-c001` for corrections. V1 continues to use a two-message diagnostic window and its
+source exemptions for compatibility.
+
+Declare any [normalized diagnostic score](NORMALIZED_SCORE.md) version and ID/set
+field metadata before execution. Retain paired strict/normalized answer reports;
+only the existing strict policy determines acceptance. This tool does not add a
+runner condition, select settings, or rescore historical evidence.
+
 The authorized human custodian can run these private, advisory tools alone; for
 held-out evaluation, no agent may read the corpus through them. Run
 [authoring_lint](AUTHORING_LINT.md), then generate the self-contained
@@ -234,7 +265,7 @@ dimension accuracy, family/tag coverage and acceptance. Keep primary measurement
 costs and existing trial reports. Publish only permitted opaque trial identifiers
 and disclosure/configuration records; private text/keys remain private.
 
-See [brief](AUTHORING_BRIEF.md), [format](AUTHORING_FORMAT_V1.md),
+See [brief v2](AUTHORING_BRIEF_V2.md), [historical brief v1](AUTHORING_BRIEF.md), [format](AUTHORING_FORMAT_V1.md),
 [mapper](AUTHORING_MAPPER.md), [aggregation](CORPUS_AGGREGATION.md),
 [freeze](CORPUS_FREEZE.md), [sidecar intake](STATE_RECORDS_V1.md) and
 [accepted specification](STATE_EVOLUTION_CORPUS_SPEC.md).

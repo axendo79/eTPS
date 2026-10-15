@@ -9,8 +9,35 @@ Acceptance, first-attempt retention, RR and generation TPS remain separate;
 eTPS is a labeled experimental index. Legacy v0.1 modules remain preserved.
 
 The state-evolution authoring pipeline is merged in PR #25; see the
-[isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). No development
-or evaluation corpus has been authored yet.
+[isolated author-session runbook](v0.2/AUTHORING_RUNBOOK.md). This checkout contains
+SYNTHETIC tooling fixtures. This implementation task neither inspects nor authors
+private development or evaluation corpora.
+
+Local `v02-brief-v2` work from unmerged `v02-review-tools` adds the neutral
+[authoring brief v2](v0.2/AUTHORING_BRIEF_V2.md), dual-version authoring admission
+with v2-only pinned-ID refusal, version propagation through mapping/freeze,
+field-answer-form lint and a three-message v2 hygiene window. Human review now
+uses lint v2. The [normalized diagnostic scorer](v0.2/NORMALIZED_SCORE.md) produces
+paired strict/normalized answer reports without changing strict acceptance,
+runner, replay, RR or TPS. V1 brief bytes and frozen-release admission remain
+preserved. The maintainer's 2026-10-14 Addendum 7 settles S1/S3/S4/S6: correction
+IDs use `<task>-c001`, first-tenth evidence uses message position rounded up,
+the maintainer verifies sizes with the token counter at freeze in settings.json,
+and correction messages are exempt from rule 6. The normalized diagnostic retains
+its separate reporting role; beyond-budget conversations require at least 1.5x
+the context budget.
+See the [handoff addendum](v0.2/brief-v2-run.md#maintainer-rulings-addendum-2026-10-14)
+for current rulings and verification; the original decision list is historical.
+
+Windows Python 3.14 P3-fix verification runs **483 tests: 482 pass and the existing
+FIFO test skips**. The review-tool fixes are merged locally; normalized numeric
+units now require alphabetic characters, retaining ASCII number digits.
+Five new SYNTHETIC methods cover the three P3 findings. The earlier 2026-10-14
+amendment ran 478 tests and added four methods to the 474-test baseline.
+V1 tests are preserved.
+This is Codex-authored SYNTHETIC software evidence, not a corpus/model run,
+independent review or benchmark claim. Local commits and the authorized branch
+merge only; no push, PR or remote publication.
 
 Local maintainer review tools on v02-review-tools add advisory authoring lint,
 an offline source-hash-bound HTML checklist/export, and review.json assembly

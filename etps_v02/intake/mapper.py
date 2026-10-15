@@ -40,13 +40,13 @@ def set_order(value):
     return sorted(copy.deepcopy(value), key=encode)
 
 
-def map_task(task, source_prefix, names):
+def map_task(task, source_prefix, names, *, brief_version="authoring-brief-v1"):
     traces = {}
 
     def trace(source, artifact, pointer, kind, extra=()):
         traces[source_prefix + source] = [{"artifact": names[artifact], "pointer": pointer, "kind": kind}] + list(extra)
 
-    metadata = {"version": "authoring-v1", "brief_version": "authoring-brief-v1", "task_id": task["id"],
+    metadata = {"version": "authoring-v1", "brief_version": brief_version, "task_id": task["id"],
                 "family": task["family"], "coverage_tags": copy.deepcopy(task["coverage_tags"]),
                 "logical_field_map": copy.deepcopy(task["field_map"])}
     metadata["coverage_tags"]["subcases"] = sorted(metadata["coverage_tags"]["subcases"])
@@ -211,7 +211,7 @@ def map_authoring(raw):
         prefix = f"task-{i+1:04d}"
         names = {kind: prefix + "." + kind + ".json" for kind in
                  ("manifest", "sidecar", "keys", "field_map", "predictions", "derivation", "intake")}
-        derived, mappings = map_task(task, f"/tasks/{i}", names)
+        derived, mappings = map_task(task, f"/tasks/{i}", names, brief_version=document["brief_version"])
         files.update(derived)
         traces.update(mappings)
         family_summary = prediction_summary.setdefault(task["family"], {

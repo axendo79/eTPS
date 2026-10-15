@@ -1,6 +1,7 @@
 """Strict, neutral authoring-v1 admission. Separate from scoring and replay."""
 import argparse
 import json
+import re
 
 from ..scorer import InvalidRecord, OUTCOMES, boundaries
 from ..set_answers import scalar
@@ -10,6 +11,8 @@ from .state_records import IntakeError, read_bounded
 
 VERSION = "authoring-v1"
 BRIEF_VERSION = "authoring-brief-v1"
+BRIEF_V2 = "authoring-brief-v2"
+BRIEF_VERSIONS = (BRIEF_VERSION, BRIEF_V2)
 MAX_BYTES = 8 * 1024 * 1024
 MAX_TASKS = 256
 MAX_ITEMS = 4096
@@ -294,16 +297,38 @@ def validate_authoring(raw):
         raise AuthoringError("invalid_json", "source", str(exc)) from exc
     closed(document, FIELDS["root"], "source")
     need(document["version"] == VERSION, "format_version", "source.version", "unsupported authoring format")
-    need(document["brief_version"] == BRIEF_VERSION, "brief_version", "source.brief_version", "unsupported brief")
+    enum(document["brief_version"], BRIEF_VERSIONS, "source.brief_version", "brief_version")
     enum(document["dataset"], ("development", "evaluation"), "source.dataset")
     array(document["tasks"], "source.tasks", nonempty=True)
     need(len(document["tasks"]) <= MAX_TASKS, "safety_limit", "source.tasks", "task admission ceiling")
     ids = set()
     for i, task in enumerate(document["tasks"]):
         validate_task(task, f"source.tasks[{i}]")
+        if document["brief_version"] == BRIEF_V2:
+            validate_v2_ids(task, f"source.tasks[{i}]")
         need(task["id"] not in ids, "duplicate_id", "source.tasks", "duplicate task ID")
         ids.add(task["id"])
     return document
+
+
+def validate_v2_ids(task, path):
+    """Brief v2 pins six declared categories, including corrections."""
+    def check(identifier, letter, source):
+        pattern = re.escape(task["id"]) + "-" + letter + r"[0-9]{3}"
+        need(re.fullmatch(pattern, identifier) is not None and not identifier.endswith("000"),
+             "id_style", source, f"expected {task['id']}-{letter}001 style (001 through 999)")
+
+    for collection, letter in (("conversation", "m"), ("probes", "q"), ("state_history", "p"),
+                               ("recoveries", "c")):
+        for i, item in enumerate(task[collection]):
+            ip = f"{path}.{collection}[{i}]"
+            check(item["id"], letter, ip + ".id")
+            if collection == "state_history":
+                for j, version in enumerate(item["versions"]):
+                    vp = f"{ip}.versions[{j}]"
+                    check(version["id"], "v", vp + ".id")
+                    for k, req in enumerate(version["requirements"]):
+                        check(req["id"], "r", f"{vp}.requirements[{k}].id")
 
 
 def main():
