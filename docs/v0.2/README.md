@@ -8,6 +8,7 @@ no real corpus task, development task, key or prediction.
 | Artifact | Purpose |
 |---|---|
 | [BRIEF_V2](AUTHORING_BRIEF_V2.md) | Current self-contained neutral rules; explicit field answer forms, pinned IDs, three-message hygiene and context-pressure thresholds. |
+| [Evaluation authoring kit](authoring-kit/README.md) | Custodian checklist, placeholder template, nine worked SYNTHETIC family examples and one-command content-free batch check. Never supplied to the isolated author. |
 | [AUTHORING_BRIEF](AUTHORING_BRIEF.md) | Frozen historical v1, unchanged; accepted for frozen releases. |
 | [Authoring format v1](AUTHORING_FORMAT_V1.md) | Closed JSON Schema and strict reason-coded admission. |
 | [Mapper](AUTHORING_MAPPER.md) | Byte-stable executable manifests, bound state sidecars and full source-field derivation logs. |

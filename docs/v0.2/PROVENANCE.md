@@ -1,5 +1,32 @@
 # eTPS v0.2 provenance
 
+## Evaluation authoring kit (2026-10-15)
+
+The user authorized a new worktree from origin/main, local implementation,
+SYNTHETIC examples/tests, full-suite verification, evidence and a local commit,
+with no push. Codex authored the custodian kit from public v0.2 documentation,
+implementation and synthetic fixtures. The separately authorized custody-checker
+documentation/code was read only to understand its content-free reporting style;
+no private development/evaluation content or keys were inspected, copied or used.
+Private paths and release-specific IDs are excluded from this public kit.
+
+The kit adds a standalone content-free batch wrapper, placeholder template and
+worked examples for all nine families. It calls existing APIs without changing
+their behavior or scoring, preserves all mapper bytes, checks explicit H3 wording
+consistency and optionally creates a new bound bundle for later human review.
+Twenty-one new SYNTHETIC test methods exercise the real tools, output sanitization,
+refusals, exports and a simulated freeze declaration. A simulated declaration is
+not human review. The example pressure tag has no measured token budget; no
+token-size or context-overflow evidence is claimed. Final commands, environment,
+commit identity, raw logs and totals are retained in ignored scratch/EVIDENCE.md.
+
+The real isolated author still receives only the approved brief instance, never
+this implementation-informed kit. Model authorship, developer direction and the
+profile-author/Nyx system-development affiliation remain disclosed; Nyx must be
+allowed to lose. These fixtures are software evidence, not a real corpus,
+independent challenge review or benchmark result. No model run, dependency
+installation, scoring/tool-behavior change, push or remote publication occurred.
+
 ## PR #30 review repairs (2026-10-15)
 
 The user authorized both audit fixes, fail-before SYNTHETIC tests, full-suite

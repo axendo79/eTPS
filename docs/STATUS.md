@@ -2,6 +2,19 @@
 
 ## Current state
 
+The [evaluation authoring kit](v0.2/authoring-kit/README.md) provides the human
+custodian a blank-to-freeze checklist, placeholder-only authoring/descriptor
+templates, generic mistake repairs and complete SYNTHETIC F1–F9 examples.
+Its standalone batch script calls unchanged admission, mapper, explicit sidecar
+intake, advisory lint and conformance, emitting only fixed codes and counts.
+Optional exclusive export preserves mapper bytes and binds the H3 declaration;
+authored wording must already equal the public descriptor rendering. Twenty-one
+new SYNTHETIC test methods cover every family, confidentiality/refusal boundaries,
+export identity and compatibility with the existing freeze gate. Token sizes
+and semantics remain unverified by this diagnostic; human review, custody,
+candidate pins and freeze/attestation requirements remain in force. No private
+development/evaluation content, model execution or remote publication was used.
+
 New releases can explicitly adopt the [answer contract](v0.2/ANSWER_CONTRACT.md)
 `h3-compressed-v1` under declaration schema `etps-question-contract-v1`.
 The public descriptor renderer and standalone content-free conformance CLI are
