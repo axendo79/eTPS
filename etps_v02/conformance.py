@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 
 from .intake.state_records import EventGraph, projected
-from .question_contract import apply, digest, read_named, read_release, unique_json
+from .question_contract import apply, digest, is_junction, read_named, read_release, unique_json
 
 SCHEMA = "etps-conformance-v1"
 STATUSES = ("active", "expired", "unestablished", "unresolved")
@@ -26,8 +26,8 @@ def check_bundle(bundle):
 
     try:
         bundle = Path(bundle)
-        if (bundle.name != "bundle.json" or bundle.is_symlink() or bundle.is_junction() or
-                bundle.parent.is_symlink() or bundle.parent.is_junction()):
+        if (bundle.name != "bundle.json" or bundle.is_symlink() or is_junction(bundle) or
+                bundle.parent.is_symlink() or is_junction(bundle.parent)):
             raise ValueError("file boundary")
         root = bundle.parent
         raw = read_named(root, "bundle.json")

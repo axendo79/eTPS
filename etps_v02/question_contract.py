@@ -5,6 +5,7 @@ Rendering accepts public descriptors only; it never reads expected answers.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import stat
 
@@ -35,6 +36,15 @@ def unique_json(raw):
     return json.loads(raw, object_pairs_hook=pairs, parse_constant=constant)
 
 
+def is_junction(path):
+    """Use pathlib when available; conservatively refuse 3.11 reparse points."""
+    check = getattr(path, "is_junction", None)
+    if check is not None:
+        return check()
+    return bool(getattr(os.lstat(path), "st_file_attributes", 0) &
+                stat.FILE_ATTRIBUTE_REPARSE_POINT)
+
+
 def read_named(root, name, ceiling=16 * 1024 * 1024):
     """Read one bounded regular file directly inside the declared directory."""
     if (type(name) is not str or not name or name in (".", "..") or
@@ -42,7 +52,7 @@ def read_named(root, name, ceiling=16 * 1024 * 1024):
         raise ValueError("file boundary")
     root = Path(root)
     path = root / name
-    if (path.is_symlink() or path.is_junction() or
+    if (path.is_symlink() or is_junction(path) or
             not path.resolve().is_relative_to(root.resolve()) or
             not stat.S_ISREG(path.stat().st_mode) or path.stat().st_size > ceiling):
         raise ValueError("file boundary")

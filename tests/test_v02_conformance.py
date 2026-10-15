@@ -1,10 +1,14 @@
 """SYNTHETIC conformance regressions, including output secrecy canaries."""
 import json
+import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import PropertyMock, patch
 
 from question_contract_fixtures import write_contract_fixture
 from etps_v02 import conformance
@@ -34,6 +38,37 @@ class ConformanceTests(unittest.TestCase):
         raw = json.dumps(report)
         for canary in canaries + ("SYNTHETIC_A", "SYNTHETIC-p0", "SYNTHETIC-m0"):
             self.assertNotIn(canary, raw)
+
+    def test_valid_bundle_without_path_is_junction(self):
+        bundle, _, _ = self.fixture()
+        with patch.object(Path, "is_junction", new_callable=PropertyMock,
+                          side_effect=AttributeError("SYNTHETIC Python 3.11"), create=True):
+            report = conformance.check_bundle(bundle)
+        self.assertEqual(report["violation_count"], 0, report)
+        self.assertEqual(report["tasks_checked"], 1)
+        self.assertGreater(report["fields_checked"], 0)
+        self.assert_content_free(report)
+
+    def test_fallback_refuses_bundle_and_parent_reparse_points(self):
+        bundle, _, _ = self.fixture()
+        real_lstat = os.lstat
+        for blocked in (bundle, bundle.parent):
+            def lstat(path, *args, **kwargs):
+                info = real_lstat(path, *args, **kwargs)
+                if Path(path) == blocked:
+                    return SimpleNamespace(st_mode=info.st_mode,
+                                           st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT)
+                return info
+            with self.subTest(blocked=blocked.name), \
+                    patch.object(Path, "is_junction", new_callable=PropertyMock,
+                                 side_effect=AttributeError("SYNTHETIC Python 3.11"), create=True), \
+                    patch("os.lstat", side_effect=lstat) as inspected:
+                report = conformance.check_bundle(bundle)
+                self.assertIn(blocked, [Path(call.args[0]) for call in inspected.call_args_list])
+            self.assertEqual(self.rules(report), {"R1-INPUT"})
+            self.assertEqual(report["tasks_checked"], 0)
+            self.assertEqual(report["fields_checked"], 0)
+            self.assert_content_free(report)
 
     def test_valid_synthetic_states_and_retry_are_read_only(self):
         for case in ("active", "expired", "unestablished", "unresolved", "settled", "missing", "retry"):

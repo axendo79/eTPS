@@ -2,8 +2,11 @@
 import copy
 import json
 from pathlib import Path
+import stat
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import PropertyMock, patch
 
 from question_contract_fixtures import write_contract_fixture
 from etps_v02 import question_contract as contract
@@ -17,6 +20,34 @@ class QuestionContractTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory(prefix="etps-SYNTHETIC-wording-")
         self.addCleanup(folder.cleanup)
         return write_contract_fixture(Path(folder.name), case)
+
+    def test_read_named_without_path_is_junction(self):
+        bundle, _, _ = self.fixture()
+        expected = bundle.read_bytes()
+        with patch.object(Path, "is_junction", new_callable=PropertyMock,
+                          side_effect=AttributeError("SYNTHETIC Python 3.11"), create=True):
+            self.assertFalse(hasattr(bundle, "is_junction"))
+            self.assertEqual(contract.read_named(bundle.parent, bundle.name), expected)
+
+    def test_fallback_refuses_reparse_points_before_opening(self):
+        bundle, _, _ = self.fixture()
+        info = SimpleNamespace(st_mode=stat.S_IFREG,
+                               st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT)
+        with patch.object(Path, "is_junction", new_callable=PropertyMock,
+                          side_effect=AttributeError("SYNTHETIC Python 3.11"), create=True), \
+                patch("os.lstat", return_value=info), patch.object(Path, "open") as opened:
+            with self.assertRaisesRegex(ValueError, "file boundary"):
+                contract.read_named(bundle.parent, bundle.name)
+            opened.assert_not_called()
+
+    def test_fallback_accepts_regular_files_without_windows_attributes(self):
+        bundle, _, _ = self.fixture()
+        expected = bundle.read_bytes()
+        info = SimpleNamespace(st_mode=stat.S_IFREG)
+        with patch.object(Path, "is_junction", new_callable=PropertyMock,
+                          side_effect=AttributeError("SYNTHETIC Python 3.11"), create=True), \
+                patch("os.lstat", return_value=info):
+            self.assertEqual(contract.read_named(bundle.parent, bundle.name), expected)
 
     def test_absent_and_explicit_legacy_do_not_render(self):
         bundle, index, declaration = self.fixture()
