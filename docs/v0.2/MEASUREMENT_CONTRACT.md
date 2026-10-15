@@ -78,6 +78,14 @@ For mixed messages, the frozen template maps recovery byte spans to obligation I
 
 ## 5. Mechanical classification and answer checking
 
+New releases may explicitly opt into the adopted
+[v0.2 answer contract](ANSWER_CONTRACT.md): four ordinary status labels,
+designated missing information, typed/null/set/ID rules and exact compressed H3
+question slots. The declaration is `etps-question-contract-v1`, version
+`h3-compressed-v1`. Legacy releases, keys, strict scoring, declared d10 tolerance
+and fence extraction remain unchanged. The standalone content-free conformance
+checker is diagnostic and is not a runner or freeze gate.
+
 The pilot uses finite structured answers with frozen allowed values and normalization rules. Exact structured equality checks complete propositions, including negation, scope, time, and required uncertainty. A response containing a correct keyword alongside the wrong value must fail. Missing fields, incompatible extra claims, malformed responses, refusals, and explicit unknown answers take frozen branches; no live judge decides reconstruction.
 
 Each probe has a finite branch map: correct answer → continue; incorrect/unknown/malformed answer → specified recovery or terminal failure. Branch priority and maximum retries are fixed. A clarification response is valid only at a manifest-designated ambiguity checkpoint. An unsolicited request for obligated information takes the failure branch. Arbitrary free-form dialogue is out of scope for this deterministic pilot; do not claim its semantics can be classified mechanically from keywords.
