@@ -1,0 +1,158 @@
+{
+  "version": "authoring-v1",
+  "brief_version": "authoring-brief-v2",
+  "dataset": "<development or evaluation>",
+  "tasks": [
+    {
+      "id": "<task>",
+      "family": "<F1 through F9>",
+      "coverage_tags": {
+        "chain_depth": "<nonnegative integer>",
+        "distance": "<nonnegative integer>",
+        "entity_similarity": "<distinct or similar>",
+        "ambiguity_status": "<active, expired, unestablished, unresolved, or resolved>",
+        "provenance_need": "<needed or none>",
+        "context_pressure": "<within or over>",
+        "verbatim_possible": "<JSON boolean>",
+        "subcases": []
+      },
+      "conversation": [
+        {
+          "id": "<task>-m001",
+          "text": "[<task>-m001] <ordinary event establishing the exact string value; no annotation labels>",
+          "recap": false
+        },
+        {
+          "id": "<task>-m002",
+          "text": "[<task>-m002] <unrelated message; no tested value/source, status labels, or question cues>",
+          "recap": false
+        },
+        {
+          "id": "<task>-m003",
+          "text": "[<task>-m003] <unrelated message; no tested value/source, status labels, or question cues>",
+          "recap": false
+        },
+        {
+          "id": "<task>-m004",
+          "text": "[<task>-m004] <unrelated message; no tested value/source, status labels, or question cues>",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "value": {
+          "dimension": "current",
+          "record": "<task>-p001",
+          "kind": "current",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "<task>-q001",
+          "position": "<task>-m004",
+          "wording": "[<task>-q001] <paste the complete rendered descriptor here>",
+          "field_map": {
+            "value": {
+              "dimension": "current",
+              "record": "<task>-p001",
+              "kind": "current",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "value": "<exact string in force>"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "<task>-r001"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "<task>-p001",
+          "entity": "<entity>",
+          "property": "<property>",
+          "scope": "<scope>",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unresolved": "unresolved",
+            "unestablished": "unestablished"
+          },
+          "versions": [
+            {
+              "id": "<task>-v001",
+              "message": "<task>-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "<exact string in force>",
+              "sources": [
+                {
+                  "message": "<task>-m001",
+                  "authority": "<public source authority>",
+                  "value": "<exact string in force>"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "<plain applicability>",
+              "requirements": [
+                {
+                  "id": "<task>-r001",
+                  "kind": "current",
+                  "begin_after": "<task>-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "<structural reason for unknown prediction; replace null only with justified JSON boolean>"
+        }
+      ]
+    }
+  ]
+}

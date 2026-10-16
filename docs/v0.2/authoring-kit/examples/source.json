@@ -1,0 +1,2571 @@
+{
+  "version": "authoring-v1",
+  "brief_version": "authoring-brief-v2",
+  "dataset": "development",
+  "tasks": [
+    {
+      "id": "SYNTHETIC-K01",
+      "family": "F1",
+      "coverage_tags": {
+        "chain_depth": 3,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "active",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": [
+          "revisit"
+        ]
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K01-m001",
+          "text": "[SYNTHETIC-K01-m001] Use nalvi-7 as the Velrin bench drawer code.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m002",
+          "text": "[SYNTHETIC-K01-m002] Replace that drawer code with zekru-4.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m003",
+          "text": "[SYNTHETIC-K01-m003] Change the Velrin bench drawer code back to nalvi-7.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m004",
+          "text": "[SYNTHETIC-K01-m004] Replace the Velrin bench drawer code with tovri-8.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m005",
+          "text": "[SYNTHETIC-K01-m005] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m006",
+          "text": "[SYNTHETIC-K01-m006] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K01-m007",
+          "text": "[SYNTHETIC-K01-m007] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "code": {
+          "dimension": "current",
+          "record": "SYNTHETIC-K01-p001",
+          "kind": "current",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K01-q001",
+          "position": "SYNTHETIC-K01-m007",
+          "wording": "[SYNTHETIC-K01-q001] What is the Velrin bench drawer code now?\n\nReturn one JSON object with exactly these fields, each once: code. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\ncode: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).",
+          "field_map": {
+            "code": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K01-p001",
+              "kind": "current",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "code": "tovri-8"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K01-r007"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K01-p001",
+          "entity": "Velrin bench",
+          "property": "drawer code",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K01-v001",
+              "message": "SYNTHETIC-K01-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "nalvi-7",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K01-m001",
+                  "authority": "workshop coordinator",
+                  "value": "nalvi-7"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Velrin bench, drawer code, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K01-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K01-m001",
+                  "end_before": "SYNTHETIC-K01-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K01-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K01-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K01-v002",
+              "message": "SYNTHETIC-K01-m002",
+              "change": "change",
+              "status": "active",
+              "value": "zekru-4",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K01-m002",
+                  "authority": "workshop coordinator",
+                  "value": "zekru-4"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Velrin bench, drawer code, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K01-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K01-m002",
+                  "end_before": "SYNTHETIC-K01-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K01-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K01-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K01-v003",
+              "message": "SYNTHETIC-K01-m003",
+              "change": "change",
+              "status": "active",
+              "value": "nalvi-7",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K01-m003",
+                  "authority": "workshop coordinator",
+                  "value": "nalvi-7"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Velrin bench, drawer code, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K01-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K01-m003",
+                  "end_before": "SYNTHETIC-K01-m004"
+                },
+                {
+                  "id": "SYNTHETIC-K01-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K01-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K01-v004",
+              "message": "SYNTHETIC-K01-m004",
+              "change": "change",
+              "status": "active",
+              "value": "tovri-8",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K01-m004",
+                  "authority": "workshop coordinator",
+                  "value": "tovri-8"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Velrin bench, drawer code, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K01-r007",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K01-m004",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K01-r008",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K01-m004",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K02",
+      "family": "F2",
+      "coverage_tags": {
+        "chain_depth": 2,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "expired",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": [
+          "retraction"
+        ]
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K02-m001",
+          "text": "[SYNTHETIC-K02-m001] The Meruv studio delivery phrase is peska-6.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K02-m002",
+          "text": "[SYNTHETIC-K02-m002] Replace the Meruv studio delivery phrase with durmi-9.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K02-m003",
+          "text": "[SYNTHETIC-K02-m003] Withdraw the Meruv studio delivery phrase; no replacement is assigned.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K02-m004",
+          "text": "[SYNTHETIC-K02-m004] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K02-m005",
+          "text": "[SYNTHETIC-K02-m005] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K02-m006",
+          "text": "[SYNTHETIC-K02-m006] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "earlier": {
+          "dimension": "historical",
+          "record": "SYNTHETIC-K02-p001",
+          "kind": "at-checkpoint",
+          "checkpoint": "SYNTHETIC-K02-m002"
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K02-q001",
+          "position": "SYNTHETIC-K02-m006",
+          "wording": "[SYNTHETIC-K02-q001] What was the Meruv studio delivery phrase just after public message SYNTHETIC-K02-m002?\n\nReturn one JSON object with exactly these fields, each once: earlier. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nearlier: one value in force just after public message SYNTHETIC-K02-m002, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).",
+          "field_map": {
+            "earlier": {
+              "dimension": "historical",
+              "record": "SYNTHETIC-K02-p001",
+              "kind": "at-checkpoint",
+              "checkpoint": "SYNTHETIC-K02-m002"
+            }
+          },
+          "expected": {
+            "earlier": "durmi-9"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K02-r004"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K02-p001",
+          "entity": "Meruv studio",
+          "property": "delivery phrase",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K02-v001",
+              "message": "SYNTHETIC-K02-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "peska-6",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K02-m001",
+                  "authority": "workshop coordinator",
+                  "value": "peska-6"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Meruv studio, delivery phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K02-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K02-m001",
+                  "end_before": "SYNTHETIC-K02-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K02-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K02-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K02-v002",
+              "message": "SYNTHETIC-K02-m002",
+              "change": "change",
+              "status": "active",
+              "value": "durmi-9",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K02-m002",
+                  "authority": "workshop coordinator",
+                  "value": "durmi-9"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Meruv studio, delivery phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K02-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K02-m002",
+                  "end_before": "SYNTHETIC-K02-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K02-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K02-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K02-v003",
+              "message": "SYNTHETIC-K02-m003",
+              "change": "lapse",
+              "status": "expired",
+              "value": null,
+              "sources": [],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Meruv studio, delivery phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K02-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K02-m003",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K02-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K02-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K03",
+      "family": "F3",
+      "coverage_tags": {
+        "chain_depth": 2,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "expired",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": [
+          "retraction"
+        ]
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K03-m001",
+          "text": "[SYNTHETIC-K03-m001] The Korven desk cabinet token is vembi-2.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K03-m002",
+          "text": "[SYNTHETIC-K03-m002] Change the Korven desk cabinet token to rulpa-8.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K03-m003",
+          "text": "[SYNTHETIC-K03-m003] Cancel the Korven desk cabinet token without issuing another.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K03-m004",
+          "text": "[SYNTHETIC-K03-m004] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K03-m005",
+          "text": "[SYNTHETIC-K03-m005] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K03-m006",
+          "text": "[SYNTHETIC-K03-m006] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "token": {
+          "dimension": "expired",
+          "record": "SYNTHETIC-K03-p001",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "status": {
+          "dimension": "expired",
+          "record": "SYNTHETIC-K03-p001",
+          "kind": "status",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K03-q001",
+          "position": "SYNTHETIC-K03-m006",
+          "wording": "[SYNTHETIC-K03-q001] What is the Korven desk cabinet token and its status now?\n\nReturn one JSON object with exactly these fields, each once: token, status. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\ntoken: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor status about Korven desk, cabinet token, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.",
+          "field_map": {
+            "token": {
+              "dimension": "expired",
+              "record": "SYNTHETIC-K03-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "status": {
+              "dimension": "expired",
+              "record": "SYNTHETIC-K03-p001",
+              "kind": "status",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "token": null,
+            "status": "expired"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K03-r005"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K03-p001",
+          "entity": "Korven desk",
+          "property": "cabinet token",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K03-v001",
+              "message": "SYNTHETIC-K03-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "vembi-2",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K03-m001",
+                  "authority": "workshop coordinator",
+                  "value": "vembi-2"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Korven desk, cabinet token, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K03-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K03-m001",
+                  "end_before": "SYNTHETIC-K03-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K03-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K03-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K03-v002",
+              "message": "SYNTHETIC-K03-m002",
+              "change": "change",
+              "status": "active",
+              "value": "rulpa-8",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K03-m002",
+                  "authority": "workshop coordinator",
+                  "value": "rulpa-8"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Korven desk, cabinet token, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K03-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K03-m002",
+                  "end_before": "SYNTHETIC-K03-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K03-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K03-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K03-v003",
+              "message": "SYNTHETIC-K03-m003",
+              "change": "lapse",
+              "status": "expired",
+              "value": null,
+              "sources": [],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Korven desk, cabinet token, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K03-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K03-m003",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K03-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K03-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K04",
+      "family": "F4",
+      "coverage_tags": {
+        "chain_depth": 2,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "resolved",
+        "provenance_need": "needed",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": []
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K04-m001",
+          "text": "[SYNTHETIC-K04-m001] Lena, a workshop coordinator, assigns vesri-5 as the Ruvin hatch paint label.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m002",
+          "text": "[SYNTHETIC-K04-m002] Omar, an equally authoritative workshop coordinator, assigns kolmu-8 to the same hatch paint label. Neither coordinator has priority.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m003",
+          "text": "[SYNTHETIC-K04-m003] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m004",
+          "text": "[SYNTHETIC-K04-m004] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m005",
+          "text": "[SYNTHETIC-K04-m005] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m006",
+          "text": "[SYNTHETIC-K04-m006] For the Ruvin hatch paint label, Lena has priority over Omar; use her earlier assignment.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m007",
+          "text": "[SYNTHETIC-K04-m007] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m008",
+          "text": "[SYNTHETIC-K04-m008] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K04-m009",
+          "text": "[SYNTHETIC-K04-m009] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "label": {
+          "dimension": "current",
+          "record": "SYNTHETIC-K04-p001",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "status": {
+          "dimension": "ambiguity",
+          "record": "SYNTHETIC-K04-p001",
+          "kind": "status",
+          "checkpoint": null
+        },
+        "values": {
+          "dimension": "ambiguity",
+          "record": "SYNTHETIC-K04-p001",
+          "kind": "values",
+          "checkpoint": null
+        },
+        "source": {
+          "dimension": "provenance",
+          "record": "SYNTHETIC-K04-p001",
+          "kind": "provenance",
+          "checkpoint": null
+        },
+        "earlier": {
+          "dimension": "historical",
+          "record": "SYNTHETIC-K04-p001",
+          "kind": "at-checkpoint",
+          "checkpoint": "SYNTHETIC-K04-m002"
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K04-q001",
+          "position": "SYNTHETIC-K04-m005",
+          "wording": "[SYNTHETIC-K04-q001] What is the Ruvin hatch paint label, its status, values in force, and source now?\n\nReturn one JSON object with exactly these fields, each once: label, status, values, source. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nlabel: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor status about Ruvin hatch, paint label, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.\n\nvalues: complete unordered JSON array of values in force now; singleton if active/settled, all distinct competing values if unresolved, [] if expired/unestablished. Members: an exact JSON string, preserving case, spelling, punctuation, and spacing. No duplicates or superseded alternatives.\n\nsource: exact public source-claim message ID for the unique active value, as a JSON string, no brackets/descriptions. After precedence, identify the selected claim, not the later decision. JSON null without a unique active claim.",
+          "field_map": {
+            "label": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "status": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "status",
+              "checkpoint": null
+            },
+            "values": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "values",
+              "checkpoint": null
+            },
+            "source": {
+              "dimension": "provenance",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "provenance",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "label": null,
+            "status": "unresolved",
+            "values": [
+              "vesri-5",
+              "kolmu-8"
+            ],
+            "source": null
+          },
+          "set_fields": [
+            "values"
+          ],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K04-r003"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        },
+        {
+          "id": "SYNTHETIC-K04-q002",
+          "position": "SYNTHETIC-K04-m009",
+          "wording": "[SYNTHETIC-K04-q002] What is the Ruvin hatch paint label, status, values in force, and source now, and the single label just after public message SYNTHETIC-K04-m002?\n\nReturn one JSON object with exactly these fields, each once: label, status, values, source, earlier. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nlabel: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor status about Ruvin hatch, paint label, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.\n\nvalues: complete unordered JSON array of values in force now; singleton if active/settled, all distinct competing values if unresolved, [] if expired/unestablished. Members: an exact JSON string, preserving case, spelling, punctuation, and spacing. No duplicates or superseded alternatives.\n\nsource: exact public source-claim message ID for the unique active value, as a JSON string, no brackets/descriptions. After precedence, identify the selected claim, not the later decision. JSON null without a unique active claim.\n\nearlier: one value in force just after public message SYNTHETIC-K04-m002, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).",
+          "field_map": {
+            "label": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "status": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "status",
+              "checkpoint": null
+            },
+            "values": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "values",
+              "checkpoint": null
+            },
+            "source": {
+              "dimension": "provenance",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "provenance",
+              "checkpoint": null
+            },
+            "earlier": {
+              "dimension": "historical",
+              "record": "SYNTHETIC-K04-p001",
+              "kind": "at-checkpoint",
+              "checkpoint": "SYNTHETIC-K04-m002"
+            }
+          },
+          "expected": {
+            "label": "vesri-5",
+            "status": "active",
+            "values": [
+              "vesri-5"
+            ],
+            "source": "SYNTHETIC-K04-m001",
+            "earlier": null
+          },
+          "set_fields": [
+            "values"
+          ],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K04-r005",
+            "SYNTHETIC-K04-r004"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K04-p001",
+          "entity": "Ruvin hatch",
+          "property": "paint label",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K04-v001",
+              "message": "SYNTHETIC-K04-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "vesri-5",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K04-m001",
+                  "authority": "workshop coordinator",
+                  "value": "vesri-5"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Ruvin hatch, paint label, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K04-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K04-m001",
+                  "end_before": "SYNTHETIC-K04-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K04-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K04-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K04-v002",
+              "message": "SYNTHETIC-K04-m002",
+              "change": "change",
+              "status": "unresolved",
+              "value": null,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K04-m001",
+                  "authority": "workshop coordinator",
+                  "value": "vesri-5"
+                },
+                {
+                  "message": "SYNTHETIC-K04-m002",
+                  "authority": "workshop coordinator",
+                  "value": "kolmu-8"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Ruvin hatch, paint label, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K04-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K04-m002",
+                  "end_before": "SYNTHETIC-K04-m006"
+                },
+                {
+                  "id": "SYNTHETIC-K04-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K04-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K04-v003",
+              "message": "SYNTHETIC-K04-m006",
+              "change": "precedence",
+              "status": "active",
+              "value": "vesri-5",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K04-m001",
+                  "authority": "workshop coordinator",
+                  "value": "vesri-5"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Ruvin hatch, paint label, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K04-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K04-m006",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K04-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K04-m006",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K05",
+      "family": "F5",
+      "coverage_tags": {
+        "chain_depth": 1,
+        "distance": 4,
+        "entity_similarity": "similar",
+        "ambiguity_status": "active",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": []
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K05-m001",
+          "text": "[SYNTHETIC-K05-m001] Tovin Annex has 47 trays.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m002",
+          "text": "[SYNTHETIC-K05-m002] Tovin Hall has 83 trays.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m003",
+          "text": "[SYNTHETIC-K05-m003] Change the Tovin Annex tray count to 61; this instruction concerns only the Annex.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m004",
+          "text": "[SYNTHETIC-K05-m004] Change the Tovin Hall tray count to 97; this instruction concerns only the Hall.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m005",
+          "text": "[SYNTHETIC-K05-m005] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m006",
+          "text": "[SYNTHETIC-K05-m006] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K05-m007",
+          "text": "[SYNTHETIC-K05-m007] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "count": {
+          "dimension": "current",
+          "record": "SYNTHETIC-K05-p001",
+          "kind": "current",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K05-q001",
+          "position": "SYNTHETIC-K05-m007",
+          "wording": "[SYNTHETIC-K05-q001] What is the Tovin Annex tray count now?\n\nReturn one JSON object with exactly these fields, each once: count. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\ncount: one value in force now, as a JSON integer; JSON null if expired, unestablished, or unresolved (no unique value).",
+          "field_map": {
+            "count": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K05-p001",
+              "kind": "current",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "count": 61
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K05-r005"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K05-p001",
+          "entity": "Tovin Annex",
+          "property": "tray count",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K05-v001",
+              "message": "SYNTHETIC-K05-m001",
+              "change": "establish",
+              "status": "active",
+              "value": 47,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K05-m001",
+                  "authority": "workshop coordinator",
+                  "value": 47
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Tovin Annex, tray count, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K05-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K05-m001",
+                  "end_before": "SYNTHETIC-K05-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K05-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K05-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K05-v003",
+              "message": "SYNTHETIC-K05-m003",
+              "change": "change",
+              "status": "active",
+              "value": 61,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K05-m003",
+                  "authority": "workshop coordinator",
+                  "value": 61
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Tovin Annex, tray count, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K05-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K05-m003",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K05-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K05-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SYNTHETIC-K05-p002",
+          "entity": "Tovin Hall",
+          "property": "tray count",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K05-v002",
+              "message": "SYNTHETIC-K05-m002",
+              "change": "establish",
+              "status": "active",
+              "value": 83,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K05-m002",
+                  "authority": "workshop coordinator",
+                  "value": 83
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Tovin Hall, tray count, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K05-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K05-m002",
+                  "end_before": "SYNTHETIC-K05-m004"
+                },
+                {
+                  "id": "SYNTHETIC-K05-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K05-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K05-v004",
+              "message": "SYNTHETIC-K05-m004",
+              "change": "change",
+              "status": "active",
+              "value": 97,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K05-m004",
+                  "authority": "workshop coordinator",
+                  "value": 97
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Tovin Hall, tray count, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K05-r007",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K05-m004",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K05-r008",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K05-m004",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K06",
+      "family": "F6",
+      "coverage_tags": {
+        "chain_depth": 0,
+        "distance": 10,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "active",
+        "provenance_need": "none",
+        "context_pressure": "over",
+        "verbatim_possible": true,
+        "subcases": []
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K06-m001",
+          "text": "[SYNTHETIC-K06-m001] The Pevril cart locker phrase is zemku-9.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m002",
+          "text": "[SYNTHETIC-K06-m002] The courtyard mural depicts a boat beside a winding path. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m003",
+          "text": "[SYNTHETIC-K06-m003] A visitor sketched the ceiling beams in a small notebook. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m004",
+          "text": "[SYNTHETIC-K06-m004] The garden fountain splashed beside the stone benches. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m005",
+          "text": "[SYNTHETIC-K06-m005] The courtyard mural depicts a boat beside a winding path. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m006",
+          "text": "[SYNTHETIC-K06-m006] A visitor sketched the ceiling beams in a small notebook. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m007",
+          "text": "[SYNTHETIC-K06-m007] The garden fountain splashed beside the stone benches. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m008",
+          "text": "[SYNTHETIC-K06-m008] The courtyard mural depicts a boat beside a winding path. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m009",
+          "text": "[SYNTHETIC-K06-m009] A visitor sketched the ceiling beams in a small notebook. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m010",
+          "text": "[SYNTHETIC-K06-m010] The garden fountain splashed beside the stone benches. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K06-m011",
+          "text": "[SYNTHETIC-K06-m011] The courtyard mural depicts a boat beside a winding path. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream. A landscape drawing shows hills, reeds, clouds, and a narrow stream.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "phrase": {
+          "dimension": "current",
+          "record": "SYNTHETIC-K06-p001",
+          "kind": "current",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K06-q001",
+          "position": "SYNTHETIC-K06-m011",
+          "wording": "[SYNTHETIC-K06-q001] What is the Pevril cart locker phrase now?\n\nReturn one JSON object with exactly these fields, each once: phrase. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nphrase: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).",
+          "field_map": {
+            "phrase": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K06-p001",
+              "kind": "current",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "phrase": "zemku-9"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K06-r001"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K06-p001",
+          "entity": "Pevril cart",
+          "property": "locker phrase",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K06-v001",
+              "message": "SYNTHETIC-K06-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "zemku-9",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K06-m001",
+                  "authority": "workshop coordinator",
+                  "value": "zemku-9"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Pevril cart, locker phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K06-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K06-m001",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K06-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K06-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K07",
+      "family": "F7",
+      "coverage_tags": {
+        "chain_depth": 3,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "active",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": [
+          "retraction",
+          "reinstatement",
+          "revisit"
+        ]
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K07-m001",
+          "text": "[SYNTHETIC-K07-m001] Use milra-6 as the Dervin table storage tag.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m002",
+          "text": "[SYNTHETIC-K07-m002] Change the Dervin table storage tag to sovki-3.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m003",
+          "text": "[SYNTHETIC-K07-m003] Withdraw the Dervin table storage tag, with no replacement.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m004",
+          "text": "[SYNTHETIC-K07-m004] Reinstate milra-6 as the Dervin table storage tag.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m005",
+          "text": "[SYNTHETIC-K07-m005] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m006",
+          "text": "[SYNTHETIC-K07-m006] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K07-m007",
+          "text": "[SYNTHETIC-K07-m007] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "tag": {
+          "dimension": "current",
+          "record": "SYNTHETIC-K07-p001",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "earlier": {
+          "dimension": "historical",
+          "record": "SYNTHETIC-K07-p001",
+          "kind": "at-checkpoint",
+          "checkpoint": "SYNTHETIC-K07-m002"
+        },
+        "status": {
+          "dimension": "ambiguity",
+          "record": "SYNTHETIC-K07-p001",
+          "kind": "status",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K07-q001",
+          "position": "SYNTHETIC-K07-m007",
+          "wording": "[SYNTHETIC-K07-q001] What is the Dervin table storage tag and status now, and the tag just after public message SYNTHETIC-K07-m002?\n\nReturn one JSON object with exactly these fields, each once: tag, earlier, status. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\ntag: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nearlier: one value in force just after public message SYNTHETIC-K07-m002, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor status about Dervin table, storage tag, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.",
+          "field_map": {
+            "tag": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "earlier": {
+              "dimension": "historical",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "at-checkpoint",
+              "checkpoint": "SYNTHETIC-K07-m002"
+            },
+            "status": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "status",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "tag": "milra-6",
+            "earlier": "sovki-3",
+            "status": "active"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K07-r007",
+            "SYNTHETIC-K07-r004"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "SYNTHETIC-K07-c001",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        },
+        {
+          "id": "SYNTHETIC-K07-q002",
+          "position": "SYNTHETIC-K07-c001",
+          "wording": "[SYNTHETIC-K07-q002] What is the Dervin table storage tag and status now, and the tag just after public message SYNTHETIC-K07-m002?\n\nReturn one JSON object with exactly these fields, each once: tag, earlier, status. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\ntag: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nearlier: one value in force just after public message SYNTHETIC-K07-m002, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor status about Dervin table, storage tag, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.",
+          "field_map": {
+            "tag": {
+              "dimension": "current",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "earlier": {
+              "dimension": "historical",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "at-checkpoint",
+              "checkpoint": "SYNTHETIC-K07-m002"
+            },
+            "status": {
+              "dimension": "ambiguity",
+              "record": "SYNTHETIC-K07-p001",
+              "kind": "status",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "tag": "milra-6",
+            "earlier": "sovki-3",
+            "status": "active"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K07-r007",
+            "SYNTHETIC-K07-r004"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K07-p001",
+          "entity": "Dervin table",
+          "property": "storage tag",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K07-v001",
+              "message": "SYNTHETIC-K07-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "milra-6",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K07-m001",
+                  "authority": "workshop coordinator",
+                  "value": "milra-6"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Dervin table, storage tag, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K07-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K07-m001",
+                  "end_before": "SYNTHETIC-K07-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K07-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K07-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K07-v002",
+              "message": "SYNTHETIC-K07-m002",
+              "change": "change",
+              "status": "active",
+              "value": "sovki-3",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K07-m002",
+                  "authority": "workshop coordinator",
+                  "value": "sovki-3"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Dervin table, storage tag, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K07-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K07-m002",
+                  "end_before": "SYNTHETIC-K07-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K07-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K07-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K07-v003",
+              "message": "SYNTHETIC-K07-m003",
+              "change": "lapse",
+              "status": "expired",
+              "value": null,
+              "sources": [],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Dervin table, storage tag, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K07-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K07-m003",
+                  "end_before": "SYNTHETIC-K07-m004"
+                },
+                {
+                  "id": "SYNTHETIC-K07-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K07-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K07-v004",
+              "message": "SYNTHETIC-K07-m004",
+              "change": "reinstate",
+              "status": "active",
+              "value": "milra-6",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K07-m004",
+                  "authority": "workshop coordinator",
+                  "value": "milra-6"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Dervin table, storage tag, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K07-r007",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K07-m004",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K07-r008",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K07-m004",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [
+        {
+          "id": "SYNTHETIC-K07-c001",
+          "failure_probes": [
+            "SYNTHETIC-K07-q001"
+          ],
+          "text": "[SYNTHETIC-K07-c001] The Dervin table storage tag is milra-6.",
+          "spans": [
+            [
+              53,
+              60,
+              "SYNTHETIC-K07-r007"
+            ]
+          ],
+          "new_spans": [],
+          "retry": "SYNTHETIC-K07-q002"
+        }
+      ],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K08",
+      "family": "F8",
+      "coverage_tags": {
+        "chain_depth": 1,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "active",
+        "provenance_need": "needed",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": []
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K08-m001",
+          "text": "[SYNTHETIC-K08-m001] The Lurven rack ribbon label is pekru-2.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K08-m002",
+          "text": "[SYNTHETIC-K08-m002] Replace the Lurven rack ribbon label with navli-7.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K08-m003",
+          "text": "[SYNTHETIC-K08-m003] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K08-m004",
+          "text": "[SYNTHETIC-K08-m004] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K08-m005",
+          "text": "[SYNTHETIC-K08-m005] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "source": {
+          "dimension": "provenance",
+          "record": "SYNTHETIC-K08-p001",
+          "kind": "provenance",
+          "checkpoint": null
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K08-q001",
+          "position": "SYNTHETIC-K08-m005",
+          "wording": "[SYNTHETIC-K08-q001] Which public source-claim message established the Lurven rack ribbon label in force now?\n\nReturn one JSON object with exactly these fields, each once: source. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nsource: exact public source-claim message ID for the unique active value, as a JSON string, no brackets/descriptions. After precedence, identify the selected claim, not the later decision. JSON null without a unique active claim.",
+          "field_map": {
+            "source": {
+              "dimension": "provenance",
+              "record": "SYNTHETIC-K08-p001",
+              "kind": "provenance",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "source": "SYNTHETIC-K08-m002"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K08-r003"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K08-p001",
+          "entity": "Lurven rack",
+          "property": "ribbon label",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K08-v001",
+              "message": "SYNTHETIC-K08-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "pekru-2",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K08-m001",
+                  "authority": "workshop coordinator",
+                  "value": "pekru-2"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Lurven rack, ribbon label, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K08-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K08-m001",
+                  "end_before": "SYNTHETIC-K08-m002"
+                },
+                {
+                  "id": "SYNTHETIC-K08-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K08-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K08-v002",
+              "message": "SYNTHETIC-K08-m002",
+              "change": "change",
+              "status": "active",
+              "value": "navli-7",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K08-m002",
+                  "authority": "workshop coordinator",
+                  "value": "navli-7"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Lurven rack, ribbon label, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K08-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K08-m002",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K08-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K08-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    },
+    {
+      "id": "SYNTHETIC-K09",
+      "family": "F9",
+      "coverage_tags": {
+        "chain_depth": 0,
+        "distance": 3,
+        "entity_similarity": "distinct",
+        "ambiguity_status": "unestablished",
+        "provenance_need": "none",
+        "context_pressure": "within",
+        "verbatim_possible": true,
+        "subcases": [
+          "retraction"
+        ]
+      },
+      "conversation": [
+        {
+          "id": "SYNTHETIC-K09-m001",
+          "text": "[SYNTHETIC-K09-m001] The Vemril shelf access phrase is kevru-5.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m002",
+          "text": "[SYNTHETIC-K09-m002] The Hovrin bay permit phrase is somvi-8.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m003",
+          "text": "[SYNTHETIC-K09-m003] Cancel the Hovrin bay permit phrase without replacement.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m004",
+          "text": "[SYNTHETIC-K09-m004] The Juvren strip has a measured length of 37. Its length unit is required to interpret the measurement.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m005",
+          "text": "[SYNTHETIC-K09-m005] The courtyard mural depicts a boat beside a winding path.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m006",
+          "text": "[SYNTHETIC-K09-m006] A visitor sketched the ceiling beams in a small notebook.",
+          "recap": false
+        },
+        {
+          "id": "SYNTHETIC-K09-m007",
+          "text": "[SYNTHETIC-K09-m007] The garden fountain splashed beside the stone benches.",
+          "recap": false
+        }
+      ],
+      "field_map": {
+        "steady": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p001",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "absent": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p002",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "absent_status": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p002",
+          "kind": "status",
+          "checkpoint": null
+        },
+        "lapsed": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p003",
+          "kind": "current",
+          "checkpoint": null
+        },
+        "lapsed_status": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p003",
+          "kind": "status",
+          "checkpoint": null
+        },
+        "status": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p004",
+          "kind": "missing_information",
+          "missing_item": "SYNTHETIC-K09-p005",
+          "projection": "status"
+        },
+        "missing_item": {
+          "dimension": "control",
+          "record": "SYNTHETIC-K09-p004",
+          "kind": "missing_information",
+          "missing_item": "SYNTHETIC-K09-p005",
+          "projection": "identifier"
+        }
+      },
+      "probes": [
+        {
+          "id": "SYNTHETIC-K09-q001",
+          "position": "SYNTHETIC-K09-m007",
+          "wording": "[SYNTHETIC-K09-q001] What are the Vemril shelf access phrase and seal color/status, and the Hovrin bay permit phrase/status now?\n\nReturn one JSON object with exactly these fields, each once: steady, absent, absent_status, lapsed, lapsed_status. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nsteady: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nabsent: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor absent_status about Vemril shelf, seal color, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.\n\nlapsed: one value in force now, as an exact JSON string; JSON null if expired, unestablished, or unresolved (no unique value).\n\nFor lapsed_status about Hovrin bay, permit phrase, workshop now, use only \"active\" (one value in force, including after explicit conflict settlement), \"expired\" (established value explicitly withdrawn/lapsed, no replacement), \"unestablished\" (never established by then), or \"unresolved\" (incompatible supplied claims still compete without explicit applicable settlement). Recency alone cannot settle conflict. Settled value: \"active\", never \"resolved\". Missing information/your uncertainty is not disagreement. Later events cannot change checkpoint answers.",
+          "field_map": {
+            "steady": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p001",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "absent": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p002",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "absent_status": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p002",
+              "kind": "status",
+              "checkpoint": null
+            },
+            "lapsed": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p003",
+              "kind": "current",
+              "checkpoint": null
+            },
+            "lapsed_status": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p003",
+              "kind": "status",
+              "checkpoint": null
+            }
+          },
+          "expected": {
+            "steady": "kevru-5",
+            "absent": null,
+            "absent_status": "unestablished",
+            "lapsed": null,
+            "lapsed_status": "expired"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K09-r001",
+            "SYNTHETIC-K09-r005"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        },
+        {
+          "id": "SYNTHETIC-K09-q002",
+          "position": "SYNTHETIC-K09-m007",
+          "wording": "[SYNTHETIC-K09-q002] Identify the never-supplied required item needed to interpret the Juvren strip length.\n\nReturn one JSON object with exactly these fields, each once: status, missing_item. No fences, commentary, extra fields, nested objects, or booleans. Numeric fields: JSON integers, never quoted, decimal, or unit-bearing. Text/IDs: JSON strings. Copy text exactly, including case, spelling, punctuation, and spacing; add no articles or descriptions. Use JSON null only under each field's null rule, never \"null\", \"\", or guesses; null is not unknown/refusal. Arrays only for declared set fields.\n\nFor \"status\", use \"missing_information\" only when required item SYNTHETIC-K09-p005 was never supplied before this question, not for disagreement. Changed, disputed, withdrawn, forgotten, or context-omitted information previously supplied is ineligible. missing_item: exact declared item ID as a JSON string, no brackets/additions.",
+          "field_map": {
+            "status": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p004",
+              "kind": "missing_information",
+              "missing_item": "SYNTHETIC-K09-p005",
+              "projection": "status"
+            },
+            "missing_item": {
+              "dimension": "control",
+              "record": "SYNTHETIC-K09-p004",
+              "kind": "missing_information",
+              "missing_item": "SYNTHETIC-K09-p005",
+              "projection": "identifier"
+            }
+          },
+          "expected": {
+            "status": "missing_information",
+            "missing_item": "SYNTHETIC-K09-p005"
+          },
+          "set_fields": [],
+          "unknown_answers": [],
+          "alternative_answers": [],
+          "requirements": [
+            "SYNTHETIC-K09-r007"
+          ],
+          "outcomes": {
+            "correct": "$continue",
+            "incorrect": "$reject",
+            "unknown": "$reject",
+            "malformed": "$reject",
+            "timeout": "$reject"
+          }
+        }
+      ],
+      "state_history": [
+        {
+          "id": "SYNTHETIC-K09-p001",
+          "entity": "Vemril shelf",
+          "property": "access phrase",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K09-v001",
+              "message": "SYNTHETIC-K09-m001",
+              "change": "establish",
+              "status": "active",
+              "value": "kevru-5",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K09-m001",
+                  "authority": "workshop coordinator",
+                  "value": "kevru-5"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Vemril shelf, access phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K09-r001",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K09-m001",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K09-r002",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K09-m001",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SYNTHETIC-K09-p002",
+          "entity": "Vemril shelf",
+          "property": "seal color",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": []
+        },
+        {
+          "id": "SYNTHETIC-K09-p003",
+          "entity": "Hovrin bay",
+          "property": "permit phrase",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K09-v002",
+              "message": "SYNTHETIC-K09-m002",
+              "change": "establish",
+              "status": "active",
+              "value": "somvi-8",
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K09-m002",
+                  "authority": "workshop coordinator",
+                  "value": "somvi-8"
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Hovrin bay, permit phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K09-r003",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K09-m002",
+                  "end_before": "SYNTHETIC-K09-m003"
+                },
+                {
+                  "id": "SYNTHETIC-K09-r004",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K09-m002",
+                  "end_before": "$trial_end"
+                }
+              ]
+            },
+            {
+              "id": "SYNTHETIC-K09-v003",
+              "message": "SYNTHETIC-K09-m003",
+              "change": "lapse",
+              "status": "expired",
+              "value": null,
+              "sources": [],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Hovrin bay, permit phrase, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K09-r005",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K09-m003",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K09-r006",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K09-m003",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SYNTHETIC-K09-p004",
+          "entity": "Juvren strip",
+          "property": "measured length",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": [
+            {
+              "id": "SYNTHETIC-K09-v004",
+              "message": "SYNTHETIC-K09-m004",
+              "change": "establish",
+              "status": "active",
+              "value": 37,
+              "sources": [
+                {
+                  "message": "SYNTHETIC-K09-m004",
+                  "authority": "workshop coordinator",
+                  "value": 37
+                }
+              ],
+              "time": {
+                "begin": null,
+                "end": null
+              },
+              "applicability": "Juvren strip, measured length, workshop",
+              "requirements": [
+                {
+                  "id": "SYNTHETIC-K09-r007",
+                  "kind": "current",
+                  "begin_after": "SYNTHETIC-K09-m004",
+                  "end_before": "$trial_end"
+                },
+                {
+                  "id": "SYNTHETIC-K09-r008",
+                  "kind": "historical",
+                  "begin_after": "SYNTHETIC-K09-m004",
+                  "end_before": "$trial_end"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SYNTHETIC-K09-p005",
+          "entity": "Juvren strip",
+          "property": "length unit",
+          "scope": "workshop",
+          "status_labels": {
+            "active": "active",
+            "expired": "expired",
+            "unestablished": "unestablished",
+            "unresolved": "unresolved"
+          },
+          "versions": []
+        }
+      ],
+      "recoveries": [],
+      "predictions": [
+        {
+          "arm": "A",
+          "failing": null,
+          "reason": "The complete conversation supplies the declared evidence; this fixture predicts no execution outcome."
+        },
+        {
+          "arm": "B",
+          "failing": null,
+          "reason": "The question omits the fictional values; guessing success has not been measured."
+        },
+        {
+          "arm": "C",
+          "failing": null,
+          "reason": "Isolated statements may omit order or scope; the selected statement policy is unspecified."
+        },
+        {
+          "arm": "D",
+          "failing": null,
+          "reason": "An exact passage can supply some evidence; passage selection and execution are unspecified."
+        },
+        {
+          "arm": "E",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        },
+        {
+          "arm": "F",
+          "failing": null,
+          "reason": "This condition has no specified behavior in the brief."
+        }
+      ]
+    }
+  ]
+}

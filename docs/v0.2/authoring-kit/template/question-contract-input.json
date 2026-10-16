@@ -1,0 +1,21 @@
+{
+  "schema": "etps-question-contract-v1",
+  "question_contract_version": "h3-compressed-v1",
+  "release_id": "<new release ID>",
+  "tasks": {
+    "<task>": {
+      "questions": {
+        "<task>-q001": {
+          "core": "[<task>-q001] <question about public entity/property/scope/point; no expected answer>",
+          "fields": {
+            "value": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "schema": "etps-question-contract-v1",
+  "question_contract_version": "h3-compressed-v1",
+  "release_id": "SYNTHETIC-authoring-kit-v1",
+  "tasks": {
+    "SYNTHETIC-K01": {
+      "questions": {
+        "SYNTHETIC-K01-q001": {
+          "core": "[SYNTHETIC-K01-q001] What is the Velrin bench drawer code now?",
+          "fields": {
+            "code": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K02": {
+      "questions": {
+        "SYNTHETIC-K02-q001": {
+          "core": "[SYNTHETIC-K02-q001] What was the Meruv studio delivery phrase just after public message SYNTHETIC-K02-m002?",
+          "fields": {
+            "earlier": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "just after public message SYNTHETIC-K02-m002"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K03": {
+      "questions": {
+        "SYNTHETIC-K03-q001": {
+          "core": "[SYNTHETIC-K03-q001] What is the Korven desk cabinet token and its status now?",
+          "fields": {
+            "token": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "status": {
+              "kind": "status",
+              "scope": "Korven desk, cabinet token, workshop",
+              "point": "now"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K04": {
+      "questions": {
+        "SYNTHETIC-K04-q001": {
+          "core": "[SYNTHETIC-K04-q001] What is the Ruvin hatch paint label, its status, values in force, and source now?",
+          "fields": {
+            "label": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "status": {
+              "kind": "status",
+              "scope": "Ruvin hatch, paint label, workshop",
+              "point": "now"
+            },
+            "values": {
+              "kind": "set",
+              "value_type": "string"
+            },
+            "source": {
+              "kind": "source"
+            }
+          }
+        },
+        "SYNTHETIC-K04-q002": {
+          "core": "[SYNTHETIC-K04-q002] What is the Ruvin hatch paint label, status, values in force, and source now, and the single label just after public message SYNTHETIC-K04-m002?",
+          "fields": {
+            "label": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "status": {
+              "kind": "status",
+              "scope": "Ruvin hatch, paint label, workshop",
+              "point": "now"
+            },
+            "values": {
+              "kind": "set",
+              "value_type": "string"
+            },
+            "source": {
+              "kind": "source"
+            },
+            "earlier": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "just after public message SYNTHETIC-K04-m002"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K05": {
+      "questions": {
+        "SYNTHETIC-K05-q001": {
+          "core": "[SYNTHETIC-K05-q001] What is the Tovin Annex tray count now?",
+          "fields": {
+            "count": {
+              "kind": "scalar",
+              "value_type": "integer",
+              "point": "now"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K06": {
+      "questions": {
+        "SYNTHETIC-K06-q001": {
+          "core": "[SYNTHETIC-K06-q001] What is the Pevril cart locker phrase now?",
+          "fields": {
+            "phrase": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K07": {
+      "questions": {
+        "SYNTHETIC-K07-q001": {
+          "core": "[SYNTHETIC-K07-q001] What is the Dervin table storage tag and status now, and the tag just after public message SYNTHETIC-K07-m002?",
+          "fields": {
+            "tag": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "earlier": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "just after public message SYNTHETIC-K07-m002"
+            },
+            "status": {
+              "kind": "status",
+              "scope": "Dervin table, storage tag, workshop",
+              "point": "now"
+            }
+          }
+        },
+        "SYNTHETIC-K07-q002": {
+          "core": "[SYNTHETIC-K07-q002] What is the Dervin table storage tag and status now, and the tag just after public message SYNTHETIC-K07-m002?",
+          "fields": {
+            "tag": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "earlier": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "just after public message SYNTHETIC-K07-m002"
+            },
+            "status": {
+              "kind": "status",
+              "scope": "Dervin table, storage tag, workshop",
+              "point": "now"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K08": {
+      "questions": {
+        "SYNTHETIC-K08-q001": {
+          "core": "[SYNTHETIC-K08-q001] Which public source-claim message established the Lurven rack ribbon label in force now?",
+          "fields": {
+            "source": {
+              "kind": "source"
+            }
+          }
+        }
+      }
+    },
+    "SYNTHETIC-K09": {
+      "questions": {
+        "SYNTHETIC-K09-q001": {
+          "core": "[SYNTHETIC-K09-q001] What are the Vemril shelf access phrase and seal color/status, and the Hovrin bay permit phrase/status now?",
+          "fields": {
+            "steady": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "absent": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "absent_status": {
+              "kind": "status",
+              "scope": "Vemril shelf, seal color, workshop",
+              "point": "now"
+            },
+            "lapsed": {
+              "kind": "scalar",
+              "value_type": "string",
+              "point": "now"
+            },
+            "lapsed_status": {
+              "kind": "status",
+              "scope": "Hovrin bay, permit phrase, workshop",
+              "point": "now"
+            }
+          }
+        },
+        "SYNTHETIC-K09-q002": {
+          "core": "[SYNTHETIC-K09-q002] Identify the never-supplied required item needed to interpret the Juvren strip length.",
+          "fields": {
+            "status": {
+              "kind": "missing_status",
+              "item_id": "SYNTHETIC-K09-p005"
+            },
+            "missing_item": {
+              "kind": "item",
+              "item_id": "SYNTHETIC-K09-p005"
+            }
+          }
+        }
+      }
+    }
+  }
+}
