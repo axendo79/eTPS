@@ -3,6 +3,7 @@
 No model/task/arm data beyond a prebuilt public request enters this module.
 """
 import base64
+import json
 import os
 import queue
 import socket
@@ -124,6 +125,28 @@ def preflight(base, arm, deadline):
         raise InvalidRecord("endpoint TCP preflight failed") from None
 
 
+def _decoded_credential_echo(raw, key):
+    """Inspect JSON strings without retaining bodies or emitting diagnostics."""
+    def reject_constant(_):
+        raise ValueError
+    try:
+        # Preserve every object member, including values behind duplicate names.
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=list,
+                           parse_constant=reject_constant)
+    except (ValueError, UnicodeError, RecursionError, OverflowError):
+        return False  # Non-JSON/malformed bodies retain the raw-only behavior.
+    pending = [value]
+    while pending:
+        value = pending.pop()
+        if isinstance(value, str):
+            if key in value:
+                return True
+        elif isinstance(value, (list, tuple)):
+            # Objects are lists of (key, value) pairs; arrays remain lists.
+            pending.extend(value)
+    return False
+
+
 def send(base, arm, body, deadline):
     """One dispatch, bounded controller wait, sanitized errors; no automatic retry.
 
@@ -166,6 +189,8 @@ def send(base, arm, body, deadline):
         result["http_body_sha256"] = sha(raw)
         # Never persist an accidentally echoed credential, even in an error body.
         if key and key.encode("ascii") in raw:
+            detail = "credential_echo"
+        elif key and _decoded_credential_echo(raw, key):
             detail = "credential_echo"
         else:
             result["http_body_base64"] = base64.b64encode(raw).decode("ascii")

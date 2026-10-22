@@ -72,9 +72,15 @@ Bearer; Anthropic uses x-api-key plus the declared anthropic-version header.
 Headers and exception text are never journaled or printed. A configured
 credential that disappears or becomes malformed during a trial is a harness
 fault: the trial aborts with the predeclared `execution_error` invalidation,
-retaining its durable prefix. It is not a model timeout. A literal credential
-echo in a response body is withheld as `credential_echo`, retaining its hash
-but not its body. Tests check a sentinel across journals, reports and exports.
+retaining its durable prefix. It is not a model timeout. A credential echo in
+a response body is withheld as `credential_echo`, retaining its hash but not
+its body. Under the maintainer ruling of 2026-10-22, matching checks literal
+raw bytes, then every decoded JSON string value and object key for the same
+credential substring, including nested containers and duplicate object members.
+Non-JSON and malformed JSON bodies use only the unchanged literal check;
+their existing response handling is unchanged. Both detection paths use the
+same timeout outcome and body-withholding behavior. Synthetic tests check
+journals, reports and exports without including credentials in diagnostics.
 Operators must not place credentials themselves in task text, model names,
 system prompts or other persisted plan fields.
 

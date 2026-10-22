@@ -1,5 +1,9 @@
 # eTPS v0.2 status
 
+## Credential echo decoded check (2026-10-22)
+
+Under the maintainer ruling of 2026-10-22, the live adapter now checks literal raw bytes plus every decoded JSON string value and object key for credential echoes, reusing `credential_echo` and its existing timeout/body-withholding/export behavior; synthetic tests cover decoded detection and unchanged ordinary, non-JSON and malformed-response handling.
+
 ## Current state
 
 The [evaluation authoring kit](v0.2/authoring-kit/README.md) provides the human
