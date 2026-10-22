@@ -1,6 +1,6 @@
 # eTPS contributor context
 
-Implementation: v0.1 at baseline `ea51ce82e011c7e65bdc43e9d5af923cdcec4897` remains preserved; the experimental v0.2 byte scorer, offline/live/manual runners and SQLite journal are implemented. Local runs 7 and 8 are exploratory calibration only. The state-evolution authoring pipeline merged in PR #25; the next stage is authoring a development corpus per [AUTHORING_RUNBOOK.md](docs/v0.2/AUTHORING_RUNBOOK.md), using an isolated author given only [AUTHORING_BRIEF.md](docs/v0.2/AUTHORING_BRIEF.md). Read [README](README.md), [architecture](ARCHITECTURE.md), [status](docs/STATUS.md), [contract](docs/v0.2/MEASUREMENT_CONTRACT.md) and [provenance](docs/v0.2/PROVENANCE.md).
+Implementation: v0.1 at baseline `ea51ce82e011c7e65bdc43e9d5af923cdcec4897` remains preserved; the experimental v0.2 byte scorer, offline/live/manual runners and SQLite journal are implemented. Local runs 7 and 8 are exploratory calibration only. The state-evolution authoring pipeline merged in PR #25, with the authoring kit (PR #31) and answer contract (PR #30); the next stage is authoring a development corpus per [AUTHORING_RUNBOOK.md](docs/v0.2/AUTHORING_RUNBOOK.md), using a fresh isolated author given only [AUTHORING_BRIEF_V2.md](docs/v0.2/AUTHORING_BRIEF_V2.md). [AUTHORING_BRIEF.md](docs/v0.2/AUTHORING_BRIEF.md) remains frozen historical v1 for frozen releases. Read [README](README.md), [architecture](ARCHITECTURE.md), [status](docs/STATUS.md), [contract](docs/v0.2/MEASUREMENT_CONTRACT.md) and [provenance](docs/v0.2/PROVENANCE.md).
 
 ## Required working rules
 
@@ -13,7 +13,7 @@ Implementation: v0.1 at baseline `ea51ce82e011c7e65bdc43e9d5af923cdcec4897` rema
 - Nyx must be allowed to lose. Disclose profile-author/system affiliation.
 - Do not expand website, leaderboard, accounts or SEIT before validity work.
 - Do not run legacy endpoint demos as if they were v0.2 validation; no dependencies are needed for document review.
-- No commit or push without explicit instruction. The current user authorized local implementation, executable synthetic fixtures and affected policy updates; no model runs or remote publication were performed.
+- No commit or push without explicit instruction.
 
 ## Existing files
 
