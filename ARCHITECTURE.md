@@ -1,6 +1,6 @@
 # eTPS architecture
 
-Status: an experimental byte scorer, offline controller and SQLite journal are implemented; live system execution remains proposed. Baseline code inspected at `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. This document was drafted with Codex assistance; [provenance](docs/v0.2/PROVENANCE.md) distinguishes decisions from proposals.
+Status: an experimental byte scorer, offline/live/manual runners (including the authorized live exploratory adapter) and SQLite journal are implemented; the complete v0.2 measurement flow remains proposed. Baseline code inspected at `ea51ce82e011c7e65bdc43e9d5af923cdcec4897`. This document was drafted with Codex assistance; [provenance](docs/v0.2/PROVENANCE.md) distinguishes decisions from proposals.
 
 ## Existing v0.1 implementation
 
@@ -8,7 +8,7 @@ Status: an experimental byte scorer, offline controller and SQLite journal are i
 
 These are existing code paths, not endorsements of measurement correctness. In particular, keyword presence, estimated reconstruction, timing boundaries and aggregate persistence are inadequate for the proposed v0.2 contract. Full limitations are recorded in [v0.1 status](docs/V0.1_STATUS.md). No attempt has been made to reinterpret old stored scores as v0.2 measurements.
 
-## Proposed complete v0.2 flow — offline subset implemented
+## Proposed complete v0.2 flow — scorer, offline/live/manual runners and journal implemented
 
 ```text
 Versioned specification + frozen profile/corpus + configuration
