@@ -6,6 +6,13 @@ python -B scripts/lab/temp0_variance.py --prompts prompts.json --conditions
 '[{"id":"A","concurrency":1},{"id":"B","concurrency":4}]' --repeats 10
 --output ABSOLUTE_NEW_DIRECTORY
 
+Optional --extra-body JSON adds fields without replacing model, messages, seed or
+fixed decoding fields. --verify-no-reasoning makes the first planned slot a counted
+preflight probe: it runs alone and must succeed with empty reasoning content and
+an explicit integer-zero usage.completion_tokens_details.reasoning_tokens before
+any following slot is dispatched. Any later nonempty reasoning content stops the
+run. Transport success remains separate from this verification gate.
+
 Request serialization matches etps_v02.adapter_openai.public_request and
 workload.encode (with the explicitly requested top_p field added). Output equality
 is exact Unicode text equality without normalization. Character positions are
@@ -42,11 +49,25 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
-def request_body(prompt, condition, model):
+def extra_request_fields(extra_body):
+    if extra_body is None:
+        return {}
+    reserved = {"model", "messages", "temperature", "top_p", "max_tokens", "stream", "seed"}
+    if (not isinstance(extra_body, dict) or any(not isinstance(k, str) for k in extra_body)
+            or reserved.intersection(extra_body)):
+        raise ValueError("extra body must be an object without core request or seed overrides")
+    try:
+        return json.loads(encoded(extra_body))  # JSON-only snapshot; never mutate caller data.
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise ValueError("extra body must contain finite JSON values") from exc
+
+
+def request_body(prompt, condition, model, *, extra_body=None):
     body = {"model": model, "temperature": 0, "top_p": 1, "max_tokens": 256,
             "stream": False, "messages": prompt["messages"]}
     if condition.get("seed") is not None:
         body["seed"] = condition["seed"]
+    body.update(extra_request_fields(extra_body))
     return body
 
 
@@ -123,7 +144,8 @@ def one_request(endpoint, body, prompt_id, condition, repeat_index, timeout):
            "response_json": None, "response_body_base64": None,
            "response_body_utf8": None, "response_body_sha256": None,
            "output_text": None, "output_sha256": None, "usage": None,
-           "returned_model": None, "finish_reason": None, "success": False, "error": None}
+           "returned_model": None, "finish_reason": None, "success": False, "error": None,
+           "reasoning_content": None, "reasoning_contents": [], "reasoning_tokens": None}
     began = time.monotonic()
     try:
         opener = request.build_opener(request.ProxyHandler({}), NoRedirect())
@@ -143,6 +165,16 @@ def one_request(endpoint, body, prompt_id, condition, repeat_index, timeout):
         if isinstance(data, dict):
             row["returned_model"] = data.get("model")
             row["usage"] = data.get("usage") if isinstance(data.get("usage"), dict) else None
+            details = (row["usage"] or {}).get("completion_tokens_details")
+            if isinstance(details, dict):
+                row["reasoning_tokens"] = details.get("reasoning_tokens")
+            choices = data.get("choices")
+            if isinstance(choices, list):
+                row["reasoning_contents"] = [choice["message"].get("reasoning_content")
+                    for choice in choices if isinstance(choice, dict)
+                    and isinstance(choice.get("message"), dict)]
+                if row["reasoning_contents"]:
+                    row["reasoning_content"] = row["reasoning_contents"][0]
         if not 200 <= row["http_status"] < 300:
             row["error"] = "http_error"
         elif row["returned_model"] != body["model"]:
@@ -197,21 +229,30 @@ def validate(prompts, conditions, repeats, base):
 
 
 def run_measurement(prompts, conditions, repeats, output, *, base="http://localhost:1234/v1",
-                    model="google/gemma-4-e4b", timeout=300, temperature_reader=gpu_temperatures):
+                    model="google/gemma-4-e4b", timeout=300, temperature_reader=gpu_temperatures,
+                    extra_body=None, verify_no_reasoning=False):
     validate(prompts, conditions, repeats, base)
+    extra_body = extra_request_fields(extra_body)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     endpoint = base.rstrip("/") + "/chat/completions"
     schedule = [{"condition": c["id"], "prompt_id": p["id"], "repeat_index": r}
                 for c in conditions for r in range(repeats) for p in prompts]
+    probe = ({**schedule[0], "counts_toward_plan": True, "attempted": False, "verified": False}
+             if verify_no_reasoning else None)
+    probe_complete = not verify_no_reasoning
     plan = {"started_utc": utc(), "model": model, "endpoint": endpoint,
             "conditions": conditions, "repeats": repeats, "timeout_seconds": timeout,
             "prompts": prompts, "schedule": schedule, "request_count": len(schedule),
             "request_parameters": {"temperature": 0, "top_p": 1, "max_tokens": 256, "stream": False},
-            "thinking_parameter": "omitted; no repository instruction found", "automatic_retries": 0,
+            "extra_body": extra_body, "preflight_probe": probe,
+            "thinking_parameter": {"reasoning_effort": extra_body["reasoning_effort"]}
+            if "reasoning_effort" in extra_body else "omitted", "automatic_retries": 0,
             "stop_policy": {"cumulative_completed_failure_rate_gt": 0.05,
-                            "different_model_id": True, "gpu_temperature_gt_c": 90},
-            "cache_policy": "server cache left unchanged; A precedes B; no warming or flushing"}
+                            "different_model_id": True, "gpu_temperature_gt_c": 90,
+                            "nonempty_reasoning_content": verify_no_reasoning,
+                            "probe_requires_explicit_zero_reasoning_tokens": verify_no_reasoning},
+            "cache_policy": "server cache unchanged; conditions in declared order; no warming or flushing"}
     with (output / "plan.json").open("xb") as file:
         file.write(encoded(plan) + b"\n")
         file.flush()
@@ -249,11 +290,23 @@ def run_measurement(prompts, conditions, repeats, output, *, base="http://localh
             sample_gpu()
 
     def execute(prompt, condition, repeat):
-        row = one_request(endpoint, request_body(prompt, condition, model),
+        row = one_request(endpoint, request_body(prompt, condition, model, extra_body=extra_body),
                           prompt["id"], condition["id"], repeat, timeout)
-        journal.write(row)  # Durable as soon as this request finishes, even during drain.
         if row["returned_model"] is not None and row["returned_model"] != model:
             halt("different_model_id")
+        if verify_no_reasoning:
+            is_probe = all(row[k] == probe[k] for k in ("condition", "prompt_id", "repeat_index"))
+            nonempty = any(value is not None and value != "" for value in row["reasoning_contents"])
+            zero_tokens = type(row["reasoning_tokens"]) is int and row["reasoning_tokens"] == 0
+            row.update(is_preflight_probe=is_probe,
+                       thinking_off_verified=row["success"] and not nonempty and (not is_probe or zero_tokens))
+            if nonempty:
+                halt("nonempty_reasoning_content")
+            elif is_probe and not row["success"]:
+                halt("probe_request_failed")
+            elif is_probe and not zero_tokens:
+                halt("probe_reasoning_usage_not_zero")
+        journal.write(row)  # Durable as soon as this request finishes, even during drain.
         return row
 
     sample_gpu()
@@ -268,12 +321,14 @@ def run_measurement(prompts, conditions, repeats, output, *, base="http://localh
                 pending = set()
                 while pending or (not exhausted and not stop.is_set()):
                     while not exhausted and not stop.is_set() and len(pending) < condition["concurrency"]:
+                        if not probe_complete and pending:
+                            break  # Even parallel plans must verify the single probe first.
                         try:
                             prompt, repeat = next(jobs)
                         except StopIteration:
                             exhausted = True
                             break
-                        body = request_body(prompt, condition, model)
+                        body = request_body(prompt, condition, model, extra_body=extra_body)
                         dispatches.write({"timestamp_utc": utc(), "prompt_id": prompt["id"],
                             "condition": cid, "repeat_index": repeat, "request_json_sha256": digest(encoded(body))})
                         counts[cid]["sent"] += 1
@@ -284,6 +339,12 @@ def run_measurement(prompts, conditions, repeats, output, *, base="http://localh
                     for future in done:
                         row = future.result()
                         rows.append(row)
+                        if row.get("is_preflight_probe"):
+                            probe.update(attempted=True, verified=row["thinking_off_verified"])
+                            probe_complete = True
+                            print("PROBE " + json.dumps({**probe,
+                                "reasoning_content": row["reasoning_content"],
+                                "reasoning_tokens": row["reasoning_tokens"]}), flush=True)
                         counts[cid]["succeeded" if row["success"] else "failed"] += 1
                         totals = {key: sum(c[key] for c in counts.values()) for key in ("succeeded", "failed")}
                         if totals["failed"] / (totals["succeeded"] + totals["failed"]) > 0.05:
@@ -305,6 +366,8 @@ def run_measurement(prompts, conditions, repeats, output, *, base="http://localh
     result = {"completed_utc": utc(), "counts": counts, "planned": len(schedule),
               "unattempted": len(schedule) - sum(c["sent"] for c in counts.values()),
               "stop_reason": reason[0], "groups": summarize(rows)}
+    if verify_no_reasoning:
+        result["preflight_probe"] = probe
     with (output / "summary.json").open("xb") as file:
         file.write(encoded(result) + b"\n")
         file.flush()
@@ -322,10 +385,14 @@ def main():
     parser.add_argument("--base", default="http://localhost:1234/v1")
     parser.add_argument("--model", default="google/gemma-4-e4b")
     parser.add_argument("--timeout", default=300, type=float)
+    parser.add_argument("--extra-body", default="{}", help="Extra JSON object; core fields and seed cannot be overridden")
+    parser.add_argument("--verify-no-reasoning", action="store_true",
+                        help="Count first slot as a strict thinking-off probe; stop on any returned reasoning")
     args = parser.parse_args()
     document = json.loads(args.prompts.read_text(encoding="utf-8"))
     result = run_measurement(document["prompts"], json.loads(args.conditions), args.repeats,
-                             args.output, base=args.base, model=args.model, timeout=args.timeout)
+                             args.output, base=args.base, model=args.model, timeout=args.timeout,
+                             extra_body=json.loads(args.extra_body), verify_no_reasoning=args.verify_no_reasoning)
     return 2 if result["stop_reason"] else 0
 
 
