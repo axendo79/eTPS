@@ -139,6 +139,26 @@ class DecodedCredentialEchoTests(unittest.TestCase):
                 with self.subTest(provider=provider, status=status):
                     self.assert_withheld(raw, provider, status)
 
+    def test_deep_json_decode_recursion_is_withheld(self):
+        # Python 3.14's JSON decoder can exceed the Python recursion limit.
+        depth = 100_000
+        nested = b"[" * depth + self.escaped(SYNTHETIC_KEY, fully=True) + b"]" * depth
+        for provider in ("openai-compatible", "anthropic"):
+            raw = encode(self.response(provider))[:-1] + b',"metadata":' + nested + b"}"
+            with self.assertRaises(RecursionError):
+                json.loads(raw)
+            for status in (200, 500):
+                with self.subTest(provider=provider, status=status):
+                    self.assert_withheld(raw, provider, status)
+
+    def test_shallow_json_decoded_check_is_unchanged(self):
+        for value, expected in (({"ordinary": [None, False, 17, "public text"]}, False),
+                                ({"metadata": SYNTHETIC_KEY}, True),
+                                ({SYNTHETIC_KEY: "ordinary"}, True)):
+            raw = self.escaped(value, fully=True) if expected else encode(value)
+            with self.subTest(echo=expected, raw=raw):
+                self.assertEqual(adapter._decoded_credential_echo(raw, SYNTHETIC_KEY), expected)
+
     def test_ordinary_response_is_unchanged(self):
         for provider in ("openai-compatible", "anthropic"):
             value = self.response(provider)

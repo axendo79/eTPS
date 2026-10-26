@@ -133,7 +133,9 @@ def _decoded_credential_echo(raw, key):
         # Preserve every object member, including values behind duplicate names.
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=list,
                            parse_constant=reject_constant)
-    except (ValueError, UnicodeError, RecursionError, OverflowError):
+    except RecursionError:
+        return True  # An incomplete check cannot safely rule out an echo.
+    except (ValueError, UnicodeError, OverflowError):
         return False  # Non-JSON/malformed bodies retain the raw-only behavior.
     pending = [value]
     while pending:
