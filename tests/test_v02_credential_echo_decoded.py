@@ -139,6 +139,38 @@ class DecodedCredentialEchoTests(unittest.TestCase):
                 with self.subTest(provider=provider, status=status):
                     self.assert_withheld(raw, provider, status)
 
+    def test_decode_recursion_error_fails_closed(self):
+        # Platform-independent: any RecursionError from decoding withholds, echo or not.
+        for raw in (self.escaped(SYNTHETIC_KEY, fully=True), encode({"ordinary": 17})):
+            with self.subTest(raw=raw), \
+                    patch.object(adapter.json, "loads", side_effect=RecursionError):
+                self.assertTrue(adapter._decoded_credential_echo(raw, SYNTHETIC_KEY))
+
+    def test_deep_json_decode_recursion_is_withheld(self):
+        # Whether real nesting exceeds the decoder's limit depends on the platform
+        # (Windows 3.14 raises at this depth; Linux 3.14 may not).
+        depth = 100_000
+        nested = b"[" * depth + self.escaped(SYNTHETIC_KEY, fully=True) + b"]" * depth
+        for provider in ("openai-compatible", "anthropic"):
+            raw = encode(self.response(provider))[:-1] + b',"metadata":' + nested + b"}"
+            try:
+                json.loads(raw)
+            except RecursionError:
+                pass
+            else:
+                self.skipTest("JSON decoder handles this depth without RecursionError here")
+            for status in (200, 500):
+                with self.subTest(provider=provider, status=status):
+                    self.assert_withheld(raw, provider, status)
+
+    def test_shallow_json_decoded_check_is_unchanged(self):
+        for value, expected in (({"ordinary": [None, False, 17, "public text"]}, False),
+                                ({"metadata": SYNTHETIC_KEY}, True),
+                                ({SYNTHETIC_KEY: "ordinary"}, True)):
+            raw = self.escaped(value, fully=True) if expected else encode(value)
+            with self.subTest(echo=expected, raw=raw):
+                self.assertEqual(adapter._decoded_credential_echo(raw, SYNTHETIC_KEY), expected)
+
     def test_ordinary_response_is_unchanged(self):
         for provider in ("openai-compatible", "anthropic"):
             value = self.response(provider)
