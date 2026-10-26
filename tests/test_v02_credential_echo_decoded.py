@@ -139,14 +139,26 @@ class DecodedCredentialEchoTests(unittest.TestCase):
                 with self.subTest(provider=provider, status=status):
                     self.assert_withheld(raw, provider, status)
 
+    def test_decode_recursion_error_fails_closed(self):
+        # Platform-independent: any RecursionError from decoding withholds, echo or not.
+        for raw in (self.escaped(SYNTHETIC_KEY, fully=True), encode({"ordinary": 17})):
+            with self.subTest(raw=raw), \
+                    patch.object(adapter.json, "loads", side_effect=RecursionError):
+                self.assertTrue(adapter._decoded_credential_echo(raw, SYNTHETIC_KEY))
+
     def test_deep_json_decode_recursion_is_withheld(self):
-        # Python 3.14's JSON decoder can exceed the Python recursion limit.
+        # Whether real nesting exceeds the decoder's limit depends on the platform
+        # (Windows 3.14 raises at this depth; Linux 3.14 may not).
         depth = 100_000
         nested = b"[" * depth + self.escaped(SYNTHETIC_KEY, fully=True) + b"]" * depth
         for provider in ("openai-compatible", "anthropic"):
             raw = encode(self.response(provider))[:-1] + b',"metadata":' + nested + b"}"
-            with self.assertRaises(RecursionError):
+            try:
                 json.loads(raw)
+            except RecursionError:
+                pass
+            else:
+                self.skipTest("JSON decoder handles this depth without RecursionError here")
             for status in (200, 500):
                 with self.subTest(provider=provider, status=status):
                     self.assert_withheld(raw, provider, status)
