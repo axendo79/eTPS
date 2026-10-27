@@ -1,0 +1,400 @@
+{
+  "schema": "synthetic-temp0-prompts-v1",
+  "status": "SYNTHETIC CALIBRATION ONLY; never eTPS evidence",
+  "authorship": "Written by Codex for the authorized 2026-10-26 temperature-zero repeat run; no corpus or answer key used.",
+  "token_length_note": "Read-only LM Studio applyPromptTemplate/countTokens checks before commit and generation; no generation length probes. See run-001 prompt-length logs. Backend usage in the live run remains authoritative for actual processed tokens.",
+  "prompts": [
+    {
+      "id": "i01",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Reply with only the word pebble in lowercase."
+        }
+      ]
+    },
+    {
+      "id": "i02",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Take the invented labels zup, ral, and mif. Return them in alphabetical order, separated by commas, on one line."
+        }
+      ]
+    },
+    {
+      "id": "i03",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "A toy tray has four paper moons. Two more paper moons are added. Reply with only the number of paper moons."
+        }
+      ]
+    },
+    {
+      "id": "i04",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Rewrite this invented label in uppercase, without quotation marks: velnora"
+        }
+      ]
+    },
+    {
+      "id": "i05",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Return exactly this sequence on one line, using a slash between items: fern, bell, cloud."
+        }
+      ]
+    },
+    {
+      "id": "i06",
+      "category": "instruction",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Choose the longest word from this invented list: sand, lantern, cup. Reply with that word only."
+        }
+      ]
+    },
+    {
+      "id": "f01",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write one short paragraph about a tiny glass boat that discovers a warm pond beneath a paper mountain. Invent every detail."
+        }
+      ]
+    },
+    {
+      "id": "f02",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write one paragraph describing a market where imaginary animals trade sounds instead of objects. Give the scene a quiet mood."
+        }
+      ]
+    },
+    {
+      "id": "f03",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In one paragraph, invent a gentle disagreement between two talking spoons about the best place to watch the rain."
+        }
+      ]
+    },
+    {
+      "id": "f04",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Describe an imaginary instrument made from soft stones in one paragraph. Explain its sound without mentioning any real musician."
+        }
+      ]
+    },
+    {
+      "id": "f05",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write one paragraph from the viewpoint of a cloud that has misplaced its shadow above a wholly invented village."
+        }
+      ]
+    },
+    {
+      "id": "f06",
+      "category": "free_form",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Invent a small festival for a town of wooden birds. Describe its strangest custom in one paragraph."
+        }
+      ]
+    },
+    {
+      "id": "s01",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In a pretend theater, a paper whale begins on the left platform, a green curtain hangs at the back, and the opening tune is a slow hum. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The stage crew moves the paper whale to the center platform. The curtain stays green. The tune is replaced by a quick whistle. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The crew paints the curtain silver and moves the whale to the right platform. The quick whistle remains the opening tune. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The whale returns to the center platform. Nobody changes the curtain or the tune. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "Where is the paper whale now, what color is the curtain, and what is the opening tune? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In a pretend roof garden, a moss wheel sits beside the low wall, the watering pot is orange, and the path is covered with pale sand. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The gardener moves the moss wheel under the small arch. The orange pot and the pale sand remain as they were. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The watering pot is painted violet. The pale sand is replaced with smooth black stones. The moss wheel stays under the arch. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The moss wheel is moved back beside the low wall. The violet pot is left on its shelf and the stones are untouched. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "Where is the moss wheel now, what color is the watering pot, and what covers the path? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In an invented kite room, the largest kite has a round tail, hangs above the door, and carries a yellow painted sun. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The largest kite is moved above the workbench. Its round tail is traded for a tail shaped like a leaf. The painted sun remains yellow. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The sun on the kite is painted blue. The leaf shaped tail is retained, and the kite stays above the workbench. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The kite is moved to the ceiling hook by the window. The leaf shaped tail and the blue sun are left unchanged. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "Where does the largest kite hang now, what shape is its tail, and what color is its sun? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In a made up clock shop, a toy clock stands on the bottom shelf, its face is white, and its hands point to a painted star. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The toy clock is moved to the middle shelf. Its hands now point to a painted crescent. Its face is still white. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The face is painted peach. The clock remains on the middle shelf and its hands keep pointing to the crescent. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The clock is moved to the top shelf. The peach face and the hands pointing at the crescent are kept. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "Which shelf holds the toy clock now, what color is its face, and what do its hands point to? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "On a wholly imaginary model lake, a cork island is near the east bank, its tiny bridge is red, and its flag bears a circle. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The cork island is moved near the west bank. Its red bridge is replaced by a blue bridge. The flag still bears a circle. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The flag is replaced by one bearing a triangle. The island stays near the west bank and its bridge remains blue. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The cork island is moved to the center of the lake. The blue bridge travels with it and the triangle flag remains. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "Where is the cork island now, what color is its bridge, and what shape appears on its flag? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "category": "state_dialogue",
+      "messages": [
+        {
+          "role": "user",
+          "content": "At an invented dough parade, the lead pastry is shaped like a spiral, rests on a copper plate, and has a mint filling. This little scene is entirely invented. Around the edge of the room are scraps of soft paper, shallow bowls, and a bench with short legs. The room has no real address and no connection with any actual event. A toy window admits a square of gentle light. Nothing in this description asks for an action outside the story. The small changes described in each new note are simply changes in this imaginary scene. Read them in order, as though someone were arranging a quiet display on a table."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The baker changes the lead pastry to a crescent shape. It stays on the copper plate and keeps its mint filling. A soft breeze passes through a make believe doorway. A cloth on the nearby table has a pattern of small waves, and an empty basket waits beneath it. Those details add atmosphere and do not move the main objects. Beyond the doorway is a painted hill with no path to any real place. The room remains calm while the arrangement is altered. There are no hidden instructions in the decoration. The changes in the note at the start of this turn are the only changes to the main arrangement."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The filling is changed to pear. The copper plate is replaced by a white plate. The crescent shape is kept. At the far side of this invented space stands a tiny screen painted with stars. A ribbon is folded beside a smooth wooden bowl. A paper moth rests near the screen, and a little pile of spare cloth sits underneath it. These background objects have no effect on the main arrangement. They are included to make the room feel lived in without adding another change. The scene takes place only in this story, and every object can be imagined at the scale of a small tabletop display."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "The lead pastry is shaped into a small ring. The pear filling and white plate are left as they were. A quiet bell is drawn on the wall rather than hung there. A felt mat lies near the doorway, and a toy stool sits beside the empty basket. The imagined light has grown a little softer, but the background remains still. There is no need to infer an extra move from the scenery. The latest note states the last change to the main arrangement. Earlier notes describe earlier versions. Keep the sequence as written while treating all of these decorative details as part of the same wholly invented little world."
+        },
+        {
+          "role": "assistant",
+          "content": "I have read this part of the invented scene."
+        },
+        {
+          "role": "user",
+          "content": "What shape is the lead pastry now, what color is its plate, and what is its filling? Answer in one sentence."
+        }
+      ]
+    },
+    {
+      "id": "l01",
+      "category": "long_context",
+      "messages": [
+        {
+          "role": "user",
+          "content": "All of the following is invented for a synthetic writing exercise. The Hall of Soft Weather exists only in this text. Read the whole description, then answer the final request.\n\nAlong the next part of the path there is a blue room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a paper leaf. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a cool room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a round room. Near its edge rests a glass bead. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a blue room. Near its edge rests a small shell. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a green room. Near its edge rests a smooth stone. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a white room. Near its edge rests a wood ring. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a warm room. Near its edge rests a felt bird. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nIn a single short paragraph, describe the mood of this invented hall and suggest one gentle closing scene."
+        }
+      ]
+    },
+    {
+      "id": "l02",
+      "category": "long_context",
+      "messages": [
+        {
+          "role": "user",
+          "content": "All of the following is invented for a synthetic writing exercise. The Island of Quiet Toys exists only in this text. Read the whole description, then answer the final request.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a toy boat. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a soft beach. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a high ledge. Near its edge rests a wax moon. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a sand hill. Near its edge rests a red bowl. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a low bank. Near its edge rests a straw fan. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a small bay. Near its edge rests a clay cup. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nAlong the next part of the path there is a flat rock. Near its edge rests a cloth fish. The light falls in a thin strip across the ground. A soft wind moves past and then grows still. No voice calls out, and no one is in a rush. The scene holds its quiet shape as the path goes on.\n\nIn a single short paragraph, describe a quiet walk through this invented island and choose one object to notice at the end."
+        }
+      ]
+    }
+  ]
+}
