@@ -1,0 +1,110 @@
+{
+  "cases_passed": 6,
+  "limits": "No adapter dispatch, durable persistence, scoring or accepted-schema change is exercised.",
+  "network_model_native_store_calls": 0,
+  "package_imports": 0,
+  "results": [
+    {
+      "case": "flat_scalar_control",
+      "projection": "valid",
+      "raw_cost_retained": true
+    },
+    {
+      "case": "nested_receipts",
+      "extraction_calls": {
+        "coverage_count": 0,
+        "request_count": 1,
+        "sum": 0
+      },
+      "projection": "invalid",
+      "raw_cost_retained": true
+    },
+    {
+      "case": "boolean_status",
+      "extraction_calls": {
+        "coverage_count": 0,
+        "request_count": 1,
+        "sum": 0
+      },
+      "projection": "invalid",
+      "raw_cost_retained": true
+    },
+    {
+      "case": "composite_v2_shape",
+      "extraction_calls": {
+        "coverage_count": 0,
+        "request_count": 1,
+        "sum": 0
+      },
+      "projection": "invalid",
+      "raw_cost_retained": true
+    },
+    {
+      "all_completion_tokens": null,
+      "all_prompt_tokens": null,
+      "case": "failed_request_then_cached_retry",
+      "events": 2,
+      "raw_extraction_calls": [
+        1,
+        0
+      ],
+      "raw_extraction_prompt_tokens_total": 8,
+      "summary": {
+        "invalid_count": 2,
+        "metrics": {
+          "beliefs_injected": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "extraction_calls": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "extraction_completion_tokens": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "extraction_prompt_tokens": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "extraction_seconds": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "facts_rejected": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          },
+          "injected_chars": {
+            "coverage_count": 0,
+            "request_count": 2,
+            "sum": 0
+          }
+        },
+        "missing_count": 0,
+        "request_count": 2,
+        "unavailable_count": 0,
+        "valid_count": 0
+      }
+    },
+    {
+      "case": "unknown_usage_control",
+      "projection": "valid",
+      "usage_stays_unknown": true
+    }
+  ],
+  "source_sha256": {
+    "memory_telemetry.py": "b6fe8cd739c0d921b1ec5fba6d1a2b7a42f63dede2dfe6ab071cb73925316870",
+    "scorer.py": "299e74d020fb5b894b19781fd8c05ada5409d3c3cda884dd7ae02e1a8396f07a",
+    "session_profile.py": "6436fb75ea64ddee7ca2191e0275fdd4f9eb72cd90ca60bdf3dd3af440c89864",
+    "workload.py": "893c542b475e85576d5dba226891e99f721654eec606f19d31537d1489c1ac06"
+  },
+  "status": "SYNTHETIC_SOURCE_EXTRACTED_PROOF"
+}

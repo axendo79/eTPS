@@ -16,6 +16,7 @@ Acceptance is binary at the trial boundary under a frozen recovery policy. Succe
 
 ## Read the design
 
+- [Bridge telemetry compatibility decision packet](docs/v0.2/bridge-telemetry-compatibility-20261028/README.md): six pure synthetic cases, retained error/retry evidence, and two unselected mapping options. No runtime or contract change; outside Gate 3 qualification.
 - [Measurement contract — draft 4](docs/v0.2/MEASUREMENT_CONTRACT.md): current consolidated definitions and explicitly marked proposals.
 - [Opt-in answer contract](docs/v0.2/ANSWER_CONTRACT.md): adopted status vocabulary, compressed H3 slots, public declaration schema and content-free conformance CLI.
 - [Architecture](ARCHITECTURE.md): existing modules versus proposed measurement flow.
