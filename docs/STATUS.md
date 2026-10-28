@@ -1,5 +1,17 @@
 # eTPS v0.2 status
 
+## Bridge telemetry compatibility decision packet (2026-10-28)
+
+The [decision packet](v0.2/bridge-telemetry-compatibility-20261028/README.md)
+contains six pure synthetic cases showing that composite bridge telemetry
+retains raw failed/retried-request costs but is invalid under the accepted flat
+projection. Zero projected coverage is not measured zero cost; incomplete
+combined totals remain null. The recommended producer compatibility mode and
+alternative versioned consumer mapping remain unselected proposals. Runtime,
+schema, scorer, acceptance and old journals are unchanged. PR #35 remains a
+separate unaccepted telemetry draft. This packet is outside Gate 3 qualification;
+it supplies no model result or qualification permission.
+
 ## Credential echo decoded check (2026-10-22)
 
 Under the maintainer ruling of 2026-10-22, the live adapter now checks literal raw bytes plus every decoded JSON string value and object key for credential echoes, reusing `credential_echo` and its existing timeout/body-withholding/export behavior; synthetic tests cover decoded detection and unchanged ordinary, non-JSON and malformed-response handling.
