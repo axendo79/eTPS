@@ -1,8 +1,31 @@
 # EGM Gate 3 status and bounded handoff — 2026-10-28
 
-**Status: incomplete infrastructure qualification. Gate 3 has not passed; Gate 4 is prohibited.** This is related EGM preparation on disclosed fixtures, not an eTPS held-out evaluation or a benchmark result. The eTPS authoring/custody work order and measurement contract are unchanged.
+**Status: Josh accepted Gate 3 for the 8,192 load-time profile with the shared-memory caveat below. Gate 4 remains prohibited.** This is related EGM preparation on disclosed fixtures, not an eTPS held-out evaluation or a benchmark result. The eTPS authoring/custody work order and measurement contract are unchanged.
 
 This content-free account is Codex-authored from the maintainer-authorized private session and pinned source. It reports local evidence, not independent attestation. The maintainer authorized this documentation publication; private fixture text, raw prompts, logs, runtime/model files and held-out material are excluded.
+
+## Human acceptance — 8,192 load-time profile
+
+Josh accepted Gate 3 under the adopted load-time scope. The original raw receipt
+and frozen package remain unchanged; a separate private acceptance record binds
+both hashes. Acceptance-record SHA-256:
+e676794bedc597e6a04dc36d544a2e1f8226f15b52ea559808ed8cb5d4b1d72b
+
+**Shared-memory caveat:** 86 MiB was bounded and reproduced; about 7 MiB is
+named in host-buffer logs (0.95 MiB output plus 6.01 MiB compute). The
+approximately 79 MiB remainder is unattributed. Its non-inference role is
+inferred from complete CUDA0 model/cache placement; driver or context overhead
+is plausible, not individually verified. Named host allocation labels do not
+independently reconcile every WDDM shared byte. Do not describe all 86 MiB as
+explained.
+
+Before Gate 4, separately decide whether 86 MiB applies only at load time or
+also during generation, and match/record desktop state before any restart.
+No new allowance or threshold change is adopted here. Gate 4, generation,
+new loads, merges and dynamic-paging claims remain prohibited. No 4,096 load
+was qualified, and this establishes no eTPS evaluation result.
+
+Earlier capture/freeze entries below preserve their historical decision states.
 
 ## Fresh native session captured — acceptance pending
 
