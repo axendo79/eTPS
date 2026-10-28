@@ -1,5 +1,19 @@
 # eTPS v0.2 status
 
+## Related EGM qualification handoff (2026-10-28)
+
+The separately authorized EGM Gate 3 session loaded the model once and made
+23 non-generating requests. It stopped incomplete on a history-token mismatch;
+owned cleanup succeeded. Gate 3 is unpassed and Gate 4 remains prohibited.
+The pinned-source diagnosis and bounded next work are recorded in the
+[content-free handoff](lab/EGM_GATE3_HANDOFF_2026-10-28.md). Private fixtures and
+logs remain private. This is infrastructure qualification, not an eTPS held-out
+evaluation, independent attestation or benchmark result.
+
+Telemetry, Spillover and temperature-zero lab work are already merged in
+PRs #35–#37 at main c2e43bc. The proposals stay outside this qualification;
+publication or merge does not itself authorize execution.
+
 ## Credential echo decoded check (2026-10-22)
 
 Under the maintainer ruling of 2026-10-22, the live adapter now checks literal raw bytes plus every decoded JSON string value and object key for credential echoes, reusing `credential_echo` and its existing timeout/body-withholding/export behavior; synthetic tests cover decoded detection and unchanged ordinary, non-JSON and malformed-response handling.
