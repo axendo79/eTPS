@@ -1,20 +1,19 @@
 # eTPS v0.2 status
 
-## Related EGM qualification handoff (2026-10-28)
+## Related EGM qualification review (2026-10-28)
 
-The separately authorized EGM Gate 3 session loaded the model once and made
-23 non-generating requests. It stopped incomplete on a history-token mismatch;
-owned cleanup succeeded. Gate 3 is unpassed and Gate 4 remains prohibited.
-The corrected package is now frozen after 190 final installed-byte offline
-checks; all 44 listed files verify. A fresh execution decision is pending.
-The pinned-source diagnosis and bounded next work are recorded in the
-[content-free handoff](lab/EGM_GATE3_HANDOFF_2026-10-28.md). Private fixtures and
-logs remain private. This is infrastructure qualification, not an eTPS held-out
-evaluation, independent attestation or benchmark result.
+The corrected package is frozen after 190 installed-byte offline tests.
+Its fresh authorized session completed all 73 native checks and 22 fit cases:
+75 non-generating requests, one 8,192 load and verified owned shutdown.
+All 418 receipt evidence files verify. Technical review recommends accepting
+the agreed 8,192 load-time qualification; human acceptance remains pending,
+gate3_pass unset and Gate 4 prohibited. See the
+[content-free review/handoff](lab/EGM_GATE3_HANDOFF_2026-10-28.md).
+This is qualification evidence, not an eTPS evaluation result. Prior incomplete
+attempts and private raw evidence are preserved.
 
-Telemetry, Spillover and temperature-zero lab work are already merged in
-PRs #35–#37 at main c2e43bc. The proposals stay outside this qualification;
-publication or merge does not itself authorize execution.
+Telemetry/Spillover proposals remain outside this qualification. Publication
+or merge does not authorize schema changes or execution.
 
 ## Credential echo decoded check (2026-10-22)
 

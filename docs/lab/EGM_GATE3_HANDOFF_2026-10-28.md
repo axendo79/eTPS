@@ -4,6 +4,35 @@
 
 This content-free account is Codex-authored from the maintainer-authorized private session and pinned source. It reports local evidence, not independent attestation. The maintainer authorized this documentation publication; private fixture text, raw prompts, logs, runtime/model files and held-out material are excluded.
 
+## Fresh native session captured — acceptance pending
+
+Josh authorized one fresh session of corrected package ea00fd0b…47f0.
+It completed all 73 native counting/template checks and 22 fit cases: 75 total
+non-generating requests, one 8,192-context load, 43.377 seconds including
+verified owned shutdown. No fallback, retry, generation or Gate 4 occurred.
+All 418 original receipt files rehashed correctly.
+
+Receipt SHA-256:
+5b8c516d3033579a340365ceee6730c031256ee362053bf237b63ce221318efe
+
+The restored histories match native token IDs. Longest inputs are 4,013/2,989
+against unchanged 6,080/3,000 caps and full reserves. The 4,096 sizing counts
+were obtained under the 8,192 server; no 4,096 load was qualified.
+
+Startup logs place all 33 model layers, the explicit embedding override, all
+attention KV and recurrent state on CUDA0. Shared usage was exactly 86 MiB
+at readiness and after counting, within the inclusive bound. Host output
+0.95 MiB and compute 6.01 MiB remain disclosed. Compositor usage was
+1,056.207–1,056.223 MiB; minimum observed loaded headroom was 943.480 MiB.
+Headroom/compositor values are recorded context and no desktop subtraction
+was used. This is agreed load-time evidence, not dynamic-paging proof.
+
+Technical review recommends accepting the 8,192 Gate 3 profile; human
+acceptance remains pending and gate3_pass remains unset. Gate 4 is prohibited.
+No eTPS evaluation result, generated-reasoning behavior or pilot validity is
+claimed. The private post-run review and daily note record the next decision;
+the frozen package and all prior incomplete attempts are preserved.
+
 ## Corrected package frozen — later 2026-10-28 update
 
 The corrected private CLI package is now frozen. Its receipt SHA-256 is
