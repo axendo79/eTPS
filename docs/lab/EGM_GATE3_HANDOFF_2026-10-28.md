@@ -4,6 +4,39 @@
 
 This content-free account is Codex-authored from the maintainer-authorized private session and pinned source. It reports local evidence, not independent attestation. The maintainer authorized this documentation publication; private fixture text, raw prompts, logs, runtime/model files and held-out material are excluded.
 
+## Corrected package frozen — later 2026-10-28 update
+
+The corrected private CLI package is now frozen. Its receipt SHA-256 is
+ea00fd0bc3f3a2b1ec3fad5840f1a5be8c63aa2911d06710682c9ee8080d47f0;
+all 44 listed files verify, with no unexpected files. Old and false execution
+decisions are rejected. A fresh exact-package Gate 3 decision is pending.
+Gate 3 remains unpassed and Gate 4 prohibited; no additional model load or
+native request occurred during correction.
+
+The final installed-byte offline suites passed 190 tests: 80 preparation,
+33 controller, 23 lifecycle and 54 CLI checks. A fresh-process check verified
+11 module paths/hashes and complete agreement on 73 fake responses. The copied
+dependency chain changes exactly five path/digest binding files. Operational
+policy, environment repair and launch bytes are preserved.
+
+All 16 histories now reach their original per-turn targets. Longest input
+counts are 4,013 at the 8,192 profile and 2,989 at 4,096. The latter is 11 below
+the fixed 3,000 input cap, with full reserves retained. The 1,903-token initial
+stress and missed 1,800 target remain. New-history native agreement is still
+unavailable; saved 1,018-token parity is a regression on the old failed witness.
+
+The first preparation component candidate lacked the two unchanged frozen
+health/props GET files required by the controller. A separate v2 component
+closes that inventory; the first sealed candidate is preserved. The final CLI
+was sealed only after complete installed-byte checks. Initial test-runner
+guard refusals occurred before any suite and are retained in the validation
+record. No qualification authority was consumed during this offline correction.
+
+A one-paragraph daily state note is included in the private final receipt.
+The remaining primary action is a fresh execution decision. Parallel eTPS
+telemetry analysis and the isolated SystemMechanic S04 fix do not change this
+freeze or authorize a merge.
+
 ## Completed evidence
 
 The environment-repaired package was explicitly authorized for one session. It performed one 8,192-context server/model load and 23 non-generating HTTP requests, then stopped after 37.859 seconds including cleanup at an exact-token mismatch. The owned server terminated and idleness was established. No generation, automatic retry, fallback or Gate 4 occurred.
