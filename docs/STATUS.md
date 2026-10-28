@@ -1,5 +1,22 @@
 # eTPS v0.2 status
 
+## Related EGM qualification accepted (2026-10-28)
+
+Josh accepted the 8,192 Gate 3 load-time profile after 73 native checks/22 fit
+cases, 75 non-generating requests, verified owned shutdown and 418 evidence
+hash checks. The corrected package had passed 190 offline tests.
+Shared memory is bounded at 86 MiB; about 7 MiB is named in host-buffer logs,
+with the remainder unattributed and inferred non-inference from CUDA0 model/cache
+placement. All 86 MiB is not individually explained.
+
+Gate 4, generation, new loads, merges and dynamic-paging claims remain prohibited.
+Before Gate 4, settle the generation-time applicability of the 86 MiB bound
+and record comparable desktop state. See the
+[content-free acceptance/handoff](lab/EGM_GATE3_HANDOFF_2026-10-28.md).
+This is qualification evidence, not an eTPS evaluation result. Private evidence
+and prior incomplete attempts remain preserved. Telemetry/Spillover proposals
+stay outside qualification; publication does not authorize their adoption.
+
 ## Credential echo decoded check (2026-10-22)
 
 Under the maintainer ruling of 2026-10-22, the live adapter now checks literal raw bytes plus every decoded JSON string value and object key for credential echoes, reusing `credential_echo` and its existing timeout/body-withholding/export behavior; synthetic tests cover decoded detection and unchanged ordinary, non-JSON and malformed-response handling.

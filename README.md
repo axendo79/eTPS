@@ -20,6 +20,7 @@ Acceptance is binary at the trial boundary under a frozen recovery policy. Succe
 - [Opt-in answer contract](docs/v0.2/ANSWER_CONTRACT.md): adopted status vocabulary, compressed H3 slots, public declaration schema and content-free conformance CLI.
 - [Architecture](ARCHITECTURE.md): existing modules versus proposed measurement flow.
 - [Status and next steps](docs/STATUS.md): settled decisions, open details and release prerequisites.
+- [Related EGM Gate 3 handoff](docs/lab/EGM_GATE3_HANDOFF_2026-10-28.md): incomplete runtime qualification, source-corrected sizing work and execution boundaries; not an eTPS evaluation result.
 - [Clause review](docs/v0.2/CLAUSE_REVIEW.md): span matching, author conflicts and comparison boundaries.
 - [Counterexamples](docs/v0.2/COUNTEREXAMPLES.md) and [acceptance/timing review](docs/v0.2/ACCEPTANCE_TIMING_REVIEW.md): historical paper attacks, not executed benchmark evidence.
 - [Provenance](docs/v0.2/PROVENANCE.md): user requirements, endorsements and model-authored proposals.
